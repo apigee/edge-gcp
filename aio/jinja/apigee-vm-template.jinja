@@ -1,0 +1,100 @@
+{#
+Copyright 2016 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
+{% set BASE_NAME = env['deployment'] + '-' + env['name'] %}
+
+resources:
+- name: {{ BASE_NAME }}
+  type: compute.v1.instance
+  properties:
+    zone: {{ properties['zone'] }}
+    machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
+    sizeGb: 40
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          {{ imports[properties['aio-config']]|indent(10) }}
+          echo "IP1=$IP1" >> /tmp/aio-config.txt
+          echo "LB=$LB" >> /tmp/aio-config.txt
+          echo "HOSTIP=$HOSTIP" >> /tmp/aio-config.txt
+          echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> /tmp/aio-config.txt
+          echo "APIGEE_ADMINPW=$APIGEE_ADMINPW" >>  /tmp/aio-config.txt
+          echo "LICENSE_FILE=$LICENSE_FILE" >> /tmp/aio-config.txt
+          echo "MSIP=$MSIP" >> /tmp/aio-config.txt
+          echo "USE_LDAP_REMOTE_HOST=$USE_LDAP_REMOTE_HOST" >> /tmp/aio-config.txt
+          echo "LDAP_TYPE=$LDAP_TYPE" >> /tmp/aio-config.txt
+          echo "APIGEE_LDAPPW=$APIGEE_LDAPPW" >> /tmp/aio-config.txt
+          echo "BIND_ON_ALL_INTERFACES=$BIND_ON_ALL_INTERFACES" >> /tmp/aio-config.txt
+          echo "MP_POD=$MP_POD" >> /tmp/aio-config.txt
+          echo "REGION=$REGION" >> /tmp/aio-config.txt
+          echo "ZK_HOSTS=\"$ZK_HOSTS\"" >>  /tmp/aio-config.txt
+          echo "ZK_CLIENT_HOSTS=\"$ZK_CLIENT_HOSTS\"" >> /tmp/aio-config.txt
+          echo "CASS_CLUSTERNAME=$CASS_CLUSTERNAME" >> /tmp/aio-config.txt
+          echo "CASS_HOSTS=\"$CASS_HOSTS\"" >> /tmp/aio-config.txt
+          echo "SKIP_SMTP=$SKIP_SMTP" >>  /tmp/aio-config.txt
+          echo "ORG_NAME=$ORG_NAME" >> /tmp/aio-config.txt
+          echo "NEW_USER=$NEW_USER" >> /tmp/aio-config.txt
+          echo "ORG_ADMIN=$ORG_ADMIN" >> /tmp/aio-config.txt
+          echo "ENV_NAME=$ENV_NAME"  >> /tmp/aio-config.txt
+          echo "VHOST_PORT=$VHOST_PORT" >> /tmp/aio-config.txt
+          echo "VHOST_NAME=$VHOST_NAME"  >> /tmp/aio-config.txt
+          echo "# If you have a DNS entry for the virtual host." >> /tmp/aio-config.txt
+          echo "VHOST_ALIAS=$VHOST_ALIAS" >> /tmp/aio-config.txt
+          echo "AXGROUP=$AXGROUP" >> /tmp/aio-config.txt
+          echo "# Specify the analytics group." >> /tmp/aio-config.txt
+          echo "{{ properties["license"] }}" >> /tmp/license.txt
+          export FTP_USER=$(echo "{{ properties["ftp"].user }}")
+          export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
+          export RESOURCE_NAME=$(echo {{ env["name"] }})
+          sudo curl https://software.apigee.com/bootstrap_4.16.05.sh -o /tmp/bootstrap_4.16.05.sh
+          sed -i s/ORG_NAME=/ORG_NAME="${RESOURCE_NAME}"/g /tmp/aio-config.txt
+          sudo chmod 777 /tmp/bootstrap_4.16.05.sh
+          sudo setenforce 0 >> /tmp/setenforce.out
+          sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
+          sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
+          sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
+          sudo /tmp/bootstrap_4.16.05.sh apigeeuser=$FTP_USER apigeepassword=$FTP_PASSWORD JAVA_FIX=I
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
+          sudo yum install apigee-cassandra -y
+          sudo yum install apigee-zookeeper -y
+          sudo yum install apigee-openldap -y
+          sudo yum install edge-management-server -y
+          sudo yum install edge-ui -y
+          sudo yum install edge-router -y
+          sudo yum install edge-message-processor -y
+          sudo yum install apigee-postgresql -y
+          sudo yum install edge-postgres-server -y
+          sudo yum install apigee-qpidd -y
+          sudo yum install edge-qpid-server -y
+          sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        diskName: {{ BASE_NAME }}-disk
+        diskSizeGb: 40
+        sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
+    networkInterfaces:
+    - network: $(ref.{{ properties["network"] }}.selfLink)
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
+
