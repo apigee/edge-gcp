@@ -28,40 +28,32 @@ resources:
       - key: startup-script
         value: |
           {{ imports[properties['aio-config']]|indent(10) }}
-          echo "IP1=$IP1" >> /tmp/aio-config.txt
-          echo "LB=$LB" >> /tmp/aio-config.txt
-          echo "HOSTIP=$HOSTIP" >> /tmp/aio-config.txt
-          echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> /tmp/aio-config.txt
-          echo "APIGEE_ADMINPW=$APIGEE_ADMINPW" >>  /tmp/aio-config.txt
-          echo "LICENSE_FILE=$LICENSE_FILE" >> /tmp/aio-config.txt
-          echo "MSIP=$MSIP" >> /tmp/aio-config.txt
-          echo "USE_LDAP_REMOTE_HOST=$USE_LDAP_REMOTE_HOST" >> /tmp/aio-config.txt
-          echo "LDAP_TYPE=$LDAP_TYPE" >> /tmp/aio-config.txt
-          echo "APIGEE_LDAPPW=$APIGEE_LDAPPW" >> /tmp/aio-config.txt
-          echo "BIND_ON_ALL_INTERFACES=$BIND_ON_ALL_INTERFACES" >> /tmp/aio-config.txt
-          echo "MP_POD=$MP_POD" >> /tmp/aio-config.txt
-          echo "REGION=$REGION" >> /tmp/aio-config.txt
-          echo "ZK_HOSTS=\"$ZK_HOSTS\"" >>  /tmp/aio-config.txt
-          echo "ZK_CLIENT_HOSTS=\"$ZK_CLIENT_HOSTS\"" >> /tmp/aio-config.txt
-          echo "CASS_CLUSTERNAME=$CASS_CLUSTERNAME" >> /tmp/aio-config.txt
-          echo "CASS_HOSTS=\"$CASS_HOSTS\"" >> /tmp/aio-config.txt
-          echo "SKIP_SMTP=$SKIP_SMTP" >>  /tmp/aio-config.txt
-          echo "ORG_NAME=$ORG_NAME" >> /tmp/aio-config.txt
-          echo "NEW_USER=$NEW_USER" >> /tmp/aio-config.txt
-          echo "ORG_ADMIN=$ORG_ADMIN" >> /tmp/aio-config.txt
-          echo "ENV_NAME=$ENV_NAME"  >> /tmp/aio-config.txt
-          echo "VHOST_PORT=$VHOST_PORT" >> /tmp/aio-config.txt
-          echo "VHOST_NAME=$VHOST_NAME"  >> /tmp/aio-config.txt
-          echo "# If you have a DNS entry for the virtual host." >> /tmp/aio-config.txt
-          echo "VHOST_ALIAS=$VHOST_ALIAS" >> /tmp/aio-config.txt
-          echo "AXGROUP=$AXGROUP" >> /tmp/aio-config.txt
-          echo "# Specify the analytics group." >> /tmp/aio-config.txt
+          set >> /tmp/aio-config.txt
+          sed -i s/BASH.*=.*//g /tmp/aio-config.txt
+          sed -i s/_VERSION.*=.*//g /tmp/aio-config.txt
+          sed -i s/_VERSINFO=.*=.*//g /tmp/aio-config.txt
+          sed -i s/LS_COLORS=.*=.*//g /tmp/aio-config.txt
+          sed -i s/EUID=.*//g /tmp/aio-config.txt
+          sed -i s/DIRSTACK=.*//g /tmp/aio-config.txt
+          sed -i s/IFS=.*//g /tmp/aio-config.txt
+          sed -i s/PPID=.*//g /tmp/aio-config.txt
+          sed -i s/PIPESTATUS=.*//g /tmp/aio-config.txt
+          sed -i s/GROUPS=.*//g /tmp/aio-config.txt
+          sed -i s/LESSOPEN=.*//g /tmp/aio-config.txt
+          sed -i s/PS4=.*//g /tmp/aio-config.txt
+          sed -i s/PATH=.*//g /tmp/aio-config.txt
+          sed -i s/UID=.*//g /tmp/aio-config.txt
+          sed -i s/SHELLOPTS=.*//g /tmp/aio-config.txt
+          sed -i s/_=.*//g /tmp/aio-config.txt
+          sed -i s/HOME=.*//g /tmp/aio-config.txt
+          sed -i s/OPTERR=.*//g /tmp/aio-config.txt
+          sed -i s/OPTIND=.*//g /tmp/aio-config.txt
           echo "{{ properties["license"] }}" >> /tmp/license.txt
           export FTP_USER=$(echo "{{ properties["ftp"].user }}")
           export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
           export RESOURCE_NAME=$(echo {{ env["name"] }})
           sudo curl https://software.apigee.com/bootstrap_4.16.05.sh -o /tmp/bootstrap_4.16.05.sh
-          sed -i s/ORG_NAME=/ORG_NAME="${RESOURCE_NAME}"/g /tmp/aio-config.txt
+          #sed -i s/ORG_NAME=/ORG_NAME="${RESOURCE_NAME}"/g /tmp/aio-config.txt
           sudo chmod 777 /tmp/bootstrap_4.16.05.sh
           sudo setenforce 0 >> /tmp/setenforce.out
           sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
