@@ -23,20 +23,20 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 
 ## Deploy AIO profile
 ```sh
-./aio/jinja/deploy.sh "RESOURCE_NAME"
+./deploy.sh "RESOURCE_NAME"
 ```
 e.g :
 ```sh
-./aio/jinja/deploy.sh apigee-edge
+./deploy.sh apigee-edge
 ```
 
 ## Undeploy and Clean the deployment
 ```sh
-./aio/jinja/clean.sh "RESOURCE_NAME"
+./clean.sh "RESOURCE_NAME"
 ```
 e.g :
 ```sh
-./aio/jinja/clean.sh apigee-edge
+./clean.sh apigee-edge
 ```
 ## License
 
