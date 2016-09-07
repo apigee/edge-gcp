@@ -1,0 +1,51 @@
+---
+- hosts: apigee
+  tasks:
+  - name: yum clean all
+    command: "yum clean all"
+    sudo: yes
+  - name: yum install libselinux-python
+    command: "yum install libselinux-python -y"
+    sudo: yes
+  - name: Limits change
+    become_method: sudo
+    lineinfile:
+      dest=/etc/security/limits.conf
+      line='{{ item }}'
+    with_items:
+      - 'apigee soft memlock unlimited'
+      - 'apigee hard memlock unlimited'
+      - 'apigee soft nofile 32768'
+      - 'apigee hard nofile 65536'
+      - 'apigee soft as unlimited'
+      - 'apigee hard as unlimited'
+    sudo: yes
+  - name: Selinux status
+    shell: selinuxenabled && echo enabled || echo disabled
+    sudo: yes
+    register: selinuxstatus
+  - name: Print selinux status
+    debug: msg="selinux version is {{ selinuxstatus.stdout }}"
+    sudo: yes
+    ignore_errors: true
+    when: selinuxstatus.changed
+  - name: disable SELinux
+    selinux: state=disabled
+    sudo: yes
+    when: ("{{ selinuxstatus.stdout }} == 'enabled'" or "{{ selinuxstatus.stdout }} == 'permissive'")
+    register: st
+    ignore_errors: true
+    when: selinuxstatus.changed
+  - name: reboot if SELinux changed
+    shell: shutdown -r +1 "SELinux disable triggered"
+    sudo: yes
+    async: 1
+    poll: 0
+    ignore_errors: true
+    when: st.changed
+  - name: waiting for server to reboot
+    local_action: wait_for host="{{ ansible_ssh_host | default(inventory_hostname) }}" port={{ ansible_ssh_port | default(22) }} search_regex=OpenSSH state=started delay=30 timeout=300
+    sudo: false
+    ignore_errors: true
+    when: st.changed
+

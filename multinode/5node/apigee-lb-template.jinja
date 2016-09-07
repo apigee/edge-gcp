@@ -1,0 +1,54 @@
+{% set BASE_NAME = env['deployment'] + '-' + env['name'] %}
+{% set PROD_HEALTH = env['deployment'] + '-' + env['name'] + '-healthprod' %}
+{% set TEST_HEALTH = env['deployment'] + '-' + env['name'] + '-healthtest' %}
+{% set PROD_POOL = env['deployment'] + '-' + env['name'] + '-prod-pool' %}
+{% set TEST_POOL = env['deployment'] + '-' + env['name'] + '-test-pool' %}
+{% set TEST_FWRULE = env['deployment'] + '-' + env['name'] + '-test-fwrule' %}
+{% set PROD_FWRULE = env['deployment'] + '-' + env['name'] + '-prod-fwrule' %}
+
+resources:
+- name: {{ BASE_NAME }}
+  type: compute.v1.address
+  properties:
+    region: {{ properties['region'] }}
+- name: {{ PROD_HEALTH }}
+  type: compute.v1.httpHealthCheck
+  properties:
+    checkIntervalSec: 5
+    port: 9001
+- name: {{ TEST_HEALTH }}
+  type: compute.v1.httpHealthCheck
+  properties:
+    checkIntervalSec: 5
+    port: 9002
+- name: {{ PROD_POOL }}
+  type: compute.v1.targetPool
+  properties:
+    region: {{ properties['region']}}
+    healthChecks: [ $(ref.{{ PROD_HEALTH }}.selfLink) ]
+    instances: [ {{ properties['instance1'] }} , {{ properties['instance2'] }}]
+- name: {{ TEST_POOL }}
+  type: compute.v1.targetPool
+  properties:
+    region: {{ properties['region']}}
+    healthChecks: [ $(ref.{{ TEST_HEALTH }}.selfLink) ]
+    instances: [ {{ properties['instance1'] }} , {{ properties['instance2'] }}]
+- name: {{ TEST_FWRULE }}
+  type: compute.v1.forwardingRule
+  properties:
+    IPProtocol: TCP
+    region: {{ properties['region'] }}
+    portRange: 9002
+    IPAddress: $(ref.{{ BASE_NAME }}.address)
+    target: $(ref.{{ TEST_POOL }}.selfLink)
+- name: {{ PROD_FWRULE }}
+  type: compute.v1.forwardingRule
+  properties:
+    IPProtocol: TCP
+    region: {{ properties['region'] }}
+    portRange: 9001
+    IPAddress: $(ref.{{ BASE_NAME }}.address)
+    target: $(ref.{{ PROD_POOL }}.selfLink)
+outputs:
+- name: LB_IP_ALIAS
+  value: $(ref.{{ BASE_NAME }}.address)
