@@ -50,7 +50,14 @@ resources:
     private-key: {{ properties["private-key"] }}
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    APIGEE_LDAPPW: {{ properties['APIGEE_LDAPPW'] }}
     ORG_NAME: {{ properties['ORG_NAME'] }}
+    SKIP_SMTP: {{ properties['SKIP_SMTP'] }}
+    SMTPHOST: {{ properties['SMTPHOST'] }}
+    SMTPUSER: {{ properties['SMTPUSER'] }}
+    SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
+    SMTPSSL: {{ properties['SMTPSSL'] }}
+    SMTPPORT: {{ properties['SMTPPORT'] }}
     LB_IP_ALIAS: $(ref.apigee-edge.LB_IP_ALIAS)
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}

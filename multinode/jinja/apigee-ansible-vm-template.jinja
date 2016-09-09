@@ -28,7 +28,14 @@ resources:
     HOST_NAMES: {{ properties['HOST_NAMES'] }}
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    APIGEE_LDAPPW: {{ properties['APIGEE_LDAPPW'] }}
     ORG_NAME: {{ properties['ORG_NAME'] }}
+    SKIP_SMTP: {{ properties['SKIP_SMTP'] }}
+    SMTPHOST: {{ properties['SMTPHOST'] }}
+    SMTPUSER: {{ properties['SMTPUSER'] }}
+    SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
+    SMTPSSL: {{ properties['SMTPSSL'] }}
+    SMTPPORT: {{ properties['SMTPPORT'] }}
     LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}
@@ -44,7 +51,14 @@ resources:
           export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
           export APIGEE_ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
           export APIGEE_ADMINPW="{{ properties['APIGEE_ADMINPW'] }}"
+          export APIGEE_LDAPPW="{{ properties['APIGEE_LDAPPW'] }}"
           export ORG_NAME="{{ properties['ORG_NAME'] }}"
+          export SKIP_SMTP="{{ properties['SKIP_SMTP'] }}"
+          export SMTPHOST="{{ properties['SMTPHOST'] }}"
+          export SMTPUSER="{{ properties['SMTPUSER'] }}"
+          export SMTPPASSWORD="{{ properties['SMTPPASSWORD'] }}"
+          export SMTPSSL="{{ properties['SMTPSSL'] }}"
+          export SMTPPORT="{{ properties['SMTPPORT'] }}"
           export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
 
           SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
@@ -127,7 +141,14 @@ resources:
           sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-prod.txt
           sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-test.txt
 
-          sed -i.bak s/APIGEE_LDAPPW=/APIGEE_LDAPPW="${APIGEE_ADMINPW}"/g config.txt
+          sed -i.bak s/APIGEE_LDAPPW=/APIGEE_LDAPPW="${APIGEE_LDAPPW}"/g config.txt
+
+          sed -i.bak s/SKIP_SMTP=.*/SKIP_SMTP=${SKIP_SMTP}/g config.txt
+          sed -i.bak s/SMTPHOST=.*/SMTPHOST=${SMTPHOST}/g config.txt
+          sed -i.bak s/SMTPUSER=.*/SMTPUSER=${SMTPUSER}/g config.txt
+          sed -i.bak s/SMTPPASSWORD=.*/SMTPPASSWORD=${SMTPPASSWORD}/g config.txt
+          sed -i.bak s/SMTPSSL=.*/SMTPSSL=${SMTPSSL}/g config.txt
+          sed -i.bak s/SMTPPORT=.*/SMTPPORT="${SMTPPORT}"/g config.txt
 
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt

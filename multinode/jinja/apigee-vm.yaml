@@ -29,15 +29,24 @@ resources:
      machineType: n1-standard-2
      zone: us-central1-b
      region: us-central1
-     nodes: 9
+     nodes: 5
      cidr: 192.168.3.0/24
      ftp:
        user: 
        password: 
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
-     ORG_NAME: 'myorg'
-     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/multinode"
+     APIGEE_LDAPPW: 'Secret123'
+     ORG_NAME: myorg
+     SKIP_SMTP: 'n'
+     SMTPHOST: test.smtp.com
+     SMTPUSER: test@example.com
+     # 0 for no username
+     SMTPPASSWORD: testpassword
+     # 0 for no password
+     SMTPSSL: 'y'
+     SMTPPORT: 465
+     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/multinode/jinja"
      license: ""
      public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvIy0p0CcbN3Z/5HYRtmmIBMePxIXSlpWe5/aaglDPIw1EMcCfRyTFKdLStSZVroq90RyHgLgD8OQZl74ym9V05/dk8YcdK+uY71fHTEKypaH9f4nlykNXht54FworTUV8SKgDC5GMLY6HV56BRmXAImVaJ+dQxkZxVrlFHFvQ323Bv7mI1TaFrM95Mqq8v2g0ehcu8N+rIcOyADv2C8ed2UrOABj+H9ND/86ZjD86W8m0rQTolVk1r3LmWhVD6IdE8Uq+MxWW0nfJ9Xu3vzy3GUNYr/vSX73zfXjKffNRflH6f3Npnl9/h0Ixq5FZlchtAoBgFyuHmEyrL14O4379 apigee"
      private-key: "-----BEGIN RSA PRIVATE KEY-----
