@@ -9,6 +9,9 @@
     apigee_dest_path: /tmp/apigee
     apigee_config_file_name: config.txt
   tasks:
+  - name: Create dest folder
+    command: "mkdir -p {{ apigee_dest_path }}"
+    sudo: yes
   - name: Get BootstrapFile
     get_url: url={{boot_strap_url}}/{{boot_strap_file_name}} dest={{apigee_dest_path}}/{{boot_strap_file_name}}
     sudo: yes

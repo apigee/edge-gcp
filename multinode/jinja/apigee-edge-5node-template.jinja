@@ -13,12 +13,6 @@ limitations under the License.
 {% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
 
 resources:
-- name: {{ NETWORK_NAME }}
-  type: apigee-network-template.jinja
-- name: {{ NETWORK_NAME }}-firewall
-  type: apigee-firewall-template.jinja
-  properties:
-    network: {{ NETWORK_NAME }}
 - name: apigee-rmp0
   type: apigee-rmp-vm-template.jinja
   properties:

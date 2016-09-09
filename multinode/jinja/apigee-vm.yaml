@@ -13,28 +13,29 @@
 imports:
 - path: apigee-shared-vm-template.jinja
 - path: apigee-rmp-vm-template.jinja
-- path: apigee-vm-template.jinja
+- path: apigee-ansible-vm-template.jinja
 - path: apigee-network-template.jinja
 - path: apigee-firewall-template.jinja
 - path: apigee-lb-template.jinja
+- path: apigee-edge-5node-template.jinja
 - path: apigee-edge-template.jinja
-- path: apigee-edge-orchestrate-template.jinja
-
 
 resources:
 - name: apigee-edge-setup
-  type: apigee-edge-orchestrate-template.jinja
+  type: apigee-edge-template.jinja
   properties:
      machineType: n1-standard-4
      zone: us-central1-b
      region: us-central1
+     nodes: 5
+     cidr: 192.168.2.0/24
      ftp:
        user: 
        password: 
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      ORG_NAME: 'myorg'
-     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/microsoft/16x/azure-apigee-extension"
+     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/multinode"
      license: ""
      public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvIy0p0CcbN3Z/5HYRtmmIBMePxIXSlpWe5/aaglDPIw1EMcCfRyTFKdLStSZVroq90RyHgLgD8OQZl74ym9V05/dk8YcdK+uY71fHTEKypaH9f4nlykNXht54FworTUV8SKgDC5GMLY6HV56BRmXAImVaJ+dQxkZxVrlFHFvQ323Bv7mI1TaFrM95Mqq8v2g0ehcu8N+rIcOyADv2C8ed2UrOABj+H9ND/86ZjD86W8m0rQTolVk1r3LmWhVD6IdE8Uq+MxWW0nfJ9Xu3vzy3GUNYr/vSX73zfXjKffNRflH6f3Npnl9/h0Ixq5FZlchtAoBgFyuHmEyrL14O4379 apigee"
      private-key: "-----BEGIN RSA PRIVATE KEY-----

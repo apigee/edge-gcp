@@ -11,9 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-IP1=$(hostname -i)
+IP1=HOST1_INTERNALIP
 LB=LBDNS
-HOSTIP=$(hostname -i)
+HOSTIP=HOST1_INTERNALIP
 ADMIN_EMAIL=
 APIGEE_ADMINPW=
 LICENSE_FILE=/tmp/apigee/license.txt

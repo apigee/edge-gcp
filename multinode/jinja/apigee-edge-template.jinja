@@ -11,10 +11,21 @@ limitations under the License.
 #}
 
 {% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
+{% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
+{% set  TEMPLATE_NAME = 'apigee-edge-' + properties['nodes']|string + 'node-template.jinja' %}
 
 resources:
+- name: {{ NETWORK_NAME }}
+  type: apigee-network-template.jinja
+  properties:
+    cidr: {{ properties["cidr"] }}
+- name: {{ FIREWALL_NAME }}
+  type: apigee-firewall-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    cidr: {{ properties["cidr"] }}
 - name: apigee-edge
-  type: apigee-edge-template.jinja
+  type: {{ TEMPLATE_NAME }}
   properties:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
@@ -27,7 +38,7 @@ resources:
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
     ORG_NAME: {{ properties['ORG_NAME'] }}
 - name: apigee-utility
-  type: apigee-vm-template.jinja
+  type: apigee-ansible-vm-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)

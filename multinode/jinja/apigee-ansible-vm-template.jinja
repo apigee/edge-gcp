@@ -24,7 +24,7 @@ resources:
   properties:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
-    sizeGb: 40
+    sizeGb: 10
     HOST_NAMES: {{ properties['HOST_NAMES'] }}
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
