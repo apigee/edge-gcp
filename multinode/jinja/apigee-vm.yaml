@@ -13,22 +13,24 @@
 imports:
 - path: apigee-shared-vm-template.jinja
 - path: apigee-rmp-vm-template.jinja
+- path: apigee-mgmt-vm-template.jinja
 - path: apigee-ansible-vm-template.jinja
 - path: apigee-network-template.jinja
 - path: apigee-firewall-template.jinja
 - path: apigee-lb-template.jinja
 - path: apigee-edge-5node-template.jinja
+- path: apigee-edge-9node-template.jinja
 - path: apigee-edge-template.jinja
 
 resources:
 - name: apigee-edge-setup
   type: apigee-edge-template.jinja
   properties:
-     machineType: n1-standard-4
+     machineType: n1-standard-2
      zone: us-central1-b
      region: us-central1
-     nodes: 5
-     cidr: 192.168.2.0/24
+     nodes: 9
+     cidr: 192.168.3.0/24
      ftp:
        user: 
        password: 

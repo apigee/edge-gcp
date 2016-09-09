@@ -8,26 +8,38 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 - Initialize your account
 
 ## Before you start
-- Edit the aio/jinja/apigee-vm.yaml and update the properies
+- Edit the jinja/apigee-vm.yaml and update the properies
 
     ```sh
-        aio-config: aio-config.txt
-        machineType: [ machine type  e.g: n1-highcpu-8]
-        zone: [ zone e.g : us-central1-b]
-        ftp:
-            user: [Your Apigee's FTP user]
-            password: [Your Apigee's FTP password]
-        license: "[your license]" #license should be  a string, remove any \n character in license file.
+         machineType: n1-standard-2
+	     zone: us-central1-b
+	     region: us-central1
+	     nodes: 5
+	     cidr: 192.168.3.0/24
+	     ftp:
+	       user: 
+	       password: 
+	     APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
+	     APIGEE_ADMINPW: 'Secret123'
+	     ORG_NAME: 'myorg'
+	     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/multinode"
+	     license: "JakHrOe9fdsf436545==="
+	     public-key: "apigee:ssh-rsa AAAAB3 apigee"
+	     private-key: "-----BEGIN RSA PRIVATE KEY-----
+	MIIEpQIBAAKCAQEAryMtKdAnGzd2f+R2EbZpiATHj8SF0paVnuf2moJQzyMNRDHA
+	-----END RSA PRIVATE KEY-----"
     ```
-- Change the silent config file entries present in aio/jinja/aio-config.txt
+- Generate a key pair using ssh-keygen tool for apigee user (ssh-keygen -t rsa -b 4096 -C "apigee" ) and paste the key pair in public-key and private-key section  
 
-## Deploy AIO profile
+- nodes can take value of 5 for 5-node and 9 for 9-node cluster setup respectively.
+
+## Deploy any profile
 ```sh
 ./deploy.sh "RESOURCE_NAME"
 ```
 e.g :
 ```sh
-./deploy.sh apigee-edge
+./deploy.sh apigee5node
 ```
 
 ## Undeploy and Clean the deployment
@@ -36,7 +48,7 @@ e.g :
 ```
 e.g :
 ```sh
-./clean.sh apigee-edge
+./clean.sh apigee5node
 ```
 ## License
 
