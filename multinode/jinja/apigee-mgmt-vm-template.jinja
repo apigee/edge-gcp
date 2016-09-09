@@ -29,13 +29,6 @@ resources:
       items:
       - key: ssh-keys
         value: {{ properties['public-key'] }}
-      - key: startup-script
-        value: |
-          iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 9001 -j DNAT --to $(hostname -i):9001
-          iptables -A FORWARD -i eth0 -p tcp --dport  9001 -d 0.0.0.0 -j ACCEPT
-          iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 9002 -j DNAT --to $(hostname -i):9002
-          iptables -A FORWARD -i eth0 -p tcp --dport  9002 -d 0.0.0.0 -j ACCEPT
-
     disks:
     - deviceName: boot
       type: PERSISTENT
@@ -50,9 +43,11 @@ resources:
       subnetwork : $(ref.{{ SUBNET_NAME }}.selfLink)
       accessConfigs:
       - name: External NAT
-        type: ONE_TO_ONE_NAT
+        type: ONE_TO_ONE_NAT 
 outputs:
 - name: myIp
   value: $(ref.{{ MASTER }}.networkInterfaces[0].networkIP)
+- name: LB_IP_ALIAS
+  value: $(ref.{{ MASTER }}.networkInterfaces[0].accessConfigs[0].natIP)
 - name: selfLink
   value: $(ref.{{ MASTER }}.selfLink)

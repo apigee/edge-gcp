@@ -43,11 +43,9 @@ resources:
       subnetwork : $(ref.{{ SUBNET_NAME }}.selfLink)
       accessConfigs:
       - name: External NAT
-        type: ONE_TO_ONE_NAT 
+        type: ONE_TO_ONE_NAT
 outputs:
 - name: myIp
   value: $(ref.{{ MASTER }}.networkInterfaces[0].networkIP)
-- name: LB_IP_ALIAS
-  value: $(ref.{{ MASTER }}.networkInterfaces[0].accessConfigs[0].natIP)
 - name: selfLink
   value: $(ref.{{ MASTER }}.selfLink)

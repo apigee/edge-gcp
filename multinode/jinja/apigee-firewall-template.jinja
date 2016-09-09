@@ -10,7 +10,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
-{% set  FIREWALL_INTERNAL = env['name'] + '-' + '-internal-firewall' %}
+{% set  FIREWALL_INTERNAL = env['name'] + '-' + '-internal' %}
 
 resources:
 - name: {{ env["name"] }}
@@ -29,3 +29,6 @@ resources:
     allowed:
     - IPProtocol: TCP
       ports: ["0-65535"]
+    - IPProtocol: udp
+      ports: ["0-65535"]  
+    - IPProtocol: icmp

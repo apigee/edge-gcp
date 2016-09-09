@@ -14,7 +14,21 @@ limitations under the License.
 
 resources:
 - name: apigee-mgmt
-  type: apigee-mgmt-vm-template.jinja
+  type: apigee-shared-vm-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    public-key: {{ properties["public-key"] }}
+- name: apigee-ds1
+  type: apigee-shared-vm-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    public-key: {{ properties["public-key"] }}
+- name: apigee-ds2
+  type: apigee-shared-vm-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
     machineType: {{ properties["machineType"] }}
@@ -34,14 +48,28 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
-- name: apigee-ax0
+- name: apigee-qs0
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
-- name: apigee-ax1
+- name: apigee-qs1
+  type: apigee-shared-vm-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    public-key: {{ properties["public-key"] }}
+- name: apigee-ps0
+  type: apigee-shared-vm-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    public-key: {{ properties["public-key"] }}
+- name: apigee-ps1
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
@@ -56,6 +84,6 @@ resources:
     instance2: $(ref.apigee-rmp1.selfLink)
 outputs:
 - name: HOST_NAMES
-  value: $(ref.apigee-mgmt.myIp):$(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)
+  value: $(ref.apigee-mgmt.myIp):$(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp)::$(ref.apigee-qs0.myIp):$(ref.apigee-qs1.myIp):$(ref.apigee-ps0.myIp):$(ref.apigee-ps1.myIp)
 - name: LB_IP_ALIAS
   value: $(ref.apigee-lb.LB_IP_ALIAS)

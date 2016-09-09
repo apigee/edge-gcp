@@ -31,6 +31,7 @@ resources:
     ORG_NAME: {{ properties['ORG_NAME'] }}
     LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
+    nodes: {{ properties['nodes'] }}
     metadata:
       items:
       - key: ssh-keys
@@ -95,9 +96,9 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
           
-          #5 node Config
-          cp -fr  /tmp/apigee/ansible-scripts/config/config5.txt /tmp/apigee/ansible-scripts/config/config.txt
-          cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_5node /tmp/apigee/ansible-scripts/inventory/hosts
+          #Copy the right file based on node number
+          cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
+          cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_{{ properties['nodes'] }}node /tmp/apigee/ansible-scripts/inventory/hosts
           
           IFS=:
           hosts_ary=($HOST_NAMES)
