@@ -22,4 +22,4 @@ resources:
   properties:
      network : $(ref.{{ env["name"] }}.selfLink)
      region: "us-central1"
-     ipCidrRange: "192.168.2.0/24"
+     ipCidrRange: "{{ properties["cidr"] }}"
