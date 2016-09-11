@@ -57,7 +57,7 @@
     sudo: false
     ignore_errors: true
     when: st.changed
-    - name: Create dest folder
+  - name: Create dest folder
     command: "mkdir -p {{ apigee_dest_path }}"
     sudo: yes
   - name: Log Files
