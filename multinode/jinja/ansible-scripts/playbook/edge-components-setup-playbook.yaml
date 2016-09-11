@@ -7,7 +7,18 @@
     apigee_config_file_name: config.txt
     apigee_prod_config_file_name: setup-org-prod.txt
     apigee_test_config_file_name: setup-org-test.txt
+    apigee_health_config_file_name: setup-health-test.txt
+    apigee_health_proxy_file_name: healthcheck.zip
   tasks:
+  - name: Create dest folder
+    command: "mkdir -p {{ apigee_dest_path }}"
+    sudo: yes
+  - name: Log Files
+    command: "{{ item }}"
+    with_items:
+    - "mkdir -p {{ apigee_dest_path }}/log"
+    - "ln -Ts /tmp/setup-root.log {{ apigee_dest_path }}/log/setup-root.log"
+    sudo: yes
   - name: copy license file
     copy: src={{apigee_source_path}}/{{apigee_license_file_name}}
         dest={{apigee_dest_path}}/{{apigee_license_file_name}} force=yes
@@ -23,6 +34,14 @@
   - name: copy setup-org test file
     copy: src={{apigee_source_path}}/{{apigee_test_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_test_config_file_name}} force=yes
+    sudo: yes
+  - name: copy setup-org health file
+    copy: src={{apigee_source_path}}/{{apigee_health_config_file_name}}
+        dest={{apigee_dest_path}}/{{apigee_health_config_file_name}} force=yes
+    sudo: yes
+  - name: copy setup-org health proxy
+    copy: src={{apigee_source_path}}/{{apigee_health_proxy_file_name}}
+        dest={{apigee_dest_path}}/{{apigee_health_proxy_file_name}} force=yes
     sudo: yes
 - include: ds-playbook.yaml
 - include: ms-playbook.yaml

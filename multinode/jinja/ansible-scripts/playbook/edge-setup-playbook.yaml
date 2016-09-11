@@ -4,27 +4,13 @@
   vars:
     boot_strap_url: https://software.apigee.com
     boot_strap_file_name: bootstrap_4.16.05.sh
-    apigee_license_file_name: license.txt
-    apigee_source_path: ../config
     apigee_dest_path: /tmp/apigee
-    apigee_config_file_name: config.txt
   tasks:
-  - name: Create dest folder
-    command: "mkdir -p {{ apigee_dest_path }}"
-    sudo: yes
   - name: Get BootstrapFile
     get_url: url={{boot_strap_url}}/{{boot_strap_file_name}} dest={{apigee_dest_path}}/{{boot_strap_file_name}}
     sudo: yes
   - name: install apigee service
     command: "bash {{apigee_dest_path}}/{{boot_strap_file_name}} apigeeuser={{ apigee_user }} apigeepassword={{ apigee_password }} JAVA_FIX=I"
-    sudo: yes
-  - name: copy license file
-    copy: src={{apigee_source_path}}/{{apigee_license_file_name}}
-        dest={{apigee_dest_path}}/{{apigee_license_file_name}} force=yes
-    sudo: yes
-  - name: copy config file
-    copy: src={{apigee_source_path}}/{{apigee_config_file_name}}
-        dest={{apigee_dest_path}}/{{apigee_config_file_name}} force=yes
     sudo: yes
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
