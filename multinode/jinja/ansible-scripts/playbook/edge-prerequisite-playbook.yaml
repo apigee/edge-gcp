@@ -7,7 +7,7 @@
     apigee_config_file_name: config.txt
     apigee_prod_config_file_name: setup-org-prod.txt
     apigee_test_config_file_name: setup-org-test.txt
-    apigee_health_config_file_name: setup-health-test.txt
+    apigee_health_config_file_name: setup-org-health.txt
     apigee_health_proxy_file_name: healthcheck.zip
   tasks:
   - name: yum clean all
