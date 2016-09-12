@@ -2,8 +2,8 @@
 - include: edge-prerequisite-playbook.yaml
 - hosts: apigee
   vars:
-    boot_strap_url: {{softwareRepo}}
-    boot_strap_file_name: bootstrap_{{version}}.sh
+    boot_strap_url: {{ softwareRepo }}
+    boot_strap_file_name: bootstrap_{{ version }}.sh
     apigee_dest_path: /tmp/apigee
   tasks:
   - name: Get BootstrapFile
