@@ -86,4 +86,4 @@ outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-mgmt.myIp):$(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp):$(ref.apigee-qs0.myIp):$(ref.apigee-qs1.myIp):$(ref.apigee-ps0.myIp):$(ref.apigee-ps1.myIp)
 - name: LB_IP_ALIAS
-  value: $(ref.apigee-lb.LB_IP_ALIAS)
+  value: "'$(ref.apigee-lb.LB_IP_ALIAS) $(ref.apigee-rmp0.myIp) $(ref.apigee-rmp1.myIp)'"
