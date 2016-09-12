@@ -24,6 +24,7 @@ resources:
   properties:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
+    canIpForward: true
     sizeGb: 40
     metadata:
       items:
@@ -35,7 +36,6 @@ resources:
           iptables -A FORWARD -i eth0 -p tcp --dport  9001 -d 0.0.0.0 -j ACCEPT
           iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 9002 -j DNAT --to $(hostname -i):9002
           iptables -A FORWARD -i eth0 -p tcp --dport  9002 -d 0.0.0.0 -j ACCEPT
-
     disks:
     - deviceName: boot
       type: PERSISTENT

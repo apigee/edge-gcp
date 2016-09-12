@@ -16,11 +16,13 @@ resources:
   properties:
     checkIntervalSec: 5
     port: 9001
+    requestPath: "/v1/healthcheck"
 - name: {{ TEST_HEALTH }}
   type: compute.v1.httpHealthCheck
   properties:
     checkIntervalSec: 5
     port: 9002
+    requestPath: "/v1/healthcheck"
 - name: {{ PROD_POOL }}
   type: compute.v1.targetPool
   properties:

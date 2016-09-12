@@ -31,6 +31,8 @@ resources:
      region: us-central1
      nodes: 5
      cidr: 192.168.3.0/24
+     softwareRepo: https://software.apigee.com
+     version: '4.16.05'
      ftp:
        user: 
        password: 

@@ -58,4 +58,4 @@ outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-mgmt.myIp):$(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)
 - name: LB_IP_ALIAS
-  value: $(ref.apigee-lb.LB_IP_ALIAS)
+  value: "'$(ref.apigee-lb.LB_IP_ALIAS) $(ref.apigee-rmp0.myIp) $(ref.apigee-rmp1.myIp)'"

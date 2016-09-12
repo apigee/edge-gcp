@@ -44,6 +44,8 @@ resources:
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
+    softwareRepo : {{ properties["softwareRepo"] }}
+    version: {{ properties['version']}}
     ftp: {{ properties["ftp"] }}
     license: {{ properties["license"] }}
     public-key: {{ properties["public-key"] }}

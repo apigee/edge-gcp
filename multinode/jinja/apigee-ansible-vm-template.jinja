@@ -25,6 +25,8 @@ resources:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
     sizeGb: 10
+    softwareRepo: {{ properties['softwareRepo'] }}
+    version: {{ properties['version'] }}
     HOST_NAMES: {{ properties['HOST_NAMES'] }}
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
@@ -46,6 +48,9 @@ resources:
       - key: startup-script
         value: |
           mkdir -p /tmp/apigee
+          mkdir -p /tmp/apigee/log
+          export SOFTWARE_REPO="{{ properties['softwareRepo'] }}"
+          export VERSION="{{ properties['version'] }}"
           export FTP_USER=$(echo "{{ properties["ftp"].user }}")
           export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
           export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
@@ -97,6 +102,7 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/config/config9.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config9.txt
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
+          curl -o /tmp/apigee/ansible-scripts/config/healthcheck.zip  $SCRIPT_BASEPATH/ansible-scripts/config/healthcheck.zip
 
           curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
           curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
@@ -113,7 +119,7 @@ resources:
           #Copy the right file based on node number
           cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
           cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_{{ properties['nodes'] }}node /tmp/apigee/ansible-scripts/inventory/hosts
-          
+
           IFS=:
           hosts_ary=($HOST_NAMES)
           c=1
@@ -121,6 +127,7 @@ resources:
           do
           if [[ ${i} != 'empty' ]]; then
                 key='HOST'$c'_INTERNALIP'
+                export ${key}=${i}
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/inventory/hosts
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/config.txt
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-prod.txt
@@ -156,8 +163,35 @@ resources:
 
           /#Lets Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
-          ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
-    
+          ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
+          
+          #Run the curl commands to deploy health check
+          cd /tmp/apigee/ansible-scripts/config
+          echo ${HOST1_INTERNALIP}
+
+          IFS='|'
+          usercred=$(echo $(eval echo $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW))
+          httpHost=$(echo $(eval echo http://$HOST1_INTERNALIP:8080))
+          contentType=$(echo $(eval echo Content-type:application/x-www-form-urlencoded))
+
+          echo $usercred
+          echo $httpHost
+          echo $contentType
+
+          curl1=$(echo $(eval echo 'curl -X POST -u $usercred -F \"file=@healthcheck.zip\" \"$httpHost/v1/organizations/$ORG_NAME/apis?action=import\&name=healthcheck\"'))
+
+          curl2=$(echo $(eval echo 'curl -X POST -H \"$contentType\" \"$httpHost/v1/organizations/$ORG_NAME/environments/test/apis/healthcheck/revisions/1/deployments\" -u $usercred'))
+
+          curl3=$(echo $(eval echo 'curl -X POST -H \"$contentType\" \"$httpHost/v1/organizations/$ORG_NAME/environments/prod/apis/healthcheck/revisions/1/deployments\" -u $usercred'))
+
+          echo $curl1
+          echo $curl2
+          echo $curl3
+
+          eval $curl1
+          eval $curl2
+          eval $curl3
+
     disks:
     - deviceName: boot
       type: PERSISTENT
