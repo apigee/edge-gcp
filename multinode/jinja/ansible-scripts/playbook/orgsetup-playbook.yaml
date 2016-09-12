@@ -4,7 +4,6 @@
     apigee_dest_path: /tmp/apigee
     apigee_prod_config_file_name: setup-org-prod.txt
     apigee_test_config_file_name: setup-org-test.txt
-    apigee_health_config_file_name: setup-org-health.txt
   tasks:
   - name: Install provisiong service
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-provision install"
@@ -14,7 +13,4 @@
     sudo: yes
   - name: Run Setup Org on Test
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f {{apigee_dest_path}}/{{apigee_test_config_file_name}}"
-    sudo: yes
-  - name: Run Setup Org on Health
-    command: "/opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f {{apigee_dest_path}}/{{apigee_health_config_file_name}}"
     sudo: yes
