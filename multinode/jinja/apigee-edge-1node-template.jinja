@@ -10,14 +10,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
+{% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
+
 resources:
-- name: {{ env["name"] }}
-  type: compute.v1.network
-  properties:
-    autoCreateSubnetworks: false
-- name: {{ properties["subnet"] }}
-  type: compute.v1.subnetwork
-  properties:
-     network : $(ref.{{ env["name"] }}.selfLink)
-     region: "us-central1"
-     ipCidrRange: "{{ properties["cidr"] }}"
+outputs:
+- name: HOST_NAMES
+  value: ""
+- name: LB_IP_ALIAS
+  value: ""

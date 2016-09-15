@@ -11,6 +11,7 @@ limitations under the License.
 #}
 
 {% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
+{% set  SUBNET_NAME =  env['deployment'] + '-' + 'network-subnet' %}
 {% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
 {% set  TEMPLATE_NAME = 'apigee-edge-' + properties['nodes']|string + 'node-template.jinja' %}
 
@@ -19,6 +20,7 @@ resources:
   type: apigee-network-template.jinja
   properties:
     cidr: {{ properties["cidr"] }}
+    subnet: {{ SUBNET_NAME }}
 - name: {{ FIREWALL_NAME }}
   type: apigee-firewall-template.jinja
   properties:
@@ -27,6 +29,8 @@ resources:
 - name: apigee-edge
   type: {{ TEMPLATE_NAME }}
   properties:
+    network: {{ NETWORK_NAME }}
+    subnet: {{ SUBNET_NAME }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     ftp: {{ properties["ftp"] }}
@@ -37,10 +41,11 @@ resources:
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
     APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
     ORG_NAME: {{ properties['ORG_NAME'] }}
-- name: apigee-utility
-  type: apigee-ansible-vm-template.jinja
+- name: apigee-mgmt
+  type: apigee-mgmt-vm-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
+    subnet: {{ SUBNET_NAME }}
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}

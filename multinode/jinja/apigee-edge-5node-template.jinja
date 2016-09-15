@@ -10,41 +10,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
-{% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
-
 resources:
-- name: apigee-mgmt
-  type: apigee-mgmt-vm-template.jinja
-  properties:
-    network: {{ NETWORK_NAME }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
 - name: apigee-rmp0
   type: apigee-rmp-vm-template.jinja
   properties:
-    network: {{ NETWORK_NAME }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
 - name: apigee-rmp1
   type: apigee-rmp-vm-template.jinja
   properties:
-    network: {{ NETWORK_NAME }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
 - name: apigee-ax0
   type: apigee-shared-vm-template.jinja
   properties:
-    network: {{ NETWORK_NAME }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
 - name: apigee-ax1
   type: apigee-shared-vm-template.jinja
   properties:
-    network: {{ NETWORK_NAME }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
@@ -56,6 +51,6 @@ resources:
     instance2: $(ref.apigee-rmp1.selfLink)
 outputs:
 - name: HOST_NAMES
-  value: $(ref.apigee-mgmt.myIp):$(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)
+  value: $(ref.apigee-rmp0.myIp):$(ref.apigee-rmp1.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)
 - name: LB_IP_ALIAS
   value: "'$(ref.apigee-lb.LB_IP_ALIAS) $(ref.apigee-rmp0.myIp) $(ref.apigee-rmp1.myIp)'"

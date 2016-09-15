@@ -1,8 +1,8 @@
-{% set BASE_NAME = env['deployment'] + '-' + env['name'] %}
-{% set PROD_HEALTH = env['deployment'] + '-' + env['name'] + '-healthprod' %}
-{% set TEST_HEALTH = env['deployment'] + '-' + env['name'] + '-healthtest' %}
-{% set PROD_POOL = env['deployment'] + '-' + env['name'] + '-prod-pool' %}
-{% set TEST_POOL = env['deployment'] + '-' + env['name'] + '-test-pool' %}
+{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set PROD_HEALTH = env['deployment'] + '-' + env['name'] + '-prod-health' %}
+{% set TEST_HEALTH = env['deployment'] + '-' + env['name'] + '-test-health' %}
+{% set PROD_POOL =   env['deployment'] + '-' + env['name'] + '-prod-pool' %}
+{% set TEST_POOL =   env['deployment'] + '-' + env['name'] + '-test-pool' %}
 {% set TEST_FWRULE = env['deployment'] + '-' + env['name'] + '-test-fwrule' %}
 {% set PROD_FWRULE = env['deployment'] + '-' + env['name'] + '-prod-fwrule' %}
 
