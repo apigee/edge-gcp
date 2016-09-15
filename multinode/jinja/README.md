@@ -42,28 +42,33 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
     ```
 -   Details about Properties
 
--         machineType: The machine type to choose. Minimum try to provide 8 GM RAM
--	      region: Gcloud region
--	      zone: Gcloud zone
--         nodes: can take value of 1 for aio, 5 for 5-node and 9 for 9-node cluster setup respectively.
--         cidr: subnet you want to create
--         softwareRepo: Is the apigee hosted repo.
--         version: 4.16.05 is the latest version, for 1609, this will change to 4.16.09
--         ftp: Apigee ftp creds
--         APIGEE_ADMIN_EMAIL: - System admin user
--         APIGEE_ADMINPW: System admin password
--         APIGEE_LDAPPW: LDAP password
--         ORG_NAME: Your Org Name
--         SKIP_SMTP:  If you want to skip these settings please put 'y' otherwise 'n'
--         SMTPHOST: SMTP Server
--         SMTPUSER: SMTP user # 0 for no username
--         SMTPPASSWORD: SMTP password  # 0 for no password
--         SMTPSSL: If its on SSL, 'y' otherwise 'n'
--         SMTPPORT: specify port
--         SCRIPT_BASEPATH:  Path of ansible scripts. This doesnt changes
--	      license: Paste your license file
--	      public-key: Generate a key pair using ssh-keygen tool for apigee user (ssh-keygen -t rsa -b 4096 -C "apigee" ) and paste the public-key here. Please keep passphrase as empty.
--	      private-key: Paste your private key from the above generated pair. 
+
+| properties        | Description                                                             | 
+| ----------------- |:------------------------------------------------------------------------| 
+| machineType       | The machine type to choose. Minimum try to provide 8 GM RAM             | 
+| region            | gcloud region                                                           | 
+| zone              | gcloud zone                                                             |
+| nodes             | can take value of 1 for aio, 5 for 5-node and 9 for 9-node cluster setup respectively                                                                                  |
+| cidr              | subnet you want to create                                               |
+| softwareRepo      | It is the apigee hosted repo.                                           |
+| version           | 4.16.05 is the latest version. Possible value - 4.16.09                 |
+| ftp               | Apigee ftp creds                                                        |
+| APIGEE_ADMIN_EMAIL| System admin user                                                       |
+| APIGEE_ADMINPW    | System admin password                                                   |
+| APIGEE_LDAPPW     | LDAP password                                                           |
+| ORG_NAME          | Your Org Name                                                           |
+| SKIP_SMTP         |  If you want to skip these settings please put 'y' otherwise 'n'        |
+| SMTPHOST          | SMTP Server                                                             |
+| SMTPUSER          | SMTP user # 0 for no username                                           |
+| SMTPPASSWORD      | SMTP password  # 0 for no password                                      |
+| SMTPSSL           | If its on SSL, 'y' otherwise 'n'                                        |
+| SMTPPORT          | specify port                                                            |
+| SCRIPT_BASEPATH   | Path of ansible scripts. This doesnt changes                            |
+| license           | Paste your license file                                                 |
+| public-key        | Generate a key pair using ssh-keygen tool for apigee user (ssh-keygen -t rsa -b 4096 -C "apigee" ) and paste the public-key here. Please keep passphrase as empty.     |
+| private-key       | Paste your private key from the above generated pair.                   |
+
+
 
 ## Deploy any profile
 ```sh
