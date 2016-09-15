@@ -43,19 +43,10 @@
     when: ("{{ selinuxstatus.stdout }} == 'enabled'" or "{{ selinuxstatus.stdout }} == 'permissive'")
     register: st
     ignore_errors: true
-    when: selinuxstatus.changed
-  - name: reboot if SELinux changed
-    shell: shutdown -r +1 "SELinux disable triggered"
+    when: selinuxstatus.changed  
+  - name: disable SElinux in Shell
     sudo: yes
-    async: 1
-    poll: 0
-    ignore_errors: true
-    when: st.changed
-  - name: waiting for server to reboot
-    local_action: wait_for host="{{ ansible_ssh_host | default(inventory_hostname) }}" port={{ ansible_ssh_port | default(22) }} search_regex=OpenSSH state=started delay=30 timeout=300
-    sudo: false
-    ignore_errors: true
-    when: st.changed
+    command: "sudo setenforce 0"  
   - name: Create dest folder
     command: "mkdir -p {{ apigee_dest_path }}"
     sudo: yes
