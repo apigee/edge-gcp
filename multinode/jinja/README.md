@@ -46,6 +46,7 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 -	      region: Gcloud region
 -	      zone: Gcloud zone
 -         nodes: can take value of 1 for aio, 5 for 5-node and 9 for 9-node cluster setup respectively.
+-         cidr: subnet you want to create
 -         softwareRepo: Is the apigee hosted repo.
 -         version: 4.16.05 is the latest version, for 1609, this will change to 4.16.09
 -         ftp: Apigee ftp creds
