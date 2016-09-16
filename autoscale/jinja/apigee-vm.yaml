@@ -1,0 +1,84 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+imports:
+- path: apigee-shared-vm-template.jinja
+- path: apigee-rmp-vm-template.jinja
+- path: apigee-mgmt-vm-template.jinja
+- path: apigee-network-template.jinja
+- path: apigee-firewall-template.jinja
+- path: apigee-lb-template.jinja
+- path: apigee-edge-5node-template.jinja
+- path: apigee-edge-9node-template.jinja
+- path: apigee-edge-1node-template.jinja
+- path: apigee-edge-template.jinja
+
+resources:
+- name: apigee-edge-setup
+  type: apigee-edge-template.jinja
+  properties:
+     machineType: n1-standard-2
+     region: us-central1
+     zone: us-central1-b
+     nodes: 5
+     cidr: 192.168.3.0/24
+     softwareRepo: https://software.apigee.com
+     version: '4.16.05'
+     ftp:
+       user: apigeese
+       password: xdLugtA0Fs1FW3wB
+     APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
+     APIGEE_ADMINPW: 'Secret123'
+     APIGEE_LDAPPW: 'Secret123'
+     ORG_NAME: myorg
+     SKIP_SMTP: 'n'
+     SMTPHOST: test.smtp.com
+     SMTPUSER: test@example.com
+     # 0 for no username
+     SMTPPASSWORD: testpassword
+     # 0 for no password
+     SMTPSSL: 'y'
+     SMTPPORT: 465
+     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
+     license: "JakHrOe9fuHhHyJzxqJ5uXlQrzk/vo/PaJpEg/NXN1kKKGQuBkv0o1BVnoRsGlMMxGK3DmShvQlF
+FHYWJIqCcJ2woZn3TfuFf0t7LSmWSoPxpPRUVM7NS3mXv3UtVp5XjFajEiByyGaejNrShgOiKmve
+JkczmcWq3g9UbfeIjhxTVpuh4fgzHOeUoPGg/gzlgYlAaU7MgNKonGKIYq23huUBYfiIB6ZoLjwy
++EBBLLYmf38Gw1gxdjtbcxpAfVgVykecudT60zaqD1iUJxluJYF8NtiKkIvW01Oa6PZcuaWZql8U
+V6KicnWnZJZzdLhTZskwz+DqcwNf0R1+UaFaPg=="
+     public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvIy0p0CcbN3Z/5HYRtmmIBMePxIXSlpWe5/aaglDPIw1EMcCfRyTFKdLStSZVroq90RyHgLgD8OQZl74ym9V05/dk8YcdK+uY71fHTEKypaH9f4nlykNXht54FworTUV8SKgDC5GMLY6HV56BRmXAImVaJ+dQxkZxVrlFHFvQ323Bv7mI1TaFrM95Mqq8v2g0ehcu8N+rIcOyADv2C8ed2UrOABj+H9ND/86ZjD86W8m0rQTolVk1r3LmWhVD6IdE8Uq+MxWW0nfJ9Xu3vzy3GUNYr/vSX73zfXjKffNRflH6f3Npnl9/h0Ixq5FZlchtAoBgFyuHmEyrL14O4379 apigee"
+     private-key: "-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEAryMtKdAnGzd2f+R2EbZpiATHj8SF0paVnuf2moJQzyMNRDHA
+n0ckxSnS0rUmVa6KvdEch4C4A/DkGZe+MpvVdOf3ZPGHHSvrmO9Xx0xCsqWh/X+J
+5cpDV4beeBcKK01FfEioAwuRjC2Oh1eegUZlwCJlWifnUMZGcVa5RRxb0N9twb+5
+iNU2hazPeTKqvL9oNHoXLvDfqyHDsgA79gvHndlKzgAY/h/TQ//OmYw/OlvJtK0E
+6JVZNa9y5loVQ+iHRPFKvjMVltJ3yfV7t788txlDWK/70l+98314yn3zUX5R+n9z
+aZ5ff4dCMauRWZXIbQKAYBcrh5hMqy9eDuN+/QIDAQABAoIBAQCnBt89r1x8YmrL
+EfFgdx0yMYy5Ge2epypOgF75gCrdQUqXrPNNdCYnOvnrJgRHVszOtq2EtUfJymVf
+2w3zahcrBUc1p/r54TcxhaGrWpmJktloz8eNtVaAFQn6cc6q+Wi5XPmO3euTSqdR
+gEiUdbT4hlUupDvBFzd7RAAxXxhZnAgXN9kmPODQSW3HKp13hCTWNGDuQLrRTy+0
+Jh6Olss2N7Up8kOmqSk1/TmXKCMMSMQHpfM1X4AxUF/WzQQjuZ+S+m9vjZKSE90C
+3euAjfFVgBY3LTGaTvSnzPOOpEb40jx7sY6LgARLevEKDyeTYUJn0awkJauWXKI0
+R45OOA8BAoGBANpxegRUiS6yDtdiPHv/R9W+q1p2tO8Rv/8XclzKeT3trQrswGJs
+PYgkt4pIlW3KwiCunXHlID5VqlTsw/UQVrODRVrvK8merYcsxs4XUB2nrYhlPXif
+Ah3JlG4Xthp3tZaRZ6gP7nsyoCcn+LE6IPDM2fGEvYwoYABaYgbFY1BhAoGBAM0/
+pLCErJlCCmtUILQLMR8o+OdSgrIYlUxNdmQvS0uMuTL4mxoSNEbh4iiYB1DADVOI
+cuVE/yM1/4aN1kV8uQs8mMhj3kWjdusZFBxkt/Rb5rjhqEN0X4F7iM7RhEh/5j/v
+zlA/ryfHHlDYZmpQt9XPkmdVGssCW4MXDSTeLeQdAoGBALElUzkNwQ4QMb7zGG/K
+DtxEursrBwHVGClrP0AGppnVE/6HDmECvEea1wkaYavewN02HdJOaH6EhBRIyYUE
+EfuT2furd4wS1VCIvFRHTZ4u66hvyZD3CgVUAr3hFrmSGL2Y/0GoYdKgtIXsgV5f
+8HS2+4tEBV8TIv9GTLaG/kohAoGAUOwp04rLvjUihISLzFCpUl7GG/YVH4C/xHC6
+H+/hoOzfy+/mvxW0VMoUb+rY34aI+olOu4RDj69nirZ7Z7QwBPUkS8XMSeqUJUci
+/brcKFTfl78op0fHq/Z3zwseO7NppYW38z3YojdIhZl8b6hZgswvLdyJDsdkK0A4
+Z3PN5iUCgYEAgd/VTzabLVTU9c2khGXaKdTJ0QzImfmpG+b5nRqceMt/ey4/HUij
+PE30NcAi7hw4xlDrOTq5et6UZ/xMYkOwWpqG0KSU963pimpVeJZjX4Sf55yc88BR
+k7fozxBEGsIdvAXbbbB/HV2RtIsj1u3pQvjtJvbuPW1ySnONFMKhMkA=
+-----END RSA PRIVATE KEY-----"

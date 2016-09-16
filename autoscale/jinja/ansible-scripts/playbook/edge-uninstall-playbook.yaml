@@ -1,0 +1,35 @@
+---
+- hosts: apigee
+  tasks:
+  - name: stop all process
+    command: "apigee-all stop"
+    become: sudo
+    ignore_errors: True
+  - name: Clean Yum
+    command: "yum clean all"
+    become: sudo
+  - name: celan components
+    command: "{{ item }}"
+    with_items:
+    - "sudo yum remove apigee-cassandra -y"
+    - "sudo yum remove apigee-zookeeper -y"
+    - "sudo yum remove apigee-openldap -y"
+    - "sudo yum remove edge-management-server -y"
+    - "sudo yum remove edge-ui -y"
+    - "sudo yum remove edge-router -y"
+    - "sudo yum remove edge-message-processor -y"
+    - "sudo yum remove apigee-postgresql -y"
+    - "sudo yum remove edge-postgres-server -y"
+    - "sudo yum remove apigee-qpidd -y"
+    - "sudo yum remove edge-qpid-server -y"
+    - "sudo yum remove apigee-adminapi -y"
+    - "sudo yum remove apigee-attribution -y"
+    - "sudo yum remove apigee-setup -y"
+    - "sudo yum remove apigee-lib -y"
+    - "sudo yum remove apigee-service -y"
+    - "sudo yum remove apigee-repo -y"
+    ignore_errors: True
+    become: sudo
+  - name: Delete Apigee
+    command: "sudo rm -rf /opt/apigee"
+    become: sudo

@@ -1,0 +1,72 @@
+{#
+Copyright 2016 Google Inc. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set PROD_HEALTH = env['deployment'] + '-' + env['name'] + '-prod-health' %}
+{% set TEST_HEALTH = env['deployment'] + '-' + env['name'] + '-test-health' %}
+{% set PROD_POOL =   env['deployment'] + '-' + env['name'] + '-prod-pool' %}
+{% set TEST_POOL =   env['deployment'] + '-' + env['name'] + '-test-pool' %}
+{% set TEST_FWRULE = env['deployment'] + '-' + env['name'] + '-test-fwrule' %}
+{% set PROD_FWRULE = env['deployment'] + '-' + env['name'] + '-prod-fwrule' %}
+{% set REGION = properties["zone"][:properties["zone"].rfind("-")] %}
+
+
+resources:
+- name: {{ BASE_NAME }}-it
+  type: apigee-rmp-instance-template.jinja
+  properties:
+    zone: {{ properties["zone"] }}
+    network: {{ properties['network'] }}
+    subnet: {{ properties["subnet"] }}
+- name: {{ BASE_NAME }}-igm
+  type: compute.v1.instanceGroupManager
+  properties:
+    zone: {{ properties['zone'] }}
+    targetSize: {{ properties['size'] }}
+    targetPools:
+      - $(ref.{{ BASE_NAME }}-tp.selfLink)
+    baseInstanceName: {{ BASE_NAME }}-instance
+    instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
+
+- name: {{ BASE_NAME }}-as
+  type: compute.v1.autoscaler
+  properties:
+    zone: {{ properties['zone'] }}
+    target: $(ref.{{ BASE_NAME }}-igm.selfLink)
+    autoscalingPolicy:
+      maxNumReplicas: {{ properties['maxSize'] }}
+
+- name: {{ BASE_NAME }}-hc
+  type: compute.v1.httpHealthCheck
+  properties:
+    port: {{ properties['port'] }}
+    requestPath: /v1/healthcheck
+
+- name: {{ BASE_NAME }}-tp
+  type: compute.v1.targetPool
+  properties:
+    region: {{ REGION }}
+    healthChecks:
+      - $(ref.{{ BASE_NAME }}-hc.selfLink)
+
+- name: {{ BASE_NAME }}-lb
+  type: compute.v1.forwardingRule
+  properties:
+    region: {{ REGION }}
+    portRange: {{ properties['port'] }}
+    target: $(ref.{{ BASE_NAME }}-tp.selfLink)
+outputs:
+- name: LB_IP_ALIAS
+  value: ""

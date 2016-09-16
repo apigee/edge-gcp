@@ -1,0 +1,48 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+IP1=HOST1_INTERNALIP
+IP2=HOST2_INTERNALIP
+IP3=HOST3_INTERNALIP
+IP4=HOST4_INTERNALIP
+IP5=HOST5_INTERNALIP
+LB=LBDNS
+HOSTIP=$(hostname -i)
+ADMIN_EMAIL=
+APIGEE_ADMINPW=
+LICENSE_FILE=/tmp/apigee/license.txt
+MSIP=$IP1
+USE_LDAP_REMOTE_HOST=n
+#LDAP_HOST=$IP1
+#LDAP_PORT=10389
+LDAP_TYPE=1
+#LDAP_SID=1
+APIGEE_LDAPPW=
+BIND_ON_ALL_INTERFACES=y
+MP_POD=gateway
+REGION=dc-1
+ZK_HOSTS="$IP1 $IP2 $IP3"
+ZK_CLIENT_HOSTS="$IP1 $IP2 $IP3"
+CASS_CLUSTERNAME=Apigee
+CASS_HOSTS="$IP1 $IP2 $IP3"
+PG_MASTER=$IP4
+PG_STANDBY=$IP5
+SKIP_SMTP=y
+SMTPHOST=smtp.gmail.com
+SMTPUSER=0
+# 0 for no username
+SMTPPASSWORD=0
+# 0 for no password
+SMTPSSL=n
+SMTPPORT=25
+AXGROUP=axgroup001
+# Specify the analytics group.

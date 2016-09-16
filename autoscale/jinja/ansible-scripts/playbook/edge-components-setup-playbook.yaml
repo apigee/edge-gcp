@@ -1,0 +1,8 @@
+---
+- include: ds-playbook.yaml
+- include: ms-playbook.yaml
+- include: rmp-playbook.yaml
+- include: qs-playbook.yaml
+- include: ps-playbook.yaml
+- include: orgsetup-playbook.yaml
+

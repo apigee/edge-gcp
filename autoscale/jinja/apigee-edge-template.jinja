@@ -1,0 +1,70 @@
+{#
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
+{% set  SUBNET_NAME =  env['deployment'] + '-' + 'network-subnet' %}
+{% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
+{% set  TEMPLATE_NAME = 'apigee-edge-' + properties['nodes']|string + 'node-template.jinja' %}
+
+resources:
+- name: {{ NETWORK_NAME }}
+  type: apigee-network-template.jinja
+  properties:
+    cidr: {{ properties["cidr"] }}
+    subnet: {{ SUBNET_NAME }}
+- name: {{ FIREWALL_NAME }}
+  type: apigee-firewall-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    cidr: {{ properties["cidr"] }}
+- name: apigee-edge
+  type: {{ TEMPLATE_NAME }}
+  properties:
+    network: {{ NETWORK_NAME }}
+    subnet: {{ SUBNET_NAME }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    ftp: {{ properties["ftp"] }}
+    license: {{ properties["license"] }}
+    region: {{ properties["region"] }}
+    public-key: {{ properties["public-key"] }}
+    private-key: {{ properties["private-key"] }}
+    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
+    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    ORG_NAME: {{ properties['ORG_NAME'] }}
+- name: apigee-mgmt
+  type: apigee-mgmt-vm-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    subnet: {{ SUBNET_NAME }}
+    HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    softwareRepo : {{ properties["softwareRepo"] }}
+    version: {{ properties['version']}}
+    ftp: {{ properties["ftp"] }}
+    license: {{ properties["license"] }}
+    public-key: {{ properties["public-key"] }}
+    private-key: {{ properties["private-key"] }}
+    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
+    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    APIGEE_LDAPPW: {{ properties['APIGEE_LDAPPW'] }}
+    ORG_NAME: {{ properties['ORG_NAME'] }}
+    SKIP_SMTP: {{ properties['SKIP_SMTP'] }}
+    SMTPHOST: {{ properties['SMTPHOST'] }}
+    SMTPUSER: {{ properties['SMTPUSER'] }}
+    SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
+    SMTPSSL: {{ properties['SMTPSSL'] }}
+    SMTPPORT: {{ properties['SMTPPORT'] }}
+    LB_IP_ALIAS: $(ref.apigee-edge.LB_IP_ALIAS)
+    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
+    nodes: {{ properties['nodes'] }}
