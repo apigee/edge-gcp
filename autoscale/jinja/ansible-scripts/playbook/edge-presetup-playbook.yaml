@@ -1,0 +1,14 @@
+---
+- hosts: apigee
+  vars:
+    apigee_dest_path: /tmp/apigee
+  tasks:
+  - name: Get BootstrapFile
+    get_url: url={{ softwareRepo }}/bootstrap_{{ version }}.sh dest={{apigee_dest_path}}/bootstrap_{{ version }}.sh
+    sudo: yes
+  - name: install apigee service
+    command: "bash {{apigee_dest_path}}/bootstrap_{{ version }}.sh apigeeuser={{ apigee_user }} apigeepassword={{ apigee_password }} JAVA_FIX=I"
+    sudo: yes
+  - name: Install Apigee setup
+    command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
+    sudo: yes
