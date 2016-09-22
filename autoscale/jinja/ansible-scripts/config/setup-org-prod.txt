@@ -20,7 +20,7 @@ ORG_NAME=
 NEW_USER="n"
 ORG_ADMIN=$ADMIN_EMAIL
 ENV_NAME=prod
-VHOST_PORT=9001
+VHOST_PORT=80
 VHOST_NAME=default
 # If you have a DNS entry for the virtual host.
 VHOST_ALIAS=$LB
