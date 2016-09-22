@@ -46,7 +46,8 @@
     when: selinuxstatus.changed  
   - name: disable SElinux in Shell
     sudo: yes
-    command: "sudo setenforce 0"  
+    command: "sudo setenforce 0"
+    ignore_errors: true
   - name: Create dest folder
     command: "mkdir -p {{ apigee_dest_path }}"
     sudo: yes
