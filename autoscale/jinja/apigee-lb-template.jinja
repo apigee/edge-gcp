@@ -1,45 +1,41 @@
-{#
-Copyright 2016 Google Inc. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-#}
-
 {% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
-{% set PROD_HEALTH = env['deployment'] + '-' + env['name'] + '-prod-health' %}
-{% set TEST_HEALTH = env['deployment'] + '-' + env['name'] + '-test-health' %}
-{% set PROD_POOL =   env['deployment'] + '-' + env['name'] + '-prod-pool' %}
-{% set TEST_POOL =   env['deployment'] + '-' + env['name'] + '-test-pool' %}
-{% set TEST_FWRULE = env['deployment'] + '-' + env['name'] + '-test-fwrule' %}
-{% set PROD_FWRULE = env['deployment'] + '-' + env['name'] + '-prod-fwrule' %}
-{% set REGION = properties["zone"][:properties["zone"].rfind("-")] %}
-
+{% set LB_PORT = 80 %}
 
 resources:
 - name: {{ BASE_NAME }}-it
   type: apigee-rmp-instance-template.jinja
   properties:
+    region: {{ properties['region']}}
     zone: {{ properties["zone"] }}
     network: {{ properties['network'] }}
     subnet: {{ properties["subnet"] }}
+    machineType: {{ properties["machineType"] }}
+    msip: {{ properties["msip"] }}
+    HOST_NAMES: {{ properties["HOST_NAMES"] }}
+    softwareRepo : {{ properties["softwareRepo"] }}
+    version: {{ properties['version']}}
+    ftp: {{ properties["ftp"] }}
+    license: {{ properties["license"] }}
+    public-key: {{ properties["public-key"] }}
+    private-key: {{ properties["private-key"] }}
+    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
+    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    ORG_NAME: {{ properties['ORG_NAME'] }}
+    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
+    nodes: {{ properties['nodes'] }}
+    LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
 - name: {{ BASE_NAME }}-igm
   type: compute.v1.instanceGroupManager
   properties:
     zone: {{ properties['zone'] }}
     targetSize: {{ properties['size'] }}
-    targetPools:
-      - $(ref.{{ BASE_NAME }}-tp.selfLink)
     baseInstanceName: {{ BASE_NAME }}-instance
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
-
+    namedPorts:
+    - name: {{ BASE_NAME }}-prod
+      port: 80
+    - name: {{ BASE_NAME }}-test
+      port: 8080
 - name: {{ BASE_NAME }}-as
   type: compute.v1.autoscaler
   properties:
@@ -47,26 +43,81 @@ resources:
     target: $(ref.{{ BASE_NAME }}-igm.selfLink)
     autoscalingPolicy:
       maxNumReplicas: {{ properties['maxSize'] }}
-
+      coolDownPeriodSec: 600
 - name: {{ BASE_NAME }}-hc
   type: compute.v1.httpHealthCheck
   properties:
-    port: {{ properties['port'] }}
-    requestPath: /v1/healthcheck
-
-- name: {{ BASE_NAME }}-tp
-  type: compute.v1.targetPool
+    port: 8082
+    requestPath: /v1/servers/self
+- name: {{ BASE_NAME }}-bes-prod
+  type: compute.v1.backendService
   properties:
-    region: {{ REGION }}
-    healthChecks:
-      - $(ref.{{ BASE_NAME }}-hc.selfLink)
-
+    portName: {{ BASE_NAME }}-prod
+    backends:
+      - name: {{ BASE_NAME }}-bak
+        group: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
+    healthChecks: [ $(ref.{{ BASE_NAME }}-hc.selfLink) ]
+- name: {{ BASE_NAME }}-bes-test
+  type: compute.v1.backendService
+  properties:
+    portName: {{ BASE_NAME }}-test
+    backends:
+      - name: {{ BASE_NAME }}-bak
+        group: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
+    healthChecks: [ $(ref.{{ BASE_NAME }}-hc.selfLink) ]
+- name: {{ BASE_NAME }}-urlmap-prod
+  type: compute.v1.urlMap
+  properties:
+    defaultService: $(ref.{{ BASE_NAME }}-bes-prod.selfLink)
+    hostRules:
+      - hosts: ["*"]
+        pathMatcher: pathmap
+    pathMatchers:
+      - name: pathmap
+        defaultService: $(ref.{{ BASE_NAME }}-bes-prod.selfLink)
+        pathRules:
+          - paths: ["/static", "/static/*"]
+            service: $(ref.{{ BASE_NAME }}-bes-prod.selfLink) 
+- name: {{ BASE_NAME }}-urlmap-test
+  type: compute.v1.urlMap
+  properties:
+    defaultService: $(ref.{{ BASE_NAME }}-bes-test.selfLink)
+    hostRules:
+      - hosts: ["*"]
+        pathMatcher: pathmap
+    pathMatchers:
+      - name: pathmap
+        defaultService: $(ref.{{ BASE_NAME }}-bes-test.selfLink)
+        pathRules:
+          - paths: ["/static", "/static/*"]
+            service: $(ref.{{ BASE_NAME }}-bes-test.selfLink)  
+- name: {{ BASE_NAME }}-targetproxy-prod
+  type: compute.v1.targetHttpProxy
+  properties:
+    urlMap: $(ref.{{ BASE_NAME }}-urlmap-prod.selfLink)
+- name: {{ BASE_NAME }}-targetproxy-test
+  type: compute.v1.targetHttpProxy
+  properties:
+    urlMap: $(ref.{{ BASE_NAME }}-urlmap-test.selfLink)
+- name: {{ BASE_NAME }}-l7lb-prod
+  type: compute.v1.globalForwardingRule
+  properties:
+    IPProtocol: TCP
+    IPAddress: {{ properties['LB_IP_ALIAS'] }}
+    portRange: {{ LB_PORT }}
+    target: $(ref.{{ BASE_NAME }}-targetproxy-prod.selfLink)
+- name: {{ BASE_NAME }}-l7lb-test
+  type: compute.v1.globalForwardingRule
+  properties:
+    IPProtocol: TCP
+    IPAddress: {{ properties['LB_IP_ALIAS'] }}
+    portRange: 8080
+    target: $(ref.{{ BASE_NAME }}-targetproxy-test.selfLink)
 - name: {{ BASE_NAME }}-lb
-  type: compute.v1.forwardingRule
+  type: compute.v1.firewall
   properties:
-    region: {{ REGION }}
-    portRange: {{ properties['port'] }}
-    target: $(ref.{{ BASE_NAME }}-tp.selfLink)
-outputs:
-- name: LB_IP_ALIAS
-  value: ""
+    network: $(ref.{{ properties["network"] }}.selfLink)
+    sourceRanges: [{{ properties['LB_IP_ALIAS'] }}]
+    allowed:
+    - IPProtocol: TCP
+      ports: ["8082"]

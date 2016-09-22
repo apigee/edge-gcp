@@ -12,7 +12,7 @@
 
 imports:
 - path: apigee-shared-vm-template.jinja
-- path: apigee-rmp-vm-template.jinja
+- path: apigee-rmp-instance-template.jinja
 - path: apigee-mgmt-vm-template.jinja
 - path: apigee-network-template.jinja
 - path: apigee-firewall-template.jinja
@@ -32,10 +32,10 @@ resources:
      nodes: 5
      cidr: 192.168.3.0/24
      softwareRepo: https://software.apigee.com
-     version: '4.16.05'
+     version: '4.16.09'
      ftp:
-       user: apigeese
-       password: xdLugtA0Fs1FW3wB
+       user: 
+       password: 
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'
@@ -49,11 +49,7 @@ resources:
      SMTPSSL: 'y'
      SMTPPORT: 465
      SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
-     license: "JakHrOe9fuHhHyJzxqJ5uXlQrzk/vo/PaJpEg/NXN1kKKGQuBkv0o1BVnoRsGlMMxGK3DmShvQlF
-FHYWJIqCcJ2woZn3TfuFf0t7LSmWSoPxpPRUVM7NS3mXv3UtVp5XjFajEiByyGaejNrShgOiKmve
-JkczmcWq3g9UbfeIjhxTVpuh4fgzHOeUoPGg/gzlgYlAaU7MgNKonGKIYq23huUBYfiIB6ZoLjwy
-+EBBLLYmf38Gw1gxdjtbcxpAfVgVykecudT60zaqD1iUJxluJYF8NtiKkIvW01Oa6PZcuaWZql8U
-V6KicnWnZJZzdLhTZskwz+DqcwNf0R1+UaFaPg=="
+     license: ""
      public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvIy0p0CcbN3Z/5HYRtmmIBMePxIXSlpWe5/aaglDPIw1EMcCfRyTFKdLStSZVroq90RyHgLgD8OQZl74ym9V05/dk8YcdK+uY71fHTEKypaH9f4nlykNXht54FworTUV8SKgDC5GMLY6HV56BRmXAImVaJ+dQxkZxVrlFHFvQ323Bv7mI1TaFrM95Mqq8v2g0ehcu8N+rIcOyADv2C8ed2UrOABj+H9ND/86ZjD86W8m0rQTolVk1r3LmWhVD6IdE8Uq+MxWW0nfJ9Xu3vzy3GUNYr/vSX73zfXjKffNRflH6f3Npnl9/h0Ixq5FZlchtAoBgFyuHmEyrL14O4379 apigee"
      private-key: "-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAryMtKdAnGzd2f+R2EbZpiATHj8SF0paVnuf2moJQzyMNRDHA

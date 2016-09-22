@@ -117,6 +117,7 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-prerequisite-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-prerequisite-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-components-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-components-setup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
+          curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
           
           #Copy the right file based on node number
@@ -168,27 +169,10 @@ resources:
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
           
-          /#Lets Run ansible and complete the setup
+          #Lets Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
           ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
           
-          #Run the curl commands to deploy health check
-          cd /tmp/apigee/ansible-scripts/config
-
-          IFS='|'
-          usercred=$(echo $(eval echo $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW))
-          httpHost=$(echo $(eval echo http://$HOST1_INTERNALIP:8080))
-          contentType=$(echo $(eval echo Content-type:application/x-www-form-urlencoded))
-
-          curl1=$(echo $(eval echo 'curl -X POST -u $usercred -F \"file=@healthcheck.zip\" \"$httpHost/v1/organizations/$ORG_NAME/apis?action=import\&name=healthcheck\"'))
-
-          curl2=$(echo $(eval echo 'curl -X POST -H \"$contentType\" \"$httpHost/v1/organizations/$ORG_NAME/environments/test/apis/healthcheck/revisions/1/deployments\" -u $usercred'))
-
-          curl3=$(echo $(eval echo 'curl -X POST -H \"$contentType\" \"$httpHost/v1/organizations/$ORG_NAME/environments/prod/apis/healthcheck/revisions/1/deployments\" -u $usercred'))
-
-          eval $curl1
-          eval $curl2
-          eval $curl3
 
     disks:
     - deviceName: boot
@@ -197,7 +181,7 @@ resources:
       autoDelete: true
       initializeParams:
         diskName: {{ BASE_NAME }}-disk
-        diskSizeGb: 40
+        diskSizeGb: 20
         sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)
@@ -205,4 +189,8 @@ resources:
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
-
+outputs:
+- name: myIp
+  value: $(ref.{{ BASE_NAME }}.networkInterfaces[0].networkIP)
+- name: selfLink
+  value: $(ref.{{ BASE_NAME }}.selfLink)

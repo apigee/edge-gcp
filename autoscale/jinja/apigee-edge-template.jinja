@@ -10,6 +10,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
+{% set  BASE_NAME =   env['deployment'] + '-' + env['name'] %}
 {% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
 {% set  SUBNET_NAME =  env['deployment'] + '-' + 'network-subnet' %}
 {% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
@@ -26,6 +27,8 @@ resources:
   properties:
     network: {{ NETWORK_NAME }}
     cidr: {{ properties["cidr"] }}
+- name: {{ BASE_NAME }}-address
+  type: compute.v1.globalAddress
 - name: apigee-edge
   type: {{ TEMPLATE_NAME }}
   properties:
@@ -65,6 +68,31 @@ resources:
     SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
     SMTPSSL: {{ properties['SMTPSSL'] }}
     SMTPPORT: {{ properties['SMTPPORT'] }}
-    LB_IP_ALIAS: $(ref.apigee-edge.LB_IP_ALIAS)
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}
+    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
+- name: apigee-lb
+  type: apigee-lb-template.jinja
+  properties:
+    network: {{ NETWORK_NAME }}
+    subnet: {{ SUBNET_NAME }}
+    machineType: {{ properties["machineType"] }}
+    region: {{ properties['region']}}
+    zone: {{ properties["zone"] }}
+    softwareRepo : {{ properties["softwareRepo"] }}
+    version: {{ properties['version']}}
+    ftp: {{ properties["ftp"] }}
+    license: {{ properties["license"] }}
+    public-key: {{ properties["public-key"] }}
+    private-key: {{ properties["private-key"] }}
+    HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
+    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
+    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
+    ORG_NAME: {{ properties['ORG_NAME'] }}
+    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
+    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
+    nodes: {{ properties['nodes'] }}
+    msip: $(ref.apigee-mgmt.myIp)
+    size: 2
+    maxSize: 5
+    port: 9001

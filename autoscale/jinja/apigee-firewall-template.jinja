@@ -20,7 +20,7 @@ resources:
     sourceRanges: ["0.0.0.0/0"]
     allowed:
     - IPProtocol: TCP
-      ports: ["22","8080", "9000","9001","9002"]
+      ports: ["22","8080", "9000", "80", "8082"]
 - name: {{ FIREWALL_INTERNAL}}
   type: compute.v1.firewall
   properties:
