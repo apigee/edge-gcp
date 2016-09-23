@@ -57,7 +57,6 @@ resources:
                mkdir /tmp/apigee/ansible-scripts/inventory
                mkdir /tmp/apigee/ansible-scripts/playbook
                mkdir /tmp/apigee/ansible-scripts/config
-               mkdir /tmp/apigee/ansible-scripts/scripts
 
                echo {{ properties["license"] }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
 
@@ -86,7 +85,6 @@ resources:
                curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
                curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
 
-               curl -o /tmp/apigee/ansible-scripts/scripts/shutdown.sh  $SCRIPT_BASEPATH/ansible-scripts/scripts/shutdown.sh
           
                #Copy the right file based on node number
                cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
@@ -157,15 +155,50 @@ resources:
                cp -fr jq-linux64 /usr/bin/jq
                chmod 777 /usr/bin/jq
 
+               IFS=','
+               export MSIP="{{ properties['msip'] }}"
+               export ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
+               export ADMIN_PWD="{{ properties['APIGEE_ADMINPW'] }}"
+               export ORG_NAME="{{ properties['ORG_NAME'] }}"
+                
+               export uuid=$(curl -s http://localhost:8082/v1/servers/self | jq --raw-output '.uUID')
+               export routeruuid=$(curl -s http://localhost:8081/v1/servers/self | jq --raw-output '.uUID')
+               echo $uuid
+               echo $routeruuid
+
+               curl1=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/test/servers -d \"uuid=$uuid\&region=dc-1\&pod=gateway\&action=remove\"'))
+
+                
+               curl2=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/prod/servers -d \"uuid=$uuid\&region=dc-1\&pod=gateway\&action=remove\"'))
+
+               curl3=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/servers -d \"type=message-processor\&region=dc-1\&pod=gateway\&uuid=$uuid\&action=remove\"'))
+                
+               curl4=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/servers -d \"type=router\&region=dc-1\&pod=gateway\&uuid=$routeruuid\&action=remove\"'))
+
+               curl6=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X DELETE \"http://$MSIP:8080/v1/servers/$routeruuid\"'))
+
+               curl5=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X DELETE \"http://$MSIP:8080/v1/servers/$uuid\"'))
+
+                
+               echo $curl1 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo $curl2 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo $curl3 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo $curl4 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo $curl5 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo $curl6 >> /tmp/apigee/shutdown.sh
+               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               chmod +x /tmp/apigee/shutdown.sh
+
             - key: shutdown-script
               value: |
-                export MSIP="{{ properties['msip'] }}"
-                export APIGEE_ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
-                export APIGEE_ADMINPW="{{ properties['APIGEE_ADMINPW'] }}"
-                export ORG_NAME="{{ properties['ORG_NAME'] }}"
-                cd /tmp/apigee/ansible-scripts/scripts
-                chmod +x shutdown.sh
-                ./shutdown.sh $MSIP $ORG_NAME $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW
+                
+                /opt/apigee/apigee-service/bin/apigee-all stop
+                /tmp/apigee/shutdown.sh
                 cd /tmp/apigee/ansible-scripts/playbook
                 ansible-playbook -i ../inventory/hosts -u apigee edge-uninstall-playbook.yaml
                 rm -fr /tmp/apigee
