@@ -10,10 +10,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 IP1=HOST1_INTERNALIP
-LB=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
-HOSTIP=HOST1_INTERNALIP
+IP2=HOST2_INTERNALIP
+IP3=HOST3_INTERNALIP
+IP4=HOST4_INTERNALIP
+IP5=HOST5_INTERNALIP
+LB=LBDNS
+HOSTIP=$(hostname -i)
 ADMIN_EMAIL=
 APIGEE_ADMINPW=
 LICENSE_FILE=/tmp/apigee/license.txt
@@ -27,15 +30,17 @@ APIGEE_LDAPPW=
 BIND_ON_ALL_INTERFACES=y
 MP_POD=gateway
 REGION=dc-1
-ZK_HOSTS="$IP1"
-ZK_CLIENT_HOSTS="$IP1"
+ZK_HOSTS="$IP1 $IP2 $IP3"
+ZK_CLIENT_HOSTS="$IP1 $IP2 $IP3"
 CASS_CLUSTERNAME=Apigee
-CASS_HOSTS="$IP1"
+CASS_HOSTS="$IP1 $IP2 $IP3"
+PG_MASTER=$IP4
+PG_STANDBY=$IP5
 SKIP_SMTP=y
-SMTPHOST=smtp.example.com
-SMTPUSER=smtp@example.com
+SMTPHOST=smtp.gmail.com
+SMTPUSER=0
 # 0 for no username
-SMTPPASSWORD=smtppwd
+SMTPPASSWORD=0
 # 0 for no password
 SMTPSSL=n
 SMTPPORT=25
