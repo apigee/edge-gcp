@@ -1,0 +1,16 @@
+- hosts: apigee
+  vars:
+    apigee_source_path: ../config
+    apigee_dest_path: /tmp/apigee
+    apigee_grafana_config_file_name: grafana.txt
+  tasks:
+  - name: Install Telegraf
+    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf install"
+    sudo: yes
+  - name: Setup Telegraf
+    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
+    sudo: yes
+  - name: Restart Telegraf
+    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf restart"
+    sudo: yes
+

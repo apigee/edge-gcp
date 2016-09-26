@@ -7,7 +7,7 @@
     apigee_config_file_name: config.txt
     apigee_prod_config_file_name: setup-org-prod.txt
     apigee_test_config_file_name: setup-org-test.txt
-    apigee_health_proxy_file_name: healthcheck.zip
+    apigee_grafana_config_file_name: grafana.txt
   tasks:
   - name: yum clean all
     command: "yum clean all"
@@ -73,8 +73,8 @@
     copy: src={{apigee_source_path}}/{{apigee_test_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_test_config_file_name}} force=yes
     sudo: yes
-  - name: copy setup-org health proxy
-    copy: src={{apigee_source_path}}/{{apigee_health_proxy_file_name}}
-        dest={{apigee_dest_path}}/{{apigee_health_proxy_file_name}} force=yes
+   - name: copy grafana config file
+    copy: src={{apigee_source_path}}/{{apigee_grafana_config_file_name}}
+        dest={{apigee_dest_path}}/{{apigee_grafana_config_file_name}} force=yes
     sudo: yes
 
