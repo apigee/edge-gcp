@@ -7,3 +7,6 @@
   - name: Run Setup with rmp profile
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p rmp -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
     sudo: yes
+  - name: Run Setup with rmp profile
+    command: "apigee-all restart"
+    sudo: yes
