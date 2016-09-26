@@ -5,21 +5,21 @@
     apigee_grafana_config_file_name: grafana.txt
   tasks:
   - name: Install Influx DB on MS node
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­influxdb install"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-influxdb install"
     sudo: yes
   - name: Setup Influxdb
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­influxdb setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-influxdb setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
     sudo: yes
   - name: Restart Influxdb
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­influxdb restart"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-influxdb restart"
     sudo: yes
   - name: Install Grafana
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­grafana install"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-grafana install"
     sudo: yes
   - name: Setup Grafana
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­grafana setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-grafana setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
     sudo: yes
   - name: Restart Grafana
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­grafana restart"
+    command: "/opt/apigee/apigee­-service/bin/apigee­-service apigee­-grafana restart"
     sudo: yes
 

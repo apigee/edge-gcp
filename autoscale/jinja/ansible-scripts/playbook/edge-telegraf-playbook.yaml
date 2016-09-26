@@ -5,12 +5,12 @@
     apigee_grafana_config_file_name: grafana.txt
   tasks:
   - name: Install Telegraf
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf install"
+    command: "/opt/apigee/apigee­service/bin/apigee­-service apigee-­telegraf install"
     sudo: yes
   - name: Setup Telegraf
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
+    command: "/opt/apigee/apigee­service/bin/apigee­-service apigee­-telegraf setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
     sudo: yes
   - name: Restart Telegraf
-    command: "/opt/apigee/apigee­service/bin/apigee­service apigee­telegraf restart"
+    command: "/opt/apigee/apigee­service/bin/apigee­-service apigee­-telegraf restart"
     sudo: yes
 
