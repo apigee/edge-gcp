@@ -73,7 +73,7 @@
     copy: src={{apigee_source_path}}/{{apigee_test_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_test_config_file_name}} force=yes
     sudo: yes
-   - name: copy grafana config file
+  - name: copy grafana config file
     copy: src={{apigee_source_path}}/{{apigee_grafana_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_grafana_config_file_name}} force=yes
     sudo: yes
