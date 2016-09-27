@@ -19,7 +19,7 @@ imports:
 - path: apigee-lb-template.jinja
 - path: apigee-edge-5node-template.jinja
 - path: apigee-edge-9node-template.jinja
-- path: apigee-edge-1node-template.jinja
+- path: apigee-edge-7node-template.jinja
 - path: apigee-edge-template.jinja
 
 resources:
@@ -30,7 +30,7 @@ resources:
      region: us-central1
      zone: us-central1-b
      nodes: 5
-     cidr: 192.168.3.0/24
+     cidr: 192.168.4.0/24
      softwareRepo: https://software.apigee.com
      version: '4.16.09'
      ftp:
