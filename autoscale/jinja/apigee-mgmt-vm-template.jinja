@@ -81,9 +81,18 @@ resources:
           sed -i '1s/^/-----BEGIN RSA PRIVATE KEY-----\n/' ~/.ssh/id_rsa
           echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
-          
-          curl -o /tmp/apigee/epel-release-6-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-          rpm -ivh /tmp/apigee/epel-release-6-8.noarch.rpm
+
+          redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
+          echo $redhat_release
+
+          if [ "$redhat_release" = "7" ]; then
+            curl -o /tmp/apigee/epel-release-7-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-7-8.noarch.rpm
+          else
+            curl -o /tmp/apigee/epel-release-6-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-6-8.noarch.rpm
+          fi
+
           yum install ansible -y
           #Disable epel
           sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
@@ -106,6 +115,7 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
           curl -o /tmp/apigee/ansible-scripts/config/healthcheck.zip  $SCRIPT_BASEPATH/ansible-scripts/config/healthcheck.zip
+          curl -o /tmp/apigee/ansible-scripts/config/grafana.txt  $SCRIPT_BASEPATH/ansible-scripts/config/grafana.txt
 
           curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
           curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
@@ -119,6 +129,8 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
+          curl -o /tmp/apigee/ansible-scripts/playbook/edge-dashboard-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-dashboard-playbook.yaml
+          curl -o /tmp/apigee/ansible-scripts/playbook/edge-telegraf-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-telegraf-playbook.yaml
           
           #Copy the right file based on node number
           cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
@@ -134,6 +146,7 @@ resources:
                 export ${key}=${i}
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/inventory/hosts
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/config.txt
+                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/grafana.txt
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-prod.txt
                 sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-test.txt
                 ((c++))
@@ -173,6 +186,8 @@ resources:
           cd /tmp/apigee/ansible-scripts/playbook
           ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
           
+          ansible-playbook -i ../inventory/hosts -u apigee edge-dashboard-playbook.yaml
+          ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
     disks:
     - deviceName: boot
@@ -181,8 +196,8 @@ resources:
       autoDelete: true
       initializeParams:
         diskName: {{ BASE_NAME }}-disk
-        diskSizeGb: 20
-        sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
+        diskSizeGb: 40
+        sourceImage: {{ properties["sourceImage"] }}
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)
       subnetwork : $(ref.{{ properties["subnet"] }}.selfLink)

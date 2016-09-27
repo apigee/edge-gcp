@@ -46,8 +46,17 @@ resources:
                echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
                chmod 400 ~/.ssh/id_rsa
           
-               curl -o /tmp/apigee/epel-release-6-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-               rpm -ivh /tmp/apigee/epel-release-6-8.noarch.rpm
+               redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
+               echo $redhat_release
+               if [ "$redhat_release" = "7" ]; then
+                  curl -o /tmp/apigee/epel-release-7-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+                  rpm -ivh /tmp/apigee/epel-release-7-8.noarch.rpm
+               else
+                 curl -o /tmp/apigee/epel-release-6-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+                 rpm -ivh /tmp/apigee/epel-release-6-8.noarch.rpm
+                 yum install nc.x86_64 -y
+               fi
+
                yum install ansible -y
                #Disable epel
                sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
@@ -71,6 +80,7 @@ resources:
                curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
                curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
                curl -o /tmp/apigee/ansible-scripts/config/healthcheck.zip  $SCRIPT_BASEPATH/ansible-scripts/config/healthcheck.zip
+               curl -o /tmp/apigee/ansible-scripts/config/grafana.txt  $SCRIPT_BASEPATH/ansible-scripts/config/grafana.txt
 
                curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
                curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
@@ -84,6 +94,8 @@ resources:
                curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
                curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
                curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
+               curl -o /tmp/apigee/ansible-scripts/playbook/edge-dashboard-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-dashboard-playbook.yaml
+               curl -o /tmp/apigee/ansible-scripts/playbook/edge-telegraf-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-telegraf-playbook.yaml
 
           
                #Copy the right file based on node number
@@ -99,6 +111,7 @@ resources:
                   key='HOST'$c'_INTERNALIP'
                   export ${key}=${i}
                   sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/config.txt
+                  sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/grafana.txt
                   sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-prod.txt
                   sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-test.txt
                   ((c++))
@@ -124,7 +137,7 @@ resources:
                sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
                sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
 
-               yum install nc.x86_64 -y
+               
 
                cd /tmp/apigee/ansible-scripts/playbook
                ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee edge-prerequisite-playbook.yaml
@@ -134,11 +147,17 @@ resources:
                #Change run user to root
                echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
 
-
-               while ! nc -z $MSIP 8080; do  
-                 echo "."
-                 sleep 30
-               done
+               if [ "$redhat_release" = "7" ]; then
+                  while ! echo -n > /dev/tcp/$MSIP/8080 ; do
+                     echo "."
+                     sleep 30
+                  done
+               else
+                 while ! nc -z $MSIP 8080; do  
+                   echo "."
+                   sleep 30
+                 done
+               fi
 
                echo "MSIP launched"
                #Do whatever you want
@@ -148,6 +167,7 @@ resources:
                echo 'port 8080 is open'
                
                ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
+               ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
                #install jq to parse json
                cd /tmp/apigee
@@ -213,7 +233,7 @@ resources:
              initializeParams:
                diskType: pd-standard
                diskSizeGb: 20
-               sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
+               sourceImage: {{ properties["sourceImage"] }}
          networkInterfaces:
            - accessConfigs:
                - name: external-nat

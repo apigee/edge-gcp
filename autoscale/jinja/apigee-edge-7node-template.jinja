@@ -19,6 +19,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ds2
   type: apigee-shared-vm-template.jinja
   properties:
@@ -27,6 +28,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ax0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -35,6 +37,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ax1
   type: apigee-shared-vm-template.jinja
   properties:
@@ -43,6 +46,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)

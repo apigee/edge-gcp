@@ -24,6 +24,7 @@ resources:
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}
     LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: {{ BASE_NAME }}-igm
   type: compute.v1.instanceGroupManager
   properties:

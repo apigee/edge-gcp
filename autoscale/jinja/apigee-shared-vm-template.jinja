@@ -23,7 +23,7 @@ resources:
   properties:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
-    sizeGb: 20
+    sizeGb: 40
     metadata:
       items:
       - key: ssh-keys
@@ -36,7 +36,7 @@ resources:
       initializeParams:
         diskName: {{ MASTER }}-disk
         diskSizeGb: 40
-        sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
+        sourceImage: {{ properties["sourceImage"] }}
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)
       subnetwork : $(ref.{{ properties["subnet"] }}.selfLink)

@@ -19,6 +19,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ds2
   type: apigee-shared-vm-template.jinja
   properties:
@@ -27,6 +28,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-qs0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -35,6 +37,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-qs1
   type: apigee-shared-vm-template.jinja
   properties:
@@ -43,6 +46,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ps0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -51,6 +55,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ps1
   type: apigee-shared-vm-template.jinja
   properties:
@@ -59,6 +64,7 @@ resources:
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-qs0.myIp):$(ref.apigee-qs1.myIp):$(ref.apigee-ps0.myIp):$(ref.apigee-ps1.myIp)
