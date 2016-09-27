@@ -7,6 +7,10 @@
   tasks:
   - name: Run Setup with DS Masters profile
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p ds -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
     sudo: yes
 - hosts: ds-slave
   vars:
@@ -16,4 +20,8 @@
   tasks:
   - name: Run Setup with DS Slave profile
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p ds -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
     sudo: yes

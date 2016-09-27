@@ -7,4 +7,8 @@
   tasks:
   - name: Run Setup to install QPID Server
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p qs -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
     sudo: yes

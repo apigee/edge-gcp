@@ -6,7 +6,11 @@
   tasks:
   - name: Run Setup with rmp profile
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p rmp -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
     sudo: yes
-  - name: Run Setup with rmp profile
+  - name: Restart RMP
     command: "/opt/apigee/apigee-service/bin/apigee-all restart"
     sudo: yes
