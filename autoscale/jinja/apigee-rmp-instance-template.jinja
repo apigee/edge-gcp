@@ -167,6 +167,7 @@ resources:
                echo 'port 8080 is open'
                
                ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
+               ansible-playbook -i ../inventory/hosts -u apigee orgsetup-playbook.yaml
                ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
                #install jq to parse json

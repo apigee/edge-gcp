@@ -1,5 +1,7 @@
 {% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
 {% set LB_PORT = 80 %}
+{% set LB_PORT_TEST = 8080 %}
+{% set HEALTH_CHECK_PORT = "8082" %}
 
 resources:
 - name: {{ BASE_NAME }}-it
@@ -112,7 +114,7 @@ resources:
   properties:
     IPProtocol: TCP
     IPAddress: {{ properties['LB_IP_ALIAS'] }}
-    portRange: 8080
+    portRange: {{ LB_PORT_TEST }}
     target: $(ref.{{ BASE_NAME }}-targetproxy-test.selfLink)
 - name: {{ BASE_NAME }}-lb
   type: compute.v1.firewall
@@ -121,4 +123,4 @@ resources:
     sourceRanges: [{{ properties['LB_IP_ALIAS'] }}]
     allowed:
     - IPProtocol: TCP
-      ports: ["8082"]
+      ports: [{{ HEALTH_CHECK_PORT }}]
