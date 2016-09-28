@@ -167,7 +167,7 @@ resources:
                echo 'port 8080 is open'
                
                ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
-               ansible-playbook -i ../inventory/hosts -u apigee orgsetup-playbook.yaml
+               #ansible-playbook -i ../inventory/hosts -u apigee orgsetup-playbook.yaml
                ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
                #install jq to parse json
@@ -186,6 +186,12 @@ resources:
                export routeruuid=$(curl -s http://localhost:8081/v1/servers/self | jq --raw-output '.uUID')
                echo $uuid
                echo $routeruuid
+
+               curl0=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/test/servers -d \"uuid=$uuid\&action=add\"'))
+
+                
+               curl01=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/prod/servers -d \"uuid=$uuid\&action=add\"'))
+
 
                curl1=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/test/servers -d \"uuid=$uuid\&region=dc-1\&pod=gateway\&action=remove\"'))
 
@@ -214,6 +220,9 @@ resources:
                echo $curl6 >> /tmp/apigee/shutdown.sh
                echo "sleep 10"  >> /tmp/apigee/shutdown.sh
                chmod +x /tmp/apigee/shutdown.sh
+
+               eval $curl0
+               eval $curl01
 
             - key: shutdown-script
               value: |

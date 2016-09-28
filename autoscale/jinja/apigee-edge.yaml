@@ -39,8 +39,8 @@ resources:
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'
-     ORG_NAME: myorg
-     SKIP_SMTP: 'n'
+     ORG_NAME: ASG
+     SKIP_SMTP: 'y'
      SMTPHOST: test.smtp.com
      SMTPUSER: test@example.com
      # 0 for no username
