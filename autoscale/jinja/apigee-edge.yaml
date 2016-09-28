@@ -29,7 +29,7 @@ resources:
      machineType: n1-standard-2
      region: us-central1
      zone: us-central1-b
-     nodes: 5
+     nodes: 7
      cidr: 192.168.4.0/24
      softwareRepo: https://software.apigee.com
      version: '4.16.09'
