@@ -105,8 +105,8 @@ resources:
 
           echo {{ properties["license"] }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
 
-          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_1node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_1node
           curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_5node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_5node
+          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_7node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_7node
           curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_9node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_9node
 
           curl -o /tmp/apigee/ansible-scripts/config/config5.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config5.txt
