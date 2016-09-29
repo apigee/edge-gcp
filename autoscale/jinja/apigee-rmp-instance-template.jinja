@@ -220,8 +220,13 @@ resources:
                echo "sleep 10"  >> /tmp/apigee/shutdown.sh
                chmod +x /tmp/apigee/shutdown.sh
 
+               sleep $((RANDOM %20))
+               sleep $((RANDOM %10))
                eval $curl0
+               sleep $((RANDOM %20))
+               sleep $((RANDOM %10))
                eval $curl01
+
 
             - key: shutdown-script
               value: |
