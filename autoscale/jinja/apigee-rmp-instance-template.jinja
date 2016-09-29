@@ -157,6 +157,28 @@ resources:
 
                #Change run user to root
                echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
+               
+               #Performance Related configurations
+
+               mkdir -p /opt/apigee/customer
+               mkdir -p /opt/apigee/customer/application
+               echo "conf_load_balancing_load.balancing.driver.nginx.limit_conn=25000" >> /opt/apigee/customer/application/router.properties
+               echo "conf_http_HTTPTransport.max.client.count=20000" >> /opt/apigee/customer/application/message-processor.properties
+               echo "conf_threadpool_maximum.pool.size=150" >> /opt/apigee/customer/application/message-processor.properties
+               
+               echo "bin_setenv_min_mem=1024m" >> /opt/apigee/customer/application/message-processor.properties
+               echo "bin_setenv_max_mem=3072m" >> /opt/apigee/customer/application/message-processor.properties
+               echo "bin_setenv_max_permsize=256m" >> /opt/apigee/customer/application/message-processor.properties
+
+               echo "bin_setenv_min_mem=1024m" >> /opt/apigee/customer/application/router.properties
+               echo "bin_setenv_max_mem=3072m" >> /opt/apigee/customer/application/router.properties
+               echo "bin_setenv_max_permsize=256m" >> /opt/apigee/customer/application/router.properties
+
+               chown apigee:apigee /opt/apigee/customer/application/message-processor.properties
+               chown apigee:apigee /opt/apigee/customer/application/router.properties
+
+
+               #Wait for the MS Server to be up
 
                if [ "$redhat_release" = "7" ]; then
                   while ! echo -n > /dev/tcp/$MSIP/8080 ; do
@@ -170,16 +192,15 @@ resources:
                  done
                fi
 
-               echo "MSIP launched"
-               #Do whatever you want
-               #wait for final 30 secs for MS to complete the registeration
+               echo "Management Server is up"
+               #wait for final 10 secs for MS to complete the registeration
                sleep 5
 
-               echo 'port 8080 is open'
-               
+               echo "Installing RMP"
+
                ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
-               #ansible-playbook -i ../inventory/hosts -u apigee orgsetup-playbook.yaml
                ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
+          
 
                #install jq to parse json
                cd /tmp/apigee
@@ -219,17 +240,17 @@ resources:
 
                 
                echo $curl1 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl2 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl3 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl4 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl5 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl6 >> /tmp/apigee/shutdown.sh
-               echo "sleep 10"  >> /tmp/apigee/shutdown.sh
+               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                chmod +x /tmp/apigee/shutdown.sh
 
                sleep $((RANDOM %20))
