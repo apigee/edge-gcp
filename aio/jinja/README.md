@@ -4,7 +4,7 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 ## Prerequisite
 
 ### gcloud
-- Install gcloud sdk from https://cloud.google.com/sdk/docs
+- Install gcloud sdk from https://cloud.google.com/sdk/downloads
 - Initialize your account
 
 ## Before you start
