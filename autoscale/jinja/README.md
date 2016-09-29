@@ -7,6 +7,14 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 - Install gcloud sdk from https://cloud.google.com/sdk/downloads
 - Initialize your account
 
+## Apigee Deployment on GCP
+
+![Deployment Template](/images/deploymentTemplate.png)
+Format: ![Alt Text](url)
+
+![Resource Deployment Model](/images/resourceDeployment.png)
+Format: ![Alt Text](url)
+
 ## Getting Started
 - Create a ssh key pair 
     ```
@@ -121,6 +129,7 @@ Management Server is at http://104.198.167.243:8080
 Montitoring Dashboard http://104.198.167.243:3000
 Creds for Monitoring Dashboard admin/admin
 ```
+
 
 ## Undeploy and Clean the deployment
 ```sh
