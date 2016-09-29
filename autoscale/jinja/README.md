@@ -82,7 +82,8 @@ WtR7iP9W+2D0Z7Jikes+M6Md4V1eA+jKN7mLtFQkR3CTEaxyBiOBKGWo6La6
 -----END RSA PRIVATE KEY-----"
     ```
 - Deploy to GCP
-    ```sh
+
+    ```
     ./deploy.sh "RESOURCE_NAME"
     ```
     e.g :
