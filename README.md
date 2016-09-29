@@ -12,12 +12,14 @@ Initialize your account
 This profile helps to create a AIO profile in Google cloud platform. The details are present in 
 https://github.com/rajeshm7910/apigee-gcp/tree/master/aio/jinja
 
-### multinode (Multinode profile with Network Load Balancer)
-This profile helps to create a AIO profile in Google cloud platform. The details are present in https://github.com/rajeshm7910/apigee-gcp/tree/master/multinode/jinja
+### multinode (Edge Multinode deployment with Network Load Balancer)
+This profile helps to create a 1,5 and 9 node edge cluster deployment in Google cloud platform. The details are present in https://github.com/rajeshm7910/apigee-gcp/tree/master/multinode/jinja
 
 
-### autoscale (Autoscale on multinode with Http Load Balancer)
-This profile helps to create a AIO profile in Google cloud platform. The details are present in 
+### autoscale (Edge Autoscale deployment with Http Load Balancer)
+This profile helps to create a 5,7,9 node cluster deployment in Google cloud platform. 
+
+The details are present in 
 https://github.com/rajeshm7910/apigee-gcp/tree/master/autoscale/jinja
 
 ## License
