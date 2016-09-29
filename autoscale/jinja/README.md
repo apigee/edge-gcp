@@ -12,7 +12,7 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
     ```
     ssh-keygen -t rsa -b 4096 -C "apigee" -N "" -f apigee.key
     ```
-    This generates a key pair file apigee.key and apigee.pub
+    This generates a key pair file apigee.key and apigee.key.pub
 
 - Edit the apigee-edge.yaml and change the entries 
 
