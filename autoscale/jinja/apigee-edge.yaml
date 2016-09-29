@@ -30,7 +30,7 @@ resources:
      region: us-central1
      zone: us-central1-b
      nodes: 7
-     cidr: 192.168.4.0/24
+     cidr: 192.168.2.0/24
      softwareRepo: https://software.apigee.com
      version: '4.16.09'
      ftp:
@@ -48,6 +48,9 @@ resources:
      # 0 for no password
      SMTPSSL: 'y'
      SMTPPORT: 465
+     autoscale:
+        size: 2
+        maxSize: 5
      SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
      license: ""
      public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvIy0p0CcbN3Z/5HYRtmmIBMePxIXSlpWe5/aaglDPIw1EMcCfRyTFKdLStSZVroq90RyHgLgD8OQZl74ym9V05/dk8YcdK+uY71fHTEKypaH9f4nlykNXht54FworTUV8SKgDC5GMLY6HV56BRmXAImVaJ+dQxkZxVrlFHFvQ323Bv7mI1TaFrM95Mqq8v2g0ehcu8N+rIcOyADv2C8ed2UrOABj+H9ND/86ZjD86W8m0rQTolVk1r3LmWhVD6IdE8Uq+MxWW0nfJ9Xu3vzy3GUNYr/vSX73zfXjKffNRflH6f3Npnl9/h0Ixq5FZlchtAoBgFyuHmEyrL14O4379 apigee"

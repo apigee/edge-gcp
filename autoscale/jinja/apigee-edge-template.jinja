@@ -96,6 +96,6 @@ resources:
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
     nodes: {{ properties['nodes'] }}
     msip: $(ref.apigee-mgmt.myIp)
-    size: 2
-    maxSize: 5
+    size: {{ properties["autoscale"].size }}
+    maxSize: {{ properties["autoscale"].maxSize }}
     sourceImage: {{ sourceImage }}
