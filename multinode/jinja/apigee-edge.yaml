@@ -29,16 +29,16 @@ resources:
      machineType: n1-standard-2
      region: us-central1
      zone: us-central1-b
-     nodes: 5
+     nodes: 1
      cidr: 192.168.3.0/24
      softwareRepo: https://software.apigee.com
-     version: '4.16.05'
+     version: '4.16.09'
      ftp:
        user: 
        password: 
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
-     APIGEE_ADMINPW: 'Secret123'
-     APIGEE_LDAPPW: 'Secret123'
+     APIGEE_ADMINPW: 'P@ssw0rd'
+     APIGEE_LDAPPW: 'P@ssw0rd'
      ORG_NAME: myorg
      SKIP_SMTP: 'n'
      SMTPHOST: test.smtp.com
