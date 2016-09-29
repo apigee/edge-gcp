@@ -1,5 +1,5 @@
 gcloud deployment-manager deployments create $1 --config apigee-vm.yaml
-natIP=$(gcloud compute instances describe apigee-edge-apigee-aio --format yaml | grep natIP)
+natIP=$(gcloud compute instances describe $1-apigee-aio --format yaml | grep natIP)
 IP=$(echo $natIP | grep -oE "[^:]+$")
 IP="${IP#"${IP%%[![:space:]]*}"}"   # remove leading whitespace characters
 IP="${IP%"${IP##*[![:space:]]}"}"
