@@ -25,8 +25,8 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
     | cidr              | The subnet address.                            |
     | softwareRepo      | The apigee sofftware Repo.                     |
     | version           | The apigee private cloud release version       |
-    | ftp - user        | The ftp user details to access Apigee software |
-    | ftp-password      | The ftp password to access the software        |
+    | ftp : user        | The ftp user details to access Apigee software |
+    | ftp : password    | The ftp password to access the software        |
     | APIGEE_ADMIN_EMAIL| Edge system admin user                         |
     | APIGEE_ADMINPW    | Edge System admin Password                     |
     | APIGEE_LDAPPW     | Edge LDAP password                             |
@@ -37,8 +37,8 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
     | SMTPPASSWORD      | SMTP Password. 0 if no password                |
     | SMTPSSL           | Is SMTP on SSL                                 |
     | SMTPPORT          | SMTP port (25)                                 |
-    | autoscale-size    | The target size of autoscale instances         |
-    | autoscale-maxSize | The maximum number of autoscaled instances     |
+    | autoscale : size  | The target size of autoscale instances         |
+    | autoscale : maxSize| The maximum number of autoscaled instances     |
     | SCRIPT_BASEPATH   | The raw  path where script is located          |
     | license           | Paste the licese file here                     |
     | public-key        | Paste the contents of apigee.key.pub  you created earlier|
