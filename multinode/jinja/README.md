@@ -79,11 +79,11 @@ WtR7iP9W+2D0Z7Jikes+M6Md4V1eA+jKN7mLtFQkR3CTEaxyBiOBKGWo6La6
 
 ## Deploy any profile
 ```sh
-./deploy.sh "RESOURCE_NAME"
+./deploy.sh "RESOURCE_NAME" "zone"
 ```
 e.g :
 ```sh
-./deploy.sh apigee5node
+./deploy.sh apigee5node us-central1-b
 ```
 
 ## Undeploy and Clean the deployment

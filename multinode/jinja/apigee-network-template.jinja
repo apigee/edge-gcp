@@ -19,5 +19,5 @@ resources:
   type: compute.v1.subnetwork
   properties:
      network : $(ref.{{ env["name"] }}.selfLink)
-     region: "us-central1"
+     region: "{{ properties['region'] }}"
      ipCidrRange: "{{ properties["cidr"] }}"

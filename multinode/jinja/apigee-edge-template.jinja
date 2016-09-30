@@ -21,6 +21,7 @@ resources:
   properties:
     cidr: {{ properties["cidr"] }}
     subnet: {{ SUBNET_NAME }}
+    region: {{ properties['region'] }}
 - name: {{ FIREWALL_NAME }}
   type: apigee-firewall-template.jinja
   properties:
