@@ -23,11 +23,11 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 
 ## Deploy AIO profile
 ```sh
-./deploy.sh "RESOURCE_NAME"
+./deploy.sh "RESOURCE_NAME" "zone"
 ```
 e.g :
 ```sh
-./deploy.sh apigee-edge
+./deploy.sh apigee-edge us-central1-b
 ```
 
 ## Undeploy and Clean the deployment
