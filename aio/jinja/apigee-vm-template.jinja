@@ -48,31 +48,22 @@ resources:
           sed -i s/HOME=.*//g /tmp/aio-config.txt
           sed -i s/OPTERR=.*//g /tmp/aio-config.txt
           sed -i s/OPTIND=.*//g /tmp/aio-config.txt
-          echo "{{ properties["license"] }}" >> /tmp/license.txt
+          echo {{ properties["license"] }} | tr " " "\n" >> /tmp/license.txt
           export FTP_USER=$(echo "{{ properties["ftp"].user }}")
           export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
           export RESOURCE_NAME=$(echo {{ env["name"] }})
-          sudo curl https://software.apigee.com/bootstrap_4.16.05.sh -o /tmp/bootstrap_4.16.05.sh
-          #sed -i s/ORG_NAME=/ORG_NAME="${RESOURCE_NAME}"/g /tmp/aio-config.txt
-          sudo chmod 777 /tmp/bootstrap_4.16.05.sh
+          export VERSION=$(echo "{{ properties["version"] }}")
+          export SOFTWAREREPO=$(echo "{{ properties["softwareRepo"] }}")
+
+          sudo curl ${SOFTWAREREPO}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
+          sudo chmod 777 /tmp/bootstrap_${VERSION}.sh
           sudo setenforce 0 >> /tmp/setenforce.out
           sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
           sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
           sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
-          sudo /tmp/bootstrap_4.16.05.sh apigeeuser=$FTP_USER apigeepassword=$FTP_PASSWORD JAVA_FIX=I
+          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$FTP_USER apigeepassword=$FTP_PASSWORD JAVA_FIX=I
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
-          sudo yum install apigee-cassandra -y
-          sudo yum install apigee-zookeeper -y
-          sudo yum install apigee-openldap -y
-          sudo yum install edge-management-server -y
-          sudo yum install edge-ui -y
-          sudo yum install edge-router -y
-          sudo yum install edge-message-processor -y
-          sudo yum install apigee-postgresql -y
-          sudo yum install edge-postgres-server -y
-          sudo yum install apigee-qpidd -y
-          sudo yum install edge-qpid-server -y
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
     disks:

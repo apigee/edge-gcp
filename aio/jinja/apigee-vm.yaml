@@ -24,8 +24,10 @@ resources:
   properties:
      aio-config: aio-config.txt
      machineType: n1-highcpu-8
-     zone: us-central1-b
+     zone: us-east1-b
+     softwareRepo: https://software.apigee.com
+     version: '4.16.09'
      ftp:
-       user: [ Your FTP User ]
-       password: [ Your FTP Password ] 
-     license: "[Your License ]"
+       user: 
+       password:  
+     license: ""
