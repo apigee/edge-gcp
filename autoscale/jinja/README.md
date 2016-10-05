@@ -21,6 +21,9 @@ GCP Resource Deployment Model
     ssh-keygen -t rsa -b 4096 -C "apigee" -N "" -f apigee.key
     ```
     This generates a key pair file apigee.key and apigee.key.pub
+    Edit the apigee.key.pub file and add the user apigee in begining 
+    so it will look like  [USERNAME]:ssh-rsa [KEY_VALUE] [USERNAME]
+    In this case USERNAME is apigee
 
 - Edit the apigee-edge.yaml and change the entries 
 
