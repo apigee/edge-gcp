@@ -85,7 +85,7 @@ GCP Resource Deployment Model
             maxSize: 5
          SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
          license: "This is license file"
-         public-key: "sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
+         public-key: "apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
          private-key: "-----BEGIN RSA PRIVATE KEY-----
 MIIJKQIBAAKCAgEAzEGDsY1tDWiqJ9jgNI3nMjOSMOmxODFtwIGLlxuyPoJa635b
 Yiv+SVMft/jpPAiZ2rLU/utn7ZBNs/hEoIEeHNITIocAy6jAknjvbBUT78KnaCq2Omi708NOpTUTHHH+nqfLlXAmYGhrMLDFwT7lqTOzHGw6vKszN8TfMsxGghVeDdB5
