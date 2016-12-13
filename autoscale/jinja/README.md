@@ -21,8 +21,8 @@ GCP Resource Deployment Model
     ssh-keygen -t rsa -b 4096 -C "apigee" -N "" -f apigee.key
     ```
     This generates a key pair file apigee.key and apigee.key.pub
-    - Edit the apigee.key.pub file and add the user apigee in begining 
-    - so it will look like  [USERNAME]:ssh-rsa [KEY_VALUE] [USERNAME]
+    - Edit the apigee.key.pub file and prefix this with [USERNAME]: (apigee: in this case)  
+    - so the public key file should like  [USERNAME]:ssh-rsa [KEY_VALUE] [USERNAME]
     - In this case USERNAME is apigee
 
 - Edit the apigee-edge.yaml and change the entries 
@@ -51,7 +51,7 @@ GCP Resource Deployment Model
     | autoscale : size  | The target size of autoscale instances         |
     | autoscale : maxSize| The maximum number of autoscaled instances     |
     | SCRIPT_BASEPATH   | The raw  path where script is located          |
-    | license           | Paste the licese file here                     |
+    | license           | Paste the license  text here                   |
     | public-key        | Paste the contents of apigee.key.pub  you created earlier|
     | private-key       | Paste the contents of apigee.key you created earlier|
  
@@ -84,7 +84,7 @@ GCP Resource Deployment Model
             size: 2
             maxSize: 5
          SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
-         license: "This is license file"
+         license: "This is license text here"
          public-key: "apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
          private-key: "-----BEGIN RSA PRIVATE KEY-----
 MIIJKQIBAAKCAgEAzEGDsY1tDWiqJ9jgNI3nMjOSMOmxODFtwIGLlxuyPoJa635b
