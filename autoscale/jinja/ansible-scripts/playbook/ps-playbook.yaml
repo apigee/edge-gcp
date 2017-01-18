@@ -7,7 +7,6 @@
   tasks:
   - name: Setup Postgres Master
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p ps -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
-    sudo: yes
 - hosts: ps-slave
   vars:
     apigee_source_path: ../config
@@ -16,4 +15,3 @@
   tasks:
   - name: Setup Postgres Standby
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p ps -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
-    sudo: yes

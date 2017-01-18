@@ -3,11 +3,9 @@
   tasks:
   - name: stop all process
     command: "apigee-all stop"
-    become: sudo
     ignore_errors: True
   - name: Clean Yum
     command: "yum clean all"
-    become: sudo
   - name: celan components
     command: "{{ item }}"
     with_items:
@@ -29,7 +27,5 @@
     - "sudo yum remove apigee-service -y"
     - "sudo yum remove apigee-repo -y"
     ignore_errors: True
-    become: sudo
   - name: Delete Apigee
-    command: "sudo rm -rf /opt/apigee"
-    become: sudo
+    command: "rm -rf /opt/apigee"

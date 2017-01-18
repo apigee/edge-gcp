@@ -11,4 +11,3 @@
     until: task_result.rc == 0
     retries: 3
     delay: 1
-    sudo: yes
