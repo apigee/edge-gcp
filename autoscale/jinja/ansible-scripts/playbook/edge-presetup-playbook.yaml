@@ -7,7 +7,7 @@
     command: "curl -o {{apigee_dest_path}}/bootstrap_{{ version }}.sh {{ softwareRepo }}/bootstrap_{{ version }}.sh -u {{ apigee_user }}:{ apigee_password }}"
     sudo: yes
   - name: install apigee service
-    command: "bash {{apigee_dest_path}}/bootstrap_{{ version }}.sh apigeeuser={{ apigee_user }} apigeepassword={{ apigee_password }} JAVA_FIX=I"
+    command: "bash {{apigee_dest_path}}/bootstrap_{{ version }}.sh apigeeuser={{ apigee_user }} apigeepassword={{ apigee_password }} JAVA_FIX=I apigeestage=e2e"
     sudo: yes
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
