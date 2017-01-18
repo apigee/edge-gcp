@@ -27,6 +27,7 @@
       - 'apigee hard nofile 65536'
       - 'apigee soft as unlimited'
       - 'apigee hard as unlimited'
+    sudo: yes
   - name: Selinux status
     shell: selinuxenabled && echo enabled || echo disabled
     register: selinuxstatus
