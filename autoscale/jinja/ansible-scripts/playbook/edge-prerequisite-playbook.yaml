@@ -31,12 +31,6 @@
   - name: Print selinux status
     debug: msg="selinux version is {{ selinuxstatus.stdout }}"
     ignore_errors: true
-    when: selinuxstatus.changed
-  - name: disable SELinux
-    selinux: state=disabled
-    when: ("{{ selinuxstatus.stdout }} == 'enabled'" or "{{ selinuxstatus.stdout }} == 'permissive'")
-    register: st
-    ignore_errors: true
     when: selinuxstatus.changed  
   - name: disable SElinux in Shell
     command: "sudo setenforce 0"
