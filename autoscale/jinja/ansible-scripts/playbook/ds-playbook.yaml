@@ -11,6 +11,7 @@
     until: task_result.rc == 0
     retries: 3
     delay: 1
+    sudo: yes
 - hosts: ds-slave
   vars:
     apigee_config_file_name: config.txt
@@ -23,3 +24,4 @@
     until: task_result.rc == 0
     retries: 3
     delay: 1
+    sudo: yes

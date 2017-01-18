@@ -7,10 +7,13 @@
   - name: Install Telegraf
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-telegraf install"
     ignore_errors: yes
+    sudo: yes
   - name: Setup Telegraf
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-telegraf setup -f {{apigee_dest_path}}/{{apigee_grafana_config_file_name}}"
     ignore_errors: yes
+    sudo: yes
   - name: Restart Telegraf
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-telegraf restart"
     ignore_errors: yes
+    sudo: yes
 

@@ -11,8 +11,10 @@
   tasks:
   - name: yum clean all
     command: "yum clean all"
+    sudo: yes
   - name: yum install libselinux-python
     command: "yum install libselinux-python -y"
+    sudo: yes
   - name: Limits change
     become_method: sudo
     lineinfile:
@@ -28,33 +30,43 @@
   - name: Selinux status
     shell: selinuxenabled && echo enabled || echo disabled
     register: selinuxstatus
+    sudo: yes
   - name: Print selinux status
     debug: msg="selinux version is {{ selinuxstatus.stdout }}"
     ignore_errors: true
-    when: selinuxstatus.changed  
+    when: selinuxstatus.changed
+    sudo: yes  
   - name: disable SElinux in Shell
     command: "sudo setenforce 0"
     ignore_errors: true
+    sudo: yes
   - name: Create dest folder
     command: "mkdir -p {{ apigee_dest_path }}"
+    sudo: yes
   - name: Log Files
     command: "{{ item }}"
     with_items:
     - "mkdir -p {{ apigee_dest_path }}/log"
     - "ln -Ts /tmp/setup-root.log {{ apigee_dest_path }}/log/setup-root.log"
+    sudo: yes
   - name: copy license file
     copy: src={{apigee_source_path}}/{{apigee_license_file_name}}
         dest={{apigee_dest_path}}/{{apigee_license_file_name}} force=yes
+    sudo: yes
   - name: copy config file
     copy: src={{apigee_source_path}}/{{apigee_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_config_file_name}} force=yes
+    sudo: yes
   - name: copy setup-org prod file
     copy: src={{apigee_source_path}}/{{apigee_prod_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_prod_config_file_name}} force=yes
+    sudo: yes
   - name: copy setup-org test file
     copy: src={{apigee_source_path}}/{{apigee_test_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_test_config_file_name}} force=yes
+    sudo: yes
   - name: copy grafana config file
     copy: src={{apigee_source_path}}/{{apigee_grafana_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_grafana_config_file_name}} force=yes
+    sudo: yes
 
