@@ -38,7 +38,7 @@ resources:
     subnet: {{ SUBNET_NAME }}
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
-    ftp: {{ properties["ftp"] }}
+    repo: {{ properties["repo"] }}
     license: {{ properties["license"] }}
     region: {{ properties["region"] }}
     public-key: {{ properties["public-key"] }}
@@ -55,9 +55,8 @@ resources:
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
     machineType: {{ properties["machineType"] }}
     zone: {{ properties["zone"] }}
-    softwareRepo : {{ properties["softwareRepo"] }}
+    repo : {{ properties["repo"] }}
     version: {{ properties['version']}}
-    ftp: {{ properties["ftp"] }}
     license: {{ properties["license"] }}
     public-key: {{ properties["public-key"] }}
     private-key: {{ properties["private-key"] }}
@@ -83,9 +82,8 @@ resources:
     machineType: {{ properties["machineType"] }}
     region: {{ properties['region']}}
     zone: {{ properties["zone"] }}
-    softwareRepo : {{ properties["softwareRepo"] }}
+    repo : {{ properties["repo"] }}
     version: {{ properties['version']}}
-    ftp: {{ properties["ftp"] }}
     license: {{ properties["license"] }}
     public-key: {{ properties["public-key"] }}
     private-key: {{ properties["private-key"] }}

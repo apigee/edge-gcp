@@ -27,15 +27,17 @@ resources:
   type: apigee-edge-template.jinja
   properties:
      machineType: n1-standard-2
-     region: us-west1
-     zone: us-west1-b
-     nodes: 7
-     cidr: 192.168.2.0/24
-     softwareRepo: https://software.apigee.com
-     version: '4.16.09'
-     ftp:
+     region: us-central1
+     zone: us-central1-b
+     nodes: 5
+     cidr: 10.10.7.0/24
+     version: '4.17.01'
+     repo:
+       host: software.apigee.com
+       protocol: https
        user: 
        password: 
+       stage: prod
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'

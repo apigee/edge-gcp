@@ -26,6 +26,25 @@ resources:
       items:
       - key: ssh-keys
         value: {{ properties['public-key'] }}
+      - key: startup-script
+        value: |
+          if [ -d "/opt/apigee" ]; then
+            exit 1
+          fi
+          mkdir -p /tmp/apigee
+          mkdir -p /tmp/apigee/log
+          redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
+          echo $redhat_release
+
+          if [ "$redhat_release" = "7" ]; then
+            curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
+          else
+            curl -o /tmp/apigee/epel-release-latest-6.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-latest-6.noarch.rpm
+          fi
+          cd /etc
+          sed -i s/::1/#::1/g hosts
     disks:
     - deviceName: boot
       type: PERSISTENT

@@ -24,7 +24,7 @@ resources:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
     sizeGb: 10
-    softwareRepo: {{ properties['softwareRepo'] }}
+    repo: {{ properties['repo'] }}
     version: {{ properties['version'] }}
     HOST_NAMES: {{ properties['HOST_NAMES'] }}
     APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
@@ -51,10 +51,12 @@ resources:
           fi
           mkdir -p /tmp/apigee
           mkdir -p /tmp/apigee/log
-          export SOFTWARE_REPO="{{ properties['softwareRepo'] }}"
           export VERSION="{{ properties['version'] }}"
-          export FTP_USER=$(echo "{{ properties["ftp"].user }}")
-          export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
+          export REPO_HOST="{{ properties['repo'].host }}"
+          export REPO_PROTOCOL="{{ properties['repo'].protocol }}"
+          export REPO_USER=$(echo "{{ properties["repo"].user }}")
+          export REPO_PASSWORD=$(echo "{{ properties["repo"].password }}")
+          export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
           export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
           export HOST_NAMES=$(hostname -i):$HOST_NAMES
           export APIGEE_ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
@@ -86,16 +88,16 @@ resources:
           echo $redhat_release
 
           if [ "$redhat_release" = "7" ]; then
-            curl -o /tmp/apigee/epel-release-7-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-7-8.noarch.rpm
+            curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
           else
-            curl -o /tmp/apigee/epel-release-6-8.noarch.rpm  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-6-8.noarch.rpm
+            curl -o /tmp/apigee/epel-release-latest-6.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+            rpm -ivh /tmp/apigee/epel-release-latest-6.noarch.rpm
           fi
 
           yum install ansible -y
           #Disable epel
-          sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
+          #sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
 
           #Get ansible scripts in /tmp/apigee/ansible directory
           mkdir /tmp/apigee/ansible-scripts
@@ -183,7 +185,7 @@ resources:
           
           #Lets Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
-          ansible-playbook --extra-vars "apigee_user=$FTP_USER apigee_password=$FTP_PASSWORD softwareRepo=$SOFTWARE_REPO version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
+          ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
           
           ansible-playbook -i ../inventory/hosts -u apigee edge-dashboard-playbook.yaml
           ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
