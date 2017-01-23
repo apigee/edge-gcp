@@ -34,10 +34,12 @@ GCP Resource Deployment Model
     | zone              | The availability zone in region               |
     | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 5, 7 , 9  nodes. You can specify any of these values                                    |
     | cidr              | The subnet address.                            |
-    | softwareRepo      | The apigee sofftware Repo.                     |
     | version           | The apigee private cloud release version       |
-    | ftp : user        | The ftp user details to access Apigee software |
-    | ftp : password    | The ftp password to access the software        |
+    | repo : host       | The software repo of apigee binaries           |
+    | repo : protocol   | The software repo protocol  (http or https)    | 
+    | repo : user       | The  user details to access Apigee software    |
+    | repo : stage      | The repo stage (prod, e2e)                     |
+    | repo : password   | The  password to access the software           |
     | APIGEE_ADMIN_EMAIL| Edge system admin user                         |
     | APIGEE_ADMINPW    | Edge System admin Password                     |
     | APIGEE_LDAPPW     | Edge LDAP password                             |
@@ -63,11 +65,13 @@ GCP Resource Deployment Model
          zone: us-central1-b
          nodes: 7
          cidr: 192.168.2.0/24
-         softwareRepo: https://software.apigee.com
          version: '4.16.09'
-         ftp:
+         repo:
+           host: software.apigee.com
+           protocol: https
            user: apigee
            password: mypasswordToAccessRepo
+           stage: prod
          APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
          APIGEE_ADMINPW: 'Secret123'
          APIGEE_LDAPPW: 'Secret123'
