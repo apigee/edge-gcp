@@ -10,14 +10,14 @@ Initialize your account
 
 ## Apigee Edge Profiles
 ### aio (All in One)
-This profile helps to create a AIO profile in Google cloud platform. The details are present in 
-[AIO](../../tree/master/aio/jinja)
+This profile helps to create a AIO profile in Google cloud platform. The details are present 
+[here](../../tree/master/aio/jinja)
 
 ### autoscale (Edge Autoscale deployment with Http Load Balancer)
 This profile helps to create a 5,7,9 node cluster deployment in Google cloud platform. 
 
-The details are present in 
-https://github.com/rajeshm7910/apigee-gcp/tree/master/autoscale/jinja
+The details are present  
+[here](../../tree/master/autoscale/jinja)
 
 ## License
 
