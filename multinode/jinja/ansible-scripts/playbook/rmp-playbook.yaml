@@ -1,9 +1,0 @@
-- hosts: rmp
-  vars:
-    apigee_source_path: ../config
-    apigee_dest_path: /tmp/apigee
-    apigee_config_file_name: config.txt
-  tasks:
-  - name: Run Setup with rmp profile
-    command: "/opt/apigee/apigee-setup/bin/setup.sh -p rmp -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
-    sudo: yes

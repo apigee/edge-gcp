@@ -14,7 +14,7 @@ limitations under the License.
 #}
 
 {% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
-{% set BASE_NAME = env['deployment'] + '-' + env['name'] %}
+{% set BASE_NAME = env['deployment'] %}
 
 resources:
 - name: {{ BASE_NAME }}
@@ -49,19 +49,28 @@ resources:
           sed -i s/OPTERR=.*//g /tmp/aio-config.txt
           sed -i s/OPTIND=.*//g /tmp/aio-config.txt
           echo {{ properties["license"] }} | tr " " "\n" >> /tmp/license.txt
-          export FTP_USER=$(echo "{{ properties["ftp"].user }}")
-          export FTP_PASSWORD=$(echo "{{ properties["ftp"].password }}")
           export RESOURCE_NAME=$(echo {{ env["name"] }})
           export VERSION=$(echo "{{ properties["version"] }}")
-          export SOFTWAREREPO=$(echo "{{ properties["softwareRepo"] }}")
+          export REPO_HOST="{{ properties['repo'].host }}"
+          export REPO_PROTOCOL="{{ properties['repo'].protocol }}"
+          export REPO_USER=$(echo "{{ properties["repo"].user }}")
+          export REPO_PASSWORD=$(echo "{{ properties["repo"].password }}")
+          export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
 
-          sudo curl ${SOFTWAREREPO}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
+          curl -o /tmp/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+          rpm -ivh /tmp/epel-release-latest-7.noarch.rpm
+
+          cd /etc
+          sed -i s/::1/#::1/g hosts
+          cd -
+
+          sudo curl ${REPO_PROTOCOL}://${REPO_HOST}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
           sudo chmod 777 /tmp/bootstrap_${VERSION}.sh
           sudo setenforce 0 >> /tmp/setenforce.out
           sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
           sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
           sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
-          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$FTP_USER apigeepassword=$FTP_PASSWORD JAVA_FIX=I
+          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER apigeepassword=$REPO_PASSWORD JAVA_FIX=I repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
@@ -74,7 +83,7 @@ resources:
       initializeParams:
         diskName: {{ BASE_NAME }}-disk
         diskSizeGb: 40
-        sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-6
+        sourceImage: {{ COMPUTE_URL_BASE }}projects/rhel-cloud/global/images/family/rhel-7
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)
       accessConfigs:
