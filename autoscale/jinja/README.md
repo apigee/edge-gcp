@@ -71,7 +71,7 @@ GCP Resource Deployment Model
            protocol: https
            user: apigee
            password: mypasswordToAccessRepo
-           stage: prod
+           stage: release
          APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
          APIGEE_ADMINPW: 'Secret123'
          APIGEE_LDAPPW: 'Secret123'

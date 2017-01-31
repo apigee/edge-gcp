@@ -21,7 +21,7 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
            protocol: https
            user: apigee
            password: mypasswordToAccessRepo
-           stage: prod
+           stage: release
         license: "[your license]" #Paste the contents of license file.
     ```
 - Change the silent config file entries present in aio/jinja/aio-config.txt
