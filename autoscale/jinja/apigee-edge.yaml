@@ -37,7 +37,7 @@ resources:
        protocol: https
        user: 
        password: 
-       stage: prod
+       stage: release
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'
