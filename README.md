@@ -1,4 +1,4 @@
-# apigee-gcp
+# edge-gcp
 This project allows you to install Apigee Edge in Google Cloud Platform using GCP's deployment manager. Please refer to http://docs.apigee.com/private-cloud/latest/overview for more details on Apigee Edge Private Cloud.
 
 
