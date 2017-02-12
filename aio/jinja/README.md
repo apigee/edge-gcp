@@ -8,7 +8,7 @@ This project allows you to install Edge in Google Cloud Platform using GCP's dep
 - Initialize your account
 
 ## Before you start
-- Edit the aio/jinja/apigee-vm.yaml and update the properies
+- Edit the aio/jinja/apigee-edge.yaml and update the properies
 
     ```sh
         aio-config: aio-config.txt
