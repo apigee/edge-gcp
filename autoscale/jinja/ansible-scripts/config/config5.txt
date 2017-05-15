@@ -36,6 +36,7 @@ PG_MASTER=$IP2
 PG_STANDBY=$IP3
 SKIP_SMTP=y
 SMTPHOST=smtp.gmail.com
+SMTPMAILFROM=apiadmin@apigee.com
 SMTPUSER=0
 # 0 for no username
 SMTPPASSWORD=0
