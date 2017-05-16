@@ -1,0 +1,12 @@
+- hosts: dp
+  vars:
+    apigee_source_path: ../config
+    apigee_dest_path: /tmp/apigee
+    apigee_grafana_config_file_name: dp-config.txt
+  tasks:
+  - name: Setup Postgres DB for Drupal
+    command: "/opt/apigee/apigee-setup/bin/setup.sh -p pdb -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
+    sudo: yes
+  - name: Setup Drupal
+    command: "/opt/apigee/apigee-setup/bin/setup.sh -p dp -f {{apigee_dest_path}}/{{apigee_config_file_name}}""
+    sudo: yes
