@@ -8,6 +8,7 @@
     apigee_prod_config_file_name: setup-org-prod.txt
     apigee_test_config_file_name: setup-org-test.txt
     apigee_grafana_config_file_name: grafana.txt
+    apigee_dp_config_file_name: dp-config.txt
   tasks:
   - name: yum clean all
     command: "yum clean all"
@@ -73,4 +74,7 @@
     copy: src={{apigee_source_path}}/{{apigee_grafana_config_file_name}}
         dest={{apigee_dest_path}}/{{apigee_grafana_config_file_name}} force=yes
     sudo: yes
-
+ - name: copy dp config file
+    copy: src={{apigee_source_path}}/{{apigee_dp_config_file_name}}
+        dest={{apigee_dest_path}}/{{apigee_dp_config_file_name}} force=yes
+    sudo: yes
