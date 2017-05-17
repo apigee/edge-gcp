@@ -16,7 +16,7 @@ Initialize your account
 This profile helps to create a AIO profile in Google cloud platform. The details are present 
 [here](../../tree/master/aio/jinja)
 
-### autoscale (Edge Autoscale deployment with Http Load Balancer)
+### multinode (Multinode edge deployment)
 This profile helps to create a 5,7,9 node cluster deployment in Google cloud platform. 
 
 The details are present [here](../../tree/master/multinode-autoscale/jinja)
