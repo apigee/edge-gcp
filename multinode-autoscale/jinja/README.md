@@ -1,4 +1,4 @@
-# apigee-gcp
+# edge-gcp
 This project allows you to install edge in Google Cloud Platform using GCP's deployment manager. This uses gcp's autoscale feature to put RMP blocks in autoscale group.
 
 ## Prerequisite
