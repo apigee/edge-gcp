@@ -28,9 +28,9 @@ DEFAULT_DB=postgres
 # The installer creates this user on the portal. 
 DEVPORTAL_ADMIN_FIRSTNAME=portal
 DEVPORTAL_ADMIN_LASTNAME=admin 
-DEVPORTAL_ADMIN_USERNAME=portaladmin 
+DEVPORTAL_ADMIN_USERNAME=opdk@apigee.com 
 DEVPORTAL_ADMIN_PWD=Secret123
-DEVPORTAL_ADMIN_EMAIL=portaladmin@apigee.com 
+DEVPORTAL_ADMIN_EMAIL=opdk@apigee.com 
 
 # Edge connection details. 
 # If omitted, you can set them in the portal UI. 
