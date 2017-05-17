@@ -8,7 +8,9 @@ PG_NAME=devportal
 # If you changed the Postgres password from the default of 'postgres' 
 # then set PG_PWD accordingly. 
 # If connecting to a Postgres node installed with Edge, 
-# contact the Edge sys admin to get these credentials. 
+# contact the Edge sys admin to get these credentials.
+MP_POD=gateway
+REGION=dc-1
 PG_USER=apigee 
 PG_PWD=postgres 
 # The IP address of the Postgres server. 
