@@ -29,6 +29,15 @@ resources:
     zone: {{ properties["zone"] }}
     public-key: {{ properties["public-key"] }}
     sourceImage: {{ properties["sourceImage"] }}
+- name: apigee-dp
+  type: apigee-shared-vm-template.jinja
+  properties:
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
+    machineType: {{ properties["machineType"] }}
+    zone: {{ properties["zone"] }}
+    public-key: {{ properties["public-key"] }}
+    sourceImage: {{ properties["sourceImage"] }}
 outputs:
 - name: HOST_NAMES
-  value: $(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp)
+  value: $(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp):$(ref.apigee-dp.myIp)

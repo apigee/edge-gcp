@@ -22,6 +22,7 @@ resources:
   properties:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
+    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     sizeGb: 40
     metadata:
       items:
@@ -56,6 +57,7 @@ resources:
           export REPO_USER=$(echo "{{ properties["repo"].user }}")
           export REPO_PASSWORD=$(echo "{{ properties["repo"].password }}")
           export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
+          SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
 
           curl -o /tmp/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
           rpm -ivh /tmp/epel-release-latest-7.noarch.rpm
@@ -64,17 +66,97 @@ resources:
           sed -i s/::1/#::1/g hosts
           cd -
 
-          sudo curl ${REPO_PROTOCOL}://${REPO_HOST}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
+          sudo curl ${REPO_PROTOCOL}://${REPO_USER}:${REPO_PASSWORD}@${REPO_HOST}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
           sudo chmod 777 /tmp/bootstrap_${VERSION}.sh
           sudo setenforce 0 >> /tmp/setenforce.out
           sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
           sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
           sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
-          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER apigeepassword=$REPO_PASSWORD JAVA_FIX=I repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE
+          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER  apigeepassword=$REPO_PASSWORD apigeereleasever=${VERSION} JAVA_FIX=I apigeerepohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL apigeestage=$REPO_STAGE
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
+
+
+          {{ imports[properties['dp-config']]|indent(10) }}
+          set >> /tmp/dp-config.txt
+          sed -i s/BASH.*=.*//g /tmp/dp-config.txt
+          sed -i s/_VERSION.*=.*//g /tmp/dp-config.txt
+          sed -i s/_VERSINFO=.*=.*//g /tmp/dp-config.txt
+          sed -i s/LS_COLORS=.*=.*//g /tmp/dp-config.txt
+          sed -i s/EUID=.*//g /tmp/dp-config.txt
+          sed -i s/DIRSTACK=.*//g /tmp/dp-config.txt
+          sed -i s/IFS=.*//g /tmp/dp-config.txt
+          sed -i s/PPID=.*//g /tmp/dp-config.txt
+          sed -i s/PIPESTATUS=.*//g /tmp/dp-config.txt
+          sed -i s/GROUPS=.*//g /tmp/dp-config.txt
+          sed -i s/LESSOPEN=.*//g /tmp/dp-config.txt
+          sed -i s/PS4=.*//g /tmp/dp-config.txt
+          sed -i s/PATH=.*//g /tmp/dp-config.txt
+          sed -i s/UID=.*//g /tmp/dp-config.txt
+          sed -i s/SHELLOPTS=.*//g /tmp/dp-config.txt
+          sed -i s/_=.*//g /tmp/dp-config.txt
+          sed -i s/HOME=.*//g /tmp/dp-config.txt
+          sed -i s/OPTERR=.*//g /tmp/dp-config.txt
+          sed -i s/OPTIND=.*//g /tmp/dp-config.txt
+          sed -i s/SCRIPT_BASE.*//g /tmp/dp-config.txt
+          sed -i.bak s/MGMT_URL=/MGMT_URL="http://${MSIP}:8080/v1"/g dp-config.txt
+          sudo /opt/apigee/apigee-service/bin/apigee-all stop
+          sudo /opt/apigee/apigee-setup/bin/setup.sh -p pdb -f /tmp/dp-config.txt
+          sudo /opt/apigee/apigee-setup/bin/setup.sh -p dp -f /tmp/dp-config.txt
+
+          echo  $SCRIPT_BASEPATH >> /tmp/script.txt
+
+          curl -o /opt/nginx/conf/nginx.conf  $SCRIPT_BASEPATH/config/nginx.conf
+          curl -o /opt/apigee/data/apigee-lb/conf.d/apigee-drupal-devportal-nginx.conf $SCRIPT_BASEPATH/config/apigee-drupal-devportal-nginx.conf
+          curl -o /opt/apigee/apigee-lb/bin/start $SCRIPT_BASEPATH/config/start
+
+          chown apigee:apigee /opt/nginx/conf/nginx.conf
+          chmod 666 /opt/nginx/conf/nginx.conf
+          chown apigee:apigee /opt/apigee/data/apigee-lb/conf.d/apigee-drupal-devportal-nginx.conf
+          chmod 666 /opt/apigee/data/apigee-lb/conf.d/apigee-drupal-devportal-nginx.conf
+          rm -fr /opt/apigee/data/apigee-lb/conf.d/0-*
+          rm -fr /opt/apigee/apigee-lb/source/conf.d/*
+          rm -fr /opt/apigee/apigee-lb/conf.d/*
+          chown apigee:apigee /opt/apigee/apigee-lb/bin/start
+          chmod 777 /opt/apigee/apigee-lb/bin/start
+          sudo /opt/apigee/apigee-service/bin/apigee-all restart
+
+          {{ imports[properties['monitoring-config']]|indent(10) }}
+          set >> /tmp/monitoring-config.txt
+          sed -i s/BASH.*=.*//g /tmp/monitoring-config.txt
+          sed -i s/_VERSION.*=.*//g /tmp/monitoring-config.txt
+          sed -i s/_VERSINFO=.*=.*//g /tmp/monitoring-config.txt
+          sed -i s/LS_COLORS=.*=.*//g /tmp/monitoring-config.txt
+          sed -i s/EUID=.*//g /tmp/monitoring-config.txt
+          sed -i s/DIRSTACK=.*//g /tmp/monitoring-config.txt
+          sed -i s/IFS=.*//g /tmp/monitoring-config.txt
+          sed -i s/PPID=.*//g /tmp/monitoring-config.txt
+          sed -i s/PIPESTATUS=.*//g /tmp/monitoring-config.txt
+          sed -i s/GROUPS=.*//g /tmp/monitoring-config.txt
+          sed -i s/LESSOPEN=.*//g /tmp/monitoring-config.txt
+          sed -i s/PS4=.*//g /tmp/monitoring-config.txt
+          sed -i s/PATH=.*//g /tmp/monitoring-config.txt
+          sed -i s/UID=.*//g /tmp/monitoring-config.txt
+          sed -i s/SHELLOPTS=.*//g /tmp/monitoring-config.txt
+          sed -i s/_=.*//g /tmp/monitoring-config.txt
+          sed -i s/HOME=.*//g /tmp/monitoring-config.txt
+          sed -i s/OPTERR=.*//g /tmp/monitoring-config.txt
+          sed -i s/OPTIND=.*//g /tmp/monitoring-config.txt
+          sed -i s/SCRIPT_BASE.*//g /tmp/monitoring-config.txt
+
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb install
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb restart
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana install
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana restart
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf install
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf restart
+
+
     disks:
     - deviceName: boot
       type: PERSISTENT
@@ -89,4 +171,9 @@ resources:
       accessConfigs:
       - name: External NAT
         type: ONE_TO_ONE_NAT
+outputs:
+- name: myIp
+  value: $(ref.{{ BASE_NAME }}.networkInterfaces[0].networkIP)
+- name: selfLink
+  value: $(ref.{{ BASE_NAME }}.selfLink)
 

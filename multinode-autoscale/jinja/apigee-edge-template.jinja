@@ -70,6 +70,7 @@ resources:
     SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
     SMTPSSL: {{ properties['SMTPSSL'] }}
     SMTPPORT: {{ properties['SMTPPORT'] }}
+    SMTPMAILFROM: {{ properties['SMTPMAILFROM'] }}
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)

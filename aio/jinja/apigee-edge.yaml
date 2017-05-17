@@ -12,24 +12,31 @@
 
 imports:
 - path: apigee-vm-template.jinja
+- path: apigee-dp-vm-template.jinja
 - path: apigee-network-template.jinja
 - path: apigee-firewall-template.jinja
 - path: apigee-edge-template.jinja
 - path: ./aio-config.txt
   name: aio-config.txt
-
+- path: ./dp-config.txt
+  name: dp-config.txt
+- path: ./monitoring-config.txt
+  name: monitoring-config.txt
 resources:
 - name: apigee-edge-setup
   type: apigee-edge-template.jinja
   properties:
      aio-config: aio-config.txt
+     dp-config:  dp-config.txt
+     monitoring-config:  monitoring-config.txt
      machineType: n1-highcpu-8
      zone: us-east1-b
-     version: '4.17.01'
+     version: '4.17.05'
+     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/aio/jinja"
      repo:
-      host: software.apigee.com
+      host: ap-repo.aeip.apigee.net
       protocol: https
       user: 
       password: 
-      stage: release
+      stage: e2e
      license: ""

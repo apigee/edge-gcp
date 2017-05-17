@@ -33,6 +33,7 @@ resources:
               value: {{ properties['public-key'] }}
             - key: startup-script
               value: |
+               export TERM=xterm-256color
                mkdir -p /tmp/apigee
                mkdir -p /tmp/apigee/log
                export VERSION="{{ properties['version'] }}"
@@ -149,7 +150,6 @@ resources:
                sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
                sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
                sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
-
                
 
                cd /tmp/apigee/ansible-scripts/playbook
@@ -158,7 +158,7 @@ resources:
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-presetup-playbook.yaml
 
                #Change run user to root
-               echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
+               #echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
                
                #Performance Related configurations
 

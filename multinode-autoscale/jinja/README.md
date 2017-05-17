@@ -46,6 +46,7 @@ GCP Resource Deployment Model
     | ORG_NAME          | Edge Org name                                  |
     | SKIP_SMTP         | If you want to skip Smtp it is y               |
     | SMTPHOST          | SMTP Host                                      |
+    | SMTPMAILFROM      | SMTP MAIL FROM                                 |
     | SMTPUSER          | SMTP user. 0 if no user                        |
     | SMTPPASSWORD      | SMTP Password. 0 if no password                |
     | SMTPSSL           | Is SMTP on SSL                                 |
@@ -78,6 +79,7 @@ GCP Resource Deployment Model
          ORG_NAME: ASG
          SKIP_SMTP: 'y'
          SMTPHOST: test.smtp.com
+         SMTPMAILFROM: apiadmin@apigee.com
          SMTPUSER: test@example.com
          # 0 for no username
          SMTPPASSWORD: testpassword

@@ -31,19 +31,20 @@ resources:
      zone: us-central1-b
      nodes: 5
      cidr: 10.10.7.0/24
-     version: '4.17.01'
+     version: '4.17.05'
      repo:
-       host: software.apigee.com
+       host: ap-repo.aeip.apigee.net
        protocol: https
        user: 
        password: 
-       stage: release
+       stage: e2e
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'
      ORG_NAME: ASG
      SKIP_SMTP: 'y'
      SMTPHOST: test.smtp.com
+     SMTPMAILFROM: apiadmin@apigee.com
      SMTPUSER: test@example.com
      # 0 for no username
      SMTPPASSWORD: testpassword

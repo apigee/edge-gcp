@@ -36,6 +36,7 @@ resources:
     SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
     SMTPSSL: {{ properties['SMTPSSL'] }}
     SMTPPORT: {{ properties['SMTPPORT'] }}
+    SMTPMAILFROM: {{ properties['SMTPMAILFROM'] }}
     LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
     SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
     nodes: {{ properties['nodes'] }}
@@ -48,6 +49,7 @@ resources:
           if [ -d "/opt/apigee" ]; then
             exit 1
           fi
+          export TERM=xterm-256color
           mkdir -p /tmp/apigee
           mkdir -p /tmp/apigee/log
           export VERSION="{{ properties['version'] }}"
@@ -68,6 +70,7 @@ resources:
           export SMTPPASSWORD="{{ properties['SMTPPASSWORD'] }}"
           export SMTPSSL="{{ properties['SMTPSSL'] }}"
           export SMTPPORT="{{ properties['SMTPPORT'] }}"
+          export SMTPMAILFROM="{{ properties['SMTPMAILFROM'] }}"
           export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
 
           SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
@@ -116,12 +119,14 @@ resources:
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
           curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
           curl -o /tmp/apigee/ansible-scripts/config/grafana.txt  $SCRIPT_BASEPATH/ansible-scripts/config/grafana.txt
+          curl -o /tmp/apigee/ansible-scripts/config/dp-config.txt  $SCRIPT_BASEPATH/ansible-scripts/config/dp-config.txt
 
           curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
           curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/rmp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/rmp-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/ps-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ps-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/qs-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/qs-playbook.yaml
+          curl -o /tmp/apigee/ansible-scripts/playbook/dp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/dp-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/ms-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ms-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/orgsetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/orgsetup-playbook.yaml
           curl -o /tmp/apigee/ansible-scripts/playbook/edge-prerequisite-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-prerequisite-playbook.yaml
@@ -169,15 +174,25 @@ resources:
 
           sed -i.bak s/SKIP_SMTP=.*/SKIP_SMTP=${SKIP_SMTP}/g config.txt
           sed -i.bak s/SMTPHOST=.*/SMTPHOST=${SMTPHOST}/g config.txt
+          sed -i.bak s/SMTPMAILFROM=.*/SMTPMAILFROM=${SMTPMAILFROM}/g config.txt
           sed -i.bak s/SMTPUSER=.*/SMTPUSER=${SMTPUSER}/g config.txt
           sed -i.bak s/SMTPPASSWORD=.*/SMTPPASSWORD=${SMTPPASSWORD}/g config.txt
           sed -i.bak s/SMTPSSL=.*/SMTPSSL=${SMTPSSL}/g config.txt
           sed -i.bak s/SMTPPORT=.*/SMTPPORT="${SMTPPORT}"/g config.txt
 
+          sed -i.bak s/MGMTIP/$(hostname -i)/g dp-config.txt
+          sed -i.bak s/DEVADMIN_USER=/DEVADMIN_USER="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
+          sed -i.bak s/DEVADMIN_PWD=/DEVADMIN_PWD="${APIGEE_ADMINPW}"/g dp-config.txt
+          sed -i.bak s/EDGE_ORG=/EDGE_ORG="${ORG_NAME}"/g dp-config.txt
+          sed -i.bak s/DEVPORTAL_ADMIN_USERNAME=/DEVPORTAL_ADMIN_USERNAME="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
+          sed -i.bak s/DEVPORTAL_ADMIN_PWD=/DEVPORTAL_ADMIN_PWD="${APIGEE_ADMINPW}"/g dp-config.txt
+          sed -i.bak s/DEVPORTAL_ADMIN_EMAIL=/DEVPORTAL_ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
+
           echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
           if [[ -z ${LB_IP_ALIAS} ]]; then
               LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
           fi
+  
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
@@ -188,6 +203,7 @@ resources:
           
           ansible-playbook -i ../inventory/hosts -u apigee edge-dashboard-playbook.yaml
           ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
+          ansible-playbook -i ../inventory/hosts -u apigee dp-playbook.yaml
 
     disks:
     - deviceName: boot
