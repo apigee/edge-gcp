@@ -8,5 +8,5 @@
     command: "/opt/apigee/apigee-setup/bin/setup.sh -p pdb -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
     sudo: yes
   - name: Setup Drupal
-    command: "/opt/apigee/apigee-setup/bin/setup.sh -p dp -f {{apigee_dest_path}}/{{apigee_config_file_name}}""
+    command: "/opt/apigee/apigee-setup/bin/setup.sh -p dp -f {{apigee_dest_path}}/{{apigee_config_file_name}}"
     sudo: yes

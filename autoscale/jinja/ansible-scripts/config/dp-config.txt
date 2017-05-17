@@ -43,7 +43,7 @@ EDGE_ORG=
 # For a Private Cloud installation, it is in the form: 
 # http://<ms_ip_or_DNS>:8080/v1 or 
 # https://<ms_ip_or_DNS>:TLSport/v1 
-MGMT_URL= 
+MGMT_URL=http://MGMTIP:8080/v1
 
 # The org admin credentials for the Edge organization in the form
 # of Edge emailAddress:pword. 
