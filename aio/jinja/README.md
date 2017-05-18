@@ -1,5 +1,6 @@
 # edge-gcp
-This project allows you to install Edge in Google Cloud Platform using GCP's deployment manager
+This project allows you to install Edge in Google Cloud Platform using GCP's deployment manager.
+This is will install aio instance of edge along with dashboard monitoring and a dev portal.
 
 ## Prerequisite
 
@@ -28,11 +29,11 @@ This project allows you to install Edge in Google Cloud Platform using GCP's dep
 
 ## Deploy AIO profile
 ```sh
-./deploy.sh "RESOURCE_NAME" "zone"
+./deploy.sh "RESOURCE_NAME" 
 ```
 e.g :
 ```sh
-./deploy.sh apigee-edge us-central1-b
+./deploy.sh apigee-edge
 ```
 
 ## Undeploy and Clean the deployment

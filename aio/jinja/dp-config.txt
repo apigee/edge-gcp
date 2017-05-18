@@ -35,7 +35,7 @@ DEVPORTAL_ADMIN_EMAIL=opdk@apigee.com
 # Edge connection details. 
 # If omitted, you can set them in the portal UI. 
 # Specify the Edge organization associated with the portal. 
-EDGE_ORG=myorg
+EDGE_ORG=
 
 # Specify the URL of the Edge management API. 
 # For a Cloud based installation of Edge, the URL is: 
@@ -43,13 +43,13 @@ EDGE_ORG=myorg
 # For a Private Cloud installation, it is in the form: 
 # http://<ms_ip_or_DNS>:8080/v1 or 
 # https://<ms_ip_or_DNS>:TLSport/v1 
-MGMT_URL= 
+MGMT_URL=http://$IP1:8080/v1
 
 # The org admin credentials for the Edge organization in the form
 # of Edge emailAddress:pword. 
 # The portal uses this information to connect to Edge. 
-DEVADMIN_USER=opdk@apigee.com 
-DEVADMIN_PWD=Secret123
+DEVADMIN_USER=
+DEVADMIN_PWD=
 
 # The PHP port. 
 # If omitted, it defaults to 8888. 

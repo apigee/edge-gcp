@@ -59,24 +59,10 @@ resources:
           export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
           SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
 
-          curl -o /tmp/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-          rpm -ivh /tmp/epel-release-latest-7.noarch.rpm
-
-          cd /etc
-          sed -i s/::1/#::1/g hosts
-          cd -
-
-          sudo curl ${REPO_PROTOCOL}://${REPO_USER}:${REPO_PASSWORD}@${REPO_HOST}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
-          sudo chmod 777 /tmp/bootstrap_${VERSION}.sh
-          sudo setenforce 0 >> /tmp/setenforce.out
-          sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
-          sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
-          sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
-          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER  apigeepassword=$REPO_PASSWORD apigeereleasever=${VERSION} JAVA_FIX=I apigeerepohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL apigeestage=$REPO_STAGE
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
-          sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
+          ADMIN_EMAIL=$(cat /tmp/aio-config.txt | grep ADMIN_EMAIL | cut -d'=' -f2)
+          APIGEE_ADMINPW=$(cat /tmp/aio-config.txt | grep APIGEE_ADMINPW | cut -d'=' -f2)
+          ORG_NAME=$(cat /tmp/aio-config.txt | grep ORG_NAME | cut -d'=' -f2)
+          MSIP=$(cat /tmp/aio-config.txt | grep MSIP | cut -d'=' -f2)
 
 
           {{ imports[properties['dp-config']]|indent(10) }}
@@ -101,7 +87,32 @@ resources:
           sed -i s/OPTERR=.*//g /tmp/dp-config.txt
           sed -i s/OPTIND=.*//g /tmp/dp-config.txt
           sed -i s/SCRIPT_BASE.*//g /tmp/dp-config.txt
-          sed -i.bak s/MGMT_URL=/MGMT_URL="http://${MSIP}:8080/v1"/g dp-config.txt
+          sed -i.bak s/EDGE_ORG=/EDGE_ORG="${ORG_NAME}"/g /tmp/dp-config.txt
+          sed -i.bak s/DEVADMIN_USER=/DEVADMIN_USER="${ADMIN_EMAIL}"/g /tmp/dp-config.txt
+          sed -i.bak s/DEVADMIN_PWD=/DEVADMIN_PWD="${APIGEE_ADMINPW}"/g /tmp/dp-config.txt
+
+
+          curl -o /tmp/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+          rpm -ivh /tmp/epel-release-latest-7.noarch.rpm
+
+          cd /etc
+          sed -i s/::1/#::1/g hosts
+          cd -
+
+          sudo curl ${REPO_PROTOCOL}://${REPO_USER}:${REPO_PASSWORD}@${REPO_HOST}/bootstrap_${VERSION}.sh -o /tmp/bootstrap_${VERSION}.sh
+          sudo chmod 777 /tmp/bootstrap_${VERSION}.sh
+          sudo setenforce 0 >> /tmp/setenforce.out
+          sudo cat /etc/selinux/config > /tmp/beforeSelinux.out
+          sudo sed -i 's^SELINUX=enforcing^SELINUX=disabled^g' /etc/selinux/config || true
+          sudo cat /etc/selinux/config > /tmp/afterSeLinux.out
+          sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER  apigeepassword=$REPO_PASSWORD apigeereleasever=${VERSION} JAVA_FIX=I apigeerepohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL apigeestage=$REPO_STAGE
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
+          sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
+
+
+     
           sudo /opt/apigee/apigee-service/bin/apigee-all stop
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p pdb -f /tmp/dp-config.txt
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p dp -f /tmp/dp-config.txt
