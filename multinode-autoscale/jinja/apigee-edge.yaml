@@ -54,7 +54,7 @@ resources:
      autoscale:
         size: 2
         maxSize: 5
-     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/autoscale/jinja"
+     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"
      license: ""
      public-key: ""
      private-key: ""
