@@ -101,11 +101,11 @@ WtR7iP9W+2D0Z7Jikes+M6Md4V1eA+jKN7mLtFQkR3CTEaxyBiOBKGWo6La6
 - Deploy to GCP
 
     ```
-    ./deploy.sh "RESOURCE_NAME" "zone"
+    ./deploy.sh "RESOURCE_NAME"
     ```
     e.g :
 ```sh
-./deploy.sh edgescale us-central1-b
+./deploy.sh edgescale
 Waiting for create operation-1475126000809-53d9e8946f428-6d386c0b-d2f84caa...done.
 Create operation operation-1475126000809-53d9e8946f428-6d386c0b-d2f84caa completed successfully.
 NAME                                      TYPE                             STATE      ERRORS
