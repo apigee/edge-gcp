@@ -106,13 +106,13 @@ WtR7iP9W+2D0Z7Jikes+M6Md4V1eA+jKN7mLtFQkR3CTEaxyBiOBKGWo6La6
     e.g :
 ```sh
 ./deploy.sh edgescale
-Waiting for create operation-1475126000809-53d9e8946f428-6d386c0b-d2f84caa...done.
-Create operation operation-1475126000809-53d9e8946f428-6d386c0b-d2f84caa completed successfully.
-NAME                                      TYPE                             STATE      ERRORS
+The fingerprint of the deployment is 6wbe_dWiZbd4KTskWGiBeg==
+Waiting for create [operation-1495082230045-54fc4f53b5949-227d2cc1-c844ee98]...done.
+Create operation operation-1495082230045-54fc4f53b5949-227d2cc1-c844ee98 completed successfully.
+NAME                                      TYPE                             STATE      ERRORS  INTENT
 edgescale-apigee-ax0                      compute.v1.instance              COMPLETED  []
 edgescale-apigee-ax1                      compute.v1.instance              COMPLETED  []
-edgescale-apigee-ds1                      compute.v1.instance              COMPLETED  []
-edgescale-apigee-ds2                      compute.v1.instance              COMPLETED  []
+edgescale-apigee-dp                       compute.v1.instance              COMPLETED  []
 edgescale-apigee-edge-setup-address       compute.v1.globalAddress         COMPLETED  []
 edgescale-apigee-mgmt                     compute.v1.instance              COMPLETED  []
 edgescale-apigee-rmp-as-as                compute.v1.autoscaler            COMPLETED  []
@@ -133,9 +133,11 @@ edgescale-network-firewall                compute.v1.firewall              COMPL
 edgescale-network-firewall-internal       compute.v1.firewall              COMPLETED  []
 edgescale-network-subnet                  compute.v1.subnetwork            COMPLETED  []
 Please allow 15 minutes for edge to be installed
-Please access the management UI at http://104.198.167.243:9000
-Management Server is at http://104.198.167.243:8080
-Montitoring Dashboard http://104.198.167.243:3000
+Please access the Edge UI at http://104.197.57.76:9000
+Management Server is at http://104.197.57.76:8080
+Please access the Devportal  at http://35.188.148.136:8079
+Cred to access EdgeUI/Managament Server/DevPortal is :"opdk@apigee.com"/'Secret123'
+Montitoring Dashboard http://104.197.57.76:3000
 Creds for Monitoring Dashboard admin/admin
 ```
 
