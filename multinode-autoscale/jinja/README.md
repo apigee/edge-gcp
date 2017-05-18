@@ -92,7 +92,12 @@ GCP Resource Deployment Model
          SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
          license: "This is license text here"
          public-key: "apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
-         private-key: "-----BEGIN RSA PRIVATE KEY-----  -----END RSA PRIVATE KEY-----"
+         private-key: "-----BEGIN RSA PRIVATE KEY-----
+         MIIJKQIBAAKCAgEAudAtZkWpC/1iYPI5tpKQp2YMHfOezaqdYFw890lnvYwdntbs
+         ECeWSQiuREsnUbq/J3vJpFn21IDgFQBOifOuKoieBwtV6d0jOKoQ6cqonp2WAWFU
+         msi3/vzfelCJxdF2YBuSd1vfbpxzqHgShCI2fXGjJ+aZLwp9NCshy12a1S+U1cd5
+         c5X//bZe0L8Q2i+S/MzDyj0HC/92I3WBJb1iJZkoOm7NK1lQ9KwhPDHChhiC1fAr
+         -----END RSA PRIVATE KEY-----"
     ```
 - Deploy to GCP
 
