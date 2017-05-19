@@ -49,9 +49,9 @@ resources:
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
     namedPorts:
     - name: {{ BASE_NAME }}-prod
-      port: 9001
+      port: 80
     - name: {{ BASE_NAME }}-test
-      port: 9002
+      port: 8080
 - name: {{ BASE_NAME }}-as
   type: compute.v1.autoscaler
   properties:

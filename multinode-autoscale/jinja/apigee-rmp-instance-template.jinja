@@ -158,7 +158,7 @@ resources:
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-presetup-playbook.yaml
 
                #Change run user to root
-               #echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
+               echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
                
                #Performance Related configurations
 
