@@ -1,4 +1,4 @@
-- hosts: r
+- hosts: rmp
   vars:
     apigee_source_path: ../config
     apigee_dest_path: /tmp/apigee
