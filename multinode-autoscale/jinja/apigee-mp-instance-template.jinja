@@ -202,7 +202,7 @@ resources:
 
                echo "Installing RMP First time only"
 
-               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
+               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee mp-playbook.yaml
 
                ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
@@ -219,10 +219,8 @@ resources:
                export ORG_NAME="{{ properties['ORG_NAME'] }}"
                 
                export uuid=$(curl -s http://localhost:8082/v1/servers/self | /usr/bin/jq --raw-output '.uUID')
-               export routeruuid=$(curl -s http://localhost:8081/v1/servers/self | /usr/bin/jq --raw-output '.uUID')
                echo "uuid" >> /tmp/apigee/uuid.txt
                echo $uuid >> /tmp/apigee/uuid.txt
-               echo $routeruuid >> /tmp/apigee/uuid.txt
 
                curl0=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/o/$ORG_NAME/e/test/servers -d \"uuid=$uuid\&action=add\"'))
 
@@ -241,9 +239,6 @@ resources:
 
                curl3=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/servers -d \"type=message-processor\&region=dc-1\&pod=gateway\&uuid=$uuid\&action=remove\"'))
                 
-               curl4=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/servers -d \"type=router\&region=dc-1\&pod=gateway\&uuid=$routeruuid\&action=remove\"'))
-
-               curl6=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X DELETE \"http://$MSIP:8080/v1/servers/$routeruuid\"'))
 
                curl5=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X DELETE \"http://$MSIP:8080/v1/servers/$uuid\"'))
 
@@ -254,19 +249,12 @@ resources:
                echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl3 >> /tmp/apigee/shutdown.sh
                echo "sleep 5"  >> /tmp/apigee/shutdown.sh
-               echo $curl4 >> /tmp/apigee/shutdown.sh
-               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                echo $curl5 >> /tmp/apigee/shutdown.sh
-               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
-               echo $curl6 >> /tmp/apigee/shutdown.sh
                echo "sleep 5"  >> /tmp/apigee/shutdown.sh
                chmod +x /tmp/apigee/shutdown.sh
                chmod +x /tmp/apigee/startup.sh
 
-               sleep 30
-
                /tmp/apigee/startup.sh
-
 
             - key: shutdown-script
               value: |

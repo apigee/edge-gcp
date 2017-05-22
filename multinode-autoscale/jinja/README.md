@@ -65,7 +65,7 @@ GCP Resource Deployment Model
          region: us-central1
          zone: us-central1-b
          nodes: 7
-         cidr: 192.168.2.0/24
+         cidr: 10.10.7.0/24
          version: '4.17.01'
          repo:
            host: software.apigee.com

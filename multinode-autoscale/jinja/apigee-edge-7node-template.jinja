@@ -11,24 +11,6 @@ limitations under the License.
 #}
 
 resources:
-- name: apigee-ds1
-  type: apigee-shared-vm-template.jinja
-  properties:
-    network: {{ properties["network"] }}
-    subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
-    sourceImage: {{ properties["sourceImage"] }}
-- name: apigee-ds2
-  type: apigee-shared-vm-template.jinja
-  properties:
-    network: {{ properties["network"] }}
-    subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
-    sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ax0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -58,4 +40,4 @@ resources:
     sourceImage: {{ properties["sourceImage"] }}
 outputs:
 - name: HOST_NAMES
-  value: $(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp):$(ref.apigee-dp.myIp)
+  value: $(ref.apigee-ax0.myIp):$(ref.apigee-ax1.myIp):$(ref.apigee-dp.myIp)

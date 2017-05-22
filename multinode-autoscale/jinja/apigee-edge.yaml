@@ -29,7 +29,7 @@ resources:
      machineType: n1-standard-2
      region: us-central1
      zone: us-central1-b
-     nodes: 5
+     nodes: 7
      cidr: 10.10.7.0/24
      version: '4.17.05'
      repo:
