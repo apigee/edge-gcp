@@ -183,6 +183,12 @@ resources:
                chown apigee:apigee /opt/apigee/customer/application/router.properties
 
 
+               echo "* hard nofile 94000" >> /etc/security/limits.conf
+               echo "* soft nofile 94000" >> /etc/security/limits.conf
+               echo "* hard noproc 64000" >> /etc/security/limits.conf
+               echo "* soft noproc 64000"  >> /etc/security/limits.conf
+
+
                #Wait for the MS Server to be up
 
                if [ "$redhat_release" = "7" ]; then
