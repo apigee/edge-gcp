@@ -64,7 +64,7 @@ then
 
 fi
 
-read -r -p "Do you want to Shutdown a Router Processor? [Y/n]" response
+read -r -p "Do you want to Shutdown a Router ? [Y/n]" response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]] 
 then
 
