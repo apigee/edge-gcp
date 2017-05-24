@@ -37,7 +37,7 @@ then
 
  	echo "${red}Lets stop one of the cassandra component now"
 
-	cassIP=$(gcloud compute instances describe $1-apigee-ax0 --zone $zone --format yaml | grep natIP)
+	cassIP=$(gcloud compute instances describe $1-apigee-ds1 --zone $zone --format yaml | grep natIP)
 	cassIP=$(echo $cassIP | grep -oE "[^:]+$")
 	cassIP="${cassIP#"${cassIP%%[![:space:]]*}"}"   # remove leading whitespace characters
 	cassIP="${cassIP%"${cassIP##*[![:space:]]}"}"
