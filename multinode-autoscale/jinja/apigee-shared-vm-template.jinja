@@ -52,7 +52,7 @@ resources:
       autoDelete: true
       initializeParams:
         diskName: {{ MASTER }}-disk
-        diskSizeGb: 40
+        diskSizeGb: 100
         sourceImage: {{ properties["sourceImage"] }}
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)

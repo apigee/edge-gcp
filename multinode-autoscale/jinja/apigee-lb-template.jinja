@@ -13,6 +13,8 @@ limitations under the License.
 {% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
 {% set LB_PORT = 80 %}
 {% set LB_PORT_TEST = 8080 %}
+{% set PROD_VH_PORT = 9001 %}
+{% set TEST_VH_PORT = 9002 %}
 {% set HEALTH_CHECK_PORT = "15999" %}
 {% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
 
@@ -72,9 +74,9 @@ resources:
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
     namedPorts:
     - name: {{ BASE_NAME }}-prod
-      port: 80
+      port: {{ PROD_VH_PORT }}
     - name: {{ BASE_NAME }}-test
-      port: 8080
+      port: {{ TEST_VH_PORT }}
 - name: {{ BASE_NAME }}-mp-igm
   type: compute.v1.instanceGroupManager
   properties:
@@ -82,19 +84,6 @@ resources:
     targetSize: {{ properties['size'] }}
     baseInstanceName: {{ BASE_NAME }}-mp-instance
     instanceTemplate: $(ref.{{ BASE_NAME }}-mp-it.selfLink)
-    namedPorts:
-    - name: {{ BASE_NAME }}-prod
-      port: 80
-    - name: {{ BASE_NAME }}-test
-      port: 8080
-- name: {{ BASE_NAME }}-as
-  type: compute.v1.autoscaler
-  properties:
-    zone: {{ properties['zone'] }}
-    target: $(ref.{{ BASE_NAME }}-igm.selfLink)
-    autoscalingPolicy:
-      maxNumReplicas: {{ properties['size'] }}
-      coolDownPeriodSec: 600
 - name: {{ BASE_NAME }}-mp-as
   type: compute.v1.autoscaler
   properties:
