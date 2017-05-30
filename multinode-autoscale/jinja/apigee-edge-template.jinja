@@ -15,6 +15,8 @@ limitations under the License.
 {% set  SUBNET_NAME =  env['deployment'] + '-' + 'network-subnet' %}
 {% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
 {% set  TEMPLATE_NAME = 'apigee-edge-' + properties['nodes']|string + 'node-template.jinja' %}
+{% set  RMP_TEMPLATE_NAME = 'apigee-lb-autoscale-' + (properties['autoscale'].enabled|string).lower() + '-template.jinja' %}
+
 {% set  sourceImage= 'https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7' %}
 
 resources:
@@ -76,7 +78,7 @@ resources:
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
     sourceImage: {{ sourceImage }}
 - name: apigee-rmp-as
-  type: apigee-lb-template.jinja
+  type: {{ RMP_TEMPLATE_NAME }}
   properties:
     network: {{ NETWORK_NAME }}
     subnet: {{ SUBNET_NAME }}

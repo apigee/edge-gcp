@@ -13,23 +13,26 @@
 imports:
 - path: apigee-shared-vm-template.jinja
 - path: apigee-rmp-instance-template.jinja
+- path: apigee-r-instance-template.jinja
+- path: apigee-mp-instance-template.jinja
 - path: apigee-mgmt-vm-template.jinja
 - path: apigee-network-template.jinja
 - path: apigee-firewall-template.jinja
-- path: apigee-lb-template.jinja
+- path: apigee-lb-autoscale-true-template.jinja
+- path: apigee-lb-autoscale-false-template.jinja
 - path: apigee-edge-5node-template.jinja
-- path: apigee-edge-9node-template.jinja
 - path: apigee-edge-7node-template.jinja
+- path: apigee-edge-9node-template.jinja
 - path: apigee-edge-template.jinja
 
 resources:
 - name: apigee-edge-setup
   type: apigee-edge-template.jinja
   properties:
+     nodes: 5
      machineType: n1-standard-2
      region: us-central1
      zone: us-central1-b
-     nodes: 7
      cidr: 10.10.7.0/24
      version: '4.17.05'
      repo:
@@ -52,6 +55,7 @@ resources:
      SMTPSSL: 'y'
      SMTPPORT: 465
      autoscale:
+        enabled: false
         size: 2
         maxSize: 5
      SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"

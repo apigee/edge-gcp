@@ -32,7 +32,7 @@ GCP Resource Deployment Model
     | machineType       | The machine types. Refer https://cloud.google.com/compute/docs/machine-types for list of all machine types               |
     | region            | gcloud region . asia-east1,europe-west1,us-central1,us-east1,us-west1  | 
     | zone              | The availability zone in region               |
-    | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 5, 7 , 9  nodes. You can specify any of these values                                    |
+    | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 2,5,7,9,13 nodes. You can specify any of these values                                    |
     | cidr              | The subnet address.                            |
     | version           | The apigee private cloud release version       |
     | repo : host       | The software repo of apigee binaries           |
@@ -51,8 +51,9 @@ GCP Resource Deployment Model
     | SMTPPASSWORD      | SMTP Password. 0 if no password                |
     | SMTPSSL           | Is SMTP on SSL                                 |
     | SMTPPORT          | SMTP port (25)                                 |
-    | autoscale : size  | The target size of autoscale instances         |
-    | autoscale : maxSize| The maximum number of autoscaled instances     |
+    | autoscale : enabled| The value can be true or false                |
+    | autoscale : size  | The minimum number of rmp instances. Even if autoscale is false, you need to provide the number of rmp nodes           |
+    | autoscale : maxSize| The maximum number of autoscaled instances    |
     | SCRIPT_BASEPATH   | The raw  path where script is located          |
     | license           | Paste the license  text here                   |
     | public-key        | Paste the contents of apigee.key.pub  you created earlier|
@@ -64,7 +65,7 @@ GCP Resource Deployment Model
          machineType: n1-standard-2
          region: us-central1
          zone: us-central1-b
-         nodes: 7
+         nodes: 5
          cidr: 10.10.7.0/24
          version: '4.17.01'
          repo:
@@ -87,6 +88,7 @@ GCP Resource Deployment Model
          SMTPSSL: 'y'
          SMTPPORT: 465
          autoscale:
+            enabled: true
             size: 2
             maxSize: 5
          SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
