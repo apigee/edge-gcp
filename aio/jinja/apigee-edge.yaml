@@ -31,12 +31,12 @@ resources:
      monitoring-config:  monitoring-config.txt
      machineType: n1-highcpu-8
      zone: us-east1-b
-     version: '4.17.05'
+     version: '4.17.01'
      SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/aio/jinja"
      repo:
-      host: ap-repo.aeip.apigee.net
+      host: software.apigee.com
       protocol: https
       user: 
       password: 
-      stage: e2e
+      stage: release
      license: ""
