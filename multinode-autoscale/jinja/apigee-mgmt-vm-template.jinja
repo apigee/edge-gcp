@@ -72,6 +72,7 @@ resources:
           export SMTPPORT="{{ properties['SMTPPORT'] }}"
           export SMTPMAILFROM="{{ properties['SMTPMAILFROM'] }}"
           export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
+          export nodes="{{ properties['nodes'] }}"
 
           SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
 
@@ -109,10 +110,12 @@ resources:
 
           echo {{ properties["license"] }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
 
+          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_2node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_2node
           curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_5node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_5node
           curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_7node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_7node
           curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_9node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_9node
 
+          curl -o /tmp/apigee/ansible-scripts/config/config2.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config2.txt
           curl -o /tmp/apigee/ansible-scripts/config/config5.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config5.txt
           curl -o /tmp/apigee/ansible-scripts/config/config7.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config7.txt
           curl -o /tmp/apigee/ansible-scripts/config/config9.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config9.txt
@@ -193,6 +196,11 @@ resources:
           echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
           if [[ -z ${LB_IP_ALIAS} ]]; then
               LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
+          fi
+          if [[ $nodes == '2' ]]; then
+             LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
+             sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
+             sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
           fi
   
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt

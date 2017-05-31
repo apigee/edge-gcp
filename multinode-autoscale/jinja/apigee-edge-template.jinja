@@ -19,6 +19,10 @@ limitations under the License.
 
 {% set  sourceImage= 'https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7' %}
 
+{% if (properties['nodes'] == 2) %}
+{% set  RMP_TEMPLATE_NAME='apigee-lb-template.jinja' %}
+{% endif %}
+
 resources:
 - name: {{ NETWORK_NAME }}
   type: apigee-network-template.jinja
