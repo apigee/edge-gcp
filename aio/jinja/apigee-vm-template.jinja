@@ -111,9 +111,17 @@ resources:
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
 
+          sed -i.bak s/VHOST_PORT=9001/VHOST_PORT=9002/g /tmp/aio-config.txt
+          sed -i.bak s/ENV_NAME=test/ENV_NAME=prod/g /tmp/aio-config.txt
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
+          
+          echo "conf_system_jsse.enableSNIExtension=true" >> /opt/apigee/customer/application/message-processor.properties
+          chown apigee:apigee /opt/apigee/customer/application/message-processor.properties
+          sudo /opt/apigee/apigee-service/bin/apigee-service edge-message-processor restart
 
-     
-          sudo /opt/apigee/apigee-service/bin/apigee-all stop
+          sudo /opt/apigee/apigee-service/bin/apigee-service edge-router stop
+          sudo /opt/apigee/apigee-service/bin/apigee-service edge-ui stop
+
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p pdb -f /tmp/dp-config.txt
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p dp -f /tmp/dp-config.txt
 
@@ -132,8 +140,7 @@ resources:
           rm -fr /opt/apigee/apigee-lb/conf.d/*
           chown apigee:apigee /opt/apigee/apigee-lb/bin/start
           chmod 777 /opt/apigee/apigee-lb/bin/start
-          sudo /opt/apigee/apigee-service/bin/apigee-all restart
-
+          
           {{ imports[properties['monitoring-config']]|indent(10) }}
           set >> /tmp/monitoring-config.txt
           sed -i s/BASH.*=.*//g /tmp/monitoring-config.txt
@@ -166,6 +173,7 @@ resources:
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf install
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf setup -f /tmp/monitoringconfig
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf restart
+          sudo /opt/apigee/apigee-service/bin/apigee-all restart
 
 
     disks:
