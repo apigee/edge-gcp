@@ -9,7 +9,7 @@ This is will install aio instance of edge along with dashboard monitoring and a 
 - Initialize your account
 
 ## Before you start
-- Edit the aio/jinja/apigee-vm.yaml and update the properies
+- Edit the aio/jinja/apigee-edge.yaml and update the properies
 
     ```sh
         aio-config: aio-config.txt
