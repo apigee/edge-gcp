@@ -12,7 +12,10 @@ Please go through http://docs.apigee.com/private-cloud/content/version-41705 to 
 
 ## Apigee Deployment on GCP
 
-At this point of time supported topologies are 2,5 , 7 and 9 . Additionally for 5,7,9 topologies you can setup auto scaling. When set of auto scaling, Routers and MP's are configured in seperate nodes.
+ - At this point of time supported topologies are 2,5 , 7 and 9 . Additionally for 5,7,9 topologies you can setup auto scaling. When set of auto scaling, Routers and MP's are configured in seperate nodes.
+ - Additionally it also creates 1 node Developer portal for each supported toplogy. So for example if you choose to deploy 5 node topology, a 6th node will spin up with developer portal.
+ 
+ - Supported Deployment Topologies
 
 Edge Topology- 2 node
 ![Edge Topology- 2 node](/images/2node.png)
@@ -131,6 +134,7 @@ GCP Resource Deployment Model for 7 node
     ```
     ./deploy.sh "RESOURCE_NAME"
     ```
+    RESOURCE_NAME is any freetext name you want to give to your deployments. All the GCP resources would be tagged with the name you provide in RESOURCE name. All the GCP resopurces are createdwith name  having prefix of "RESOURCE_NAME".
     e.g :
 ```sh
 ./deploy.sh edgescale
