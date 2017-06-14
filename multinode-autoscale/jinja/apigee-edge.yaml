@@ -38,11 +38,11 @@ resources:
      cidr: 10.10.5.0/24
      version: '4.17.05'
      repo:
-       host: ap-repo.aeip.apigee.net
+       host: software.apigee.com
        protocol: https
        user: 
        password: 
-       stage: e2e
+       stage: release
      APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
      APIGEE_ADMINPW: 'Secret123'
      APIGEE_LDAPPW: 'Secret123'
