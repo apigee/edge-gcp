@@ -20,20 +20,20 @@ Edge Topology- 2 node
 Edge Topology- 5 node
 ![Edge Topology- 5 node](/images/5node.png)
 
-Edge Topology- 5 node with auto scaling with 2 MP nodes
-![Edge Topology- 5 node with auto scaling with 2 MP nodes](/images/5node-auto-scaling.png)
+Edge Topology- 5 node with auto scaling
+![Edge Topology- 5 node with auto scaling](/images/5node-auto-scaling.png)
 
 Edge Topology- 7 node
 ![Edge Topology- 7 node](/images/7node.png)
 
-Edge Topology- 7 node with auto scaling with 2 MP nodes
-![Edge Topology- 7 node with auto scaling with 2 MP nodes](/images/7node-auto-scaling.png)
+Edge Topology- 7 node with auto scaling
+![Edge Topology- 7 node with auto scaling](/images/7node-auto-scaling.png)
 
 Edge Topology- 9 node
 ![Edge Topology- 9 node](/images/9node.png)
 
-Edge Topology- 9 node with auto scaling with 2 MP nodes
-![Edge Topology- 9 node with auto scaling with 2 MP nodes](/images/9node-auto-scaling.png)
+Edge Topology- 9 node with auto scaling
+![Edge Topology- 9 node with auto scaling](/images/9node-auto-scaling.png)
 
 GCP Resource Deployment Model for 7 node
 ![GCP Resource Deployment Model for 7 node](/images/resourceDeployment.png)
