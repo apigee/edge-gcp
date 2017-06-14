@@ -9,8 +9,26 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 
 ## Apigee Deployment on GCP
 
+Edge Topology- 2 node
+![Deployment Template](/images/2node.png)
+
+Edge Topology- 5 node
+![Deployment Template](/images/5node.png)
+
+Edge Topology- 5 node with auto scaling
+![Deployment Template](/images/5node-auto-scaling.png)
+
 Edge Topology- 7 node
-![Deployment Template](/images/deploymentTemplate.png)
+![Deployment Template](/images/7node.png)
+
+Edge Topology- 7 node with auto scaling
+![Deployment Template](/images/7node-auto-scaling.png)
+
+Edge Topology- 9 node
+![Deployment Template](/images/9node.png)
+
+Edge Topology- 9 node with auto scaling
+![Deployment Template](/images/9node-auto-scaling.png)
 
 GCP Resource Deployment Model
 ![Resource Deployment Model](/images/resourceDeployment.png)
