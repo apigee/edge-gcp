@@ -53,7 +53,7 @@ GCP Resource Deployment Model for 7 node
             apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
           ```
 
-- Edit the apigee-edge.yaml and change the entries. All fields are mandatory so please add missing fields for repo->user, repo->password, public key, private key and license. 
+- Add missing fields repo->user, repo->password, public-key, private-key and license in apigee-edge.yaml. Change other entries as desired.
 
     | properties        | Description                                    |
     | ----------------- |:-----------------------------------------------| 
@@ -66,7 +66,7 @@ GCP Resource Deployment Model for 7 node
     | repo : host       | The software repo of apigee binaries           |
     | repo : protocol   | The software repo protocol  (http or https)    | 
     | repo : user       | The  user details to access Apigee software    |
-    | repo : stage      | The repo stage (prod, e2e)                     |
+    | repo : stage      | The repo stage (release, e2e)                     |
     | repo : password   | The  password to access the software           |
     | APIGEE_ADMIN_EMAIL| Edge system admin user                         |
     | APIGEE_ADMINPW    | Edge System admin Password                     |
