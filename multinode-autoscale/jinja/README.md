@@ -137,17 +137,16 @@ GCP Resource Deployment Model for 7 node
     RESOURCE_NAME is any freetext name you want to give to your deployments. All the GCP resources would be tagged with the name you provide in RESOURCE name. All the GCP resopurces are createdwith name  having prefix of "RESOURCE_NAME".
     e.g :
 ```sh
-./deploy.sh edgescale
-The fingerprint of the deployment is 6wbe_dWiZbd4KTskWGiBeg==
-Waiting for create [operation-1495082230045-54fc4f53b5949-227d2cc1-c844ee98]...done.
-Create operation operation-1495082230045-54fc4f53b5949-227d2cc1-c844ee98 completed successfully.
+ ./deploy.sh edgescale
+The fingerprint of the deployment is 9hoWNIgK1hZBgWMKaawwVw==
+Waiting for create [operation-1497481444820-551f391938420-50c3ae86-82ae79ba]...done.
+Create operation operation-1497481444820-551f391938420-50c3ae86-82ae79ba completed successfully.
 NAME                                      TYPE                             STATE      ERRORS  INTENT
 edgescale-apigee-ax0                      compute.v1.instance              COMPLETED  []
 edgescale-apigee-ax1                      compute.v1.instance              COMPLETED  []
 edgescale-apigee-dp                       compute.v1.instance              COMPLETED  []
 edgescale-apigee-edge-setup-address       compute.v1.globalAddress         COMPLETED  []
 edgescale-apigee-mgmt                     compute.v1.instance              COMPLETED  []
-edgescale-apigee-rmp-as-as                compute.v1.autoscaler            COMPLETED  []
 edgescale-apigee-rmp-as-bes-prod          compute.v1.backendService        COMPLETED  []
 edgescale-apigee-rmp-as-bes-test          compute.v1.backendService        COMPLETED  []
 edgescale-apigee-rmp-as-hc                compute.v1.httpHealthCheck       COMPLETED  []
@@ -156,6 +155,9 @@ edgescale-apigee-rmp-as-it                compute.v1.instanceTemplate      COMPL
 edgescale-apigee-rmp-as-l7lb-prod         compute.v1.globalForwardingRule  COMPLETED  []
 edgescale-apigee-rmp-as-l7lb-test         compute.v1.globalForwardingRule  COMPLETED  []
 edgescale-apigee-rmp-as-lb                compute.v1.firewall              COMPLETED  []
+edgescale-apigee-rmp-as-mp-as             compute.v1.autoscaler            COMPLETED  []
+edgescale-apigee-rmp-as-mp-igm            compute.v1.instanceGroupManager  COMPLETED  []
+edgescale-apigee-rmp-as-mp-it             compute.v1.instanceTemplate      COMPLETED  []
 edgescale-apigee-rmp-as-targetproxy-prod  compute.v1.targetHttpProxy       COMPLETED  []
 edgescale-apigee-rmp-as-targetproxy-test  compute.v1.targetHttpProxy       COMPLETED  []
 edgescale-apigee-rmp-as-urlmap-prod       compute.v1.urlMap                COMPLETED  []
@@ -165,11 +167,11 @@ edgescale-network-firewall                compute.v1.firewall              COMPL
 edgescale-network-firewall-internal       compute.v1.firewall              COMPLETED  []
 edgescale-network-subnet                  compute.v1.subnetwork            COMPLETED  []
 Please allow 15 minutes for edge to be installed
-Please access the Edge UI at http://104.197.57.76:9000
-Management Server is at http://104.197.57.76:8080
-Please access the Devportal  at http://35.188.148.136:8079
+Please access the Edge UI at http://35.184.252.116:9000
+Management Server is at http://35.184.252.116:8080
+Please access the Devportal  at http://104.198.251.5:8079
 Cred to access EdgeUI/Managament Server/DevPortal is :"opdk@apigee.com"/'Secret123'
-Montitoring Dashboard http://104.197.57.76:3000
+Montitoring Dashboard http://35.184.252.116:3000
 Creds for Monitoring Dashboard admin/admin
 ```
 
