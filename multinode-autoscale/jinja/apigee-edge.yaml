@@ -31,11 +31,11 @@ resources:
 - name: apigee-edge-setup
   type: apigee-edge-template.jinja
   properties:
-     nodes: 2
+     nodes: 5
      machineType: n1-standard-2
      region: us-central1
      zone: us-central1-b
-     cidr: 10.10.5.0/24
+     cidr: 10.10.7.0/24
      version: '4.17.05'
      repo:
        host: software.apigee.com
@@ -57,7 +57,7 @@ resources:
      SMTPSSL: 'y'
      SMTPPORT: 465
      autoscale:
-        enabled: false
+        enabled: true
         size: 2
         maxSize: 5
      SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"
