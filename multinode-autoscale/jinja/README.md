@@ -53,7 +53,7 @@ GCP Resource Deployment Model for 7 node
             apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
           ```
 
-- Edit the apigee-edge.yaml and change the entries 
+- Edit the apigee-edge.yaml and change the entries. All fields are mandatory so please add missing fields for repo->user, repo->password, public key, private key and license. 
 
     | properties        | Description                                    |
     | ----------------- |:-----------------------------------------------| 
@@ -188,8 +188,10 @@ e.g :
 ## Troubleshootig
 
 It uses ansible based scripts for multi node installation and there can be cases where the instances doesnt get up after 15 - 30 minutes. It may require additional diaganosis on what may have gone wrong in installation.
+
+- Check if apigee-edge.yaml properties are correct. Check if private key, public key, repo user, repo password and  license files are set correctly.
 - ssh to management server box which will be typically the vm with name "RESOUCE-NAME"-apigee-mgmt
-- Go to /tmp/apigee/log directory and you can find two log files - ansible.log and other is setup-root.log. You can look into these logs to find out what might have gone wrong.
+- Go to /tmp/apigee/log directory and you can find two log files - ansible.log and setup-root.log. Looking into those files can provide clue to what may have gone wrong.
 
 
 ## License
