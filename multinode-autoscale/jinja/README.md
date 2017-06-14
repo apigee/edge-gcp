@@ -15,28 +15,28 @@ Please go through http://docs.apigee.com/private-cloud/content/version-41705 to 
 At this point of time supported topologies are 2,5 , 7 and 9 . Additionally for 5,7,9 topologies you can setup auto scaling. When set of auto scaling, Routers and MP's are configured in seperate nodes.
 
 Edge Topology- 2 node
-![Deployment Template](/images/2node.png)
+![Edge Topology- 2 node](/images/2node.png)
 
 Edge Topology- 5 node
-![Deployment Template](/images/5node.png)
+![Edge Topology- 5 node](/images/5node.png)
 
 Edge Topology- 5 node with auto scaling with 2 MP nodes
-![Deployment Template](/images/5node-auto-scaling.png)
+![Edge Topology- 5 node with auto scaling with 2 MP nodes](/images/5node-auto-scaling.png)
 
 Edge Topology- 7 node
-![Deployment Template](/images/7node.png)
+![Edge Topology- 7 node](/images/7node.png)
 
 Edge Topology- 7 node with auto scaling with 2 MP nodes
-![Deployment Template](/images/7node-auto-scaling.png)
+![Edge Topology- 7 node with auto scaling with 2 MP nodes](/images/7node-auto-scaling.png)
 
 Edge Topology- 9 node
-![Deployment Template](/images/9node.png)
+![Edge Topology- 9 node](/images/9node.png)
 
 Edge Topology- 9 node with auto scaling with 2 MP nodes
-![Deployment Template](/images/9node-auto-scaling.png)
+![Edge Topology- 9 node with auto scaling with 2 MP nodes](/images/9node-auto-scaling.png)
 
 GCP Resource Deployment Model for 7 node
-![Resource Deployment Model](/images/resourceDeployment.png)
+![GCP Resource Deployment Model for 7 node](/images/resourceDeployment.png)
 
 ## Getting Started
 - Create a ssh key pair 
