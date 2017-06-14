@@ -45,7 +45,10 @@ GCP Resource Deployment Model for 7 node
     ```
     This generates a key pair file apigee.key and apigee.key.pub
     - Edit the apigee.key.pub file and prefix this with [USERNAME]: (apigee: in this case)  
-    - so the public key file should like  apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
+    - so the public key file should like  
+          ```
+            apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
+          ```
 
 - Edit the apigee-edge.yaml and change the entries 
 
