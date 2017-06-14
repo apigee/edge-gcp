@@ -57,7 +57,7 @@ GCP Resource Deployment Model for 7 node
     | machineType       | The machine types. Refer https://cloud.google.com/compute/docs/machine-types for list of all machine types               |
     | region            | gcloud region . asia-east1,europe-west1,us-central1,us-east1,us-west1  | 
     | zone              | The availability zone in region               |
-    | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 2,5,7,9,13 nodes. You can specify any of these values                                    |
+    | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 2,5,7,9 nodes. You can specify any of these values                                    |
     | cidr              | The subnet address.                            |
     | version           | The apigee private cloud release version       |
     | repo : host       | The software repo of apigee binaries           |
