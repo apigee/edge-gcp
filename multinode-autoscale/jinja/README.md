@@ -134,7 +134,7 @@ GCP Resource Deployment Model for 7 node
     ```
     ./deploy.sh "RESOURCE_NAME"
     ```
-    RESOURCE_NAME is any freetext name you want to give to your deployments. All the GCP resources would be tagged with the name you provide in RESOURCE name. All the GCP resopurces are createdwith name  having prefix of "RESOURCE_NAME".
+    RESOURCE_NAME is any freetext name you give to your deployments. All the GCP resources would be tagged with the name you provide in RESOURCE name. All the GCP resopurces are createdwith name  having prefix of "RESOURCE_NAME".
     e.g :
 ```sh
  ./deploy.sh edgescale
