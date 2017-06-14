@@ -1,5 +1,5 @@
 # edge-gcp
-This project allows you to install edge in Google Cloud Platform using GCP's deployment manager. This uses gcp's autoscale feature to put RMP blocks in autoscale group.
+This project allows you to install edge in Google Cloud Platform using GCP's deployment manager. This uses gcp's autoscale feature to put MP blocks in autoscale group.
 
 ## Prerequisite
 
@@ -7,7 +7,12 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 - Install gcloud sdk from https://cloud.google.com/sdk/downloads
 - Initialize your account
 
+## Apigee Private Cloud
+Please go through http://docs.apigee.com/private-cloud/content/version-41705 to know more about Apigee Edge Private Cloud.
+
 ## Apigee Deployment on GCP
+
+At this point of time supported topologies are 2,5 , 7 and 9 . Additionally for 5,7,9 topologies you can setup auto scaling. When set of auto scaling, Routers and MP's are configured in seperate nodes.
 
 Edge Topology- 2 node
 ![Deployment Template](/images/2node.png)
@@ -15,22 +20,22 @@ Edge Topology- 2 node
 Edge Topology- 5 node
 ![Deployment Template](/images/5node.png)
 
-Edge Topology- 5 node with auto scaling
+Edge Topology- 5 node with auto scaling with 2 MP nodes
 ![Deployment Template](/images/5node-auto-scaling.png)
 
 Edge Topology- 7 node
 ![Deployment Template](/images/7node.png)
 
-Edge Topology- 7 node with auto scaling
+Edge Topology- 7 node with auto scaling with 2 MP nodes
 ![Deployment Template](/images/7node-auto-scaling.png)
 
 Edge Topology- 9 node
 ![Deployment Template](/images/9node.png)
 
-Edge Topology- 9 node with auto scaling
+Edge Topology- 9 node with auto scaling with 2 MP nodes
 ![Deployment Template](/images/9node-auto-scaling.png)
 
-GCP Resource Deployment Model
+GCP Resource Deployment Model for 7 node
 ![Resource Deployment Model](/images/resourceDeployment.png)
 
 ## Getting Started
@@ -40,8 +45,7 @@ GCP Resource Deployment Model
     ```
     This generates a key pair file apigee.key and apigee.key.pub
     - Edit the apigee.key.pub file and prefix this with [USERNAME]: (apigee: in this case)  
-    - so the public key file should like  [USERNAME]:ssh-rsa [KEY_VALUE] [USERNAME]
-    - In this case USERNAME is apigee
+    - so the public key file should like  apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
 
 - Edit the apigee-edge.yaml and change the entries 
 
