@@ -184,6 +184,14 @@ e.g :
 ```sh
 ./clean.sh edgescale
 ```
+
+## Troubleshootig
+
+It uses ansible based scripts for multi node installation and there can be cases where the instances doesnt get up after 15 - 30 minutes. It may require additional diaganosis on what may have gone wrong in installation.
+- ssh to management server box which will be typically the vm with name "RESOUCE-NAME"-apigee-mgmt
+- Go to /tmp/apigee/log directory and you can find two log files - ansible.log and other is setup-root.log. You can look into these logs to find out what might have gone wrong.
+
+
 ## License
 
 Apache 2.0 - See [LICENSE](LICENSE) for more information.

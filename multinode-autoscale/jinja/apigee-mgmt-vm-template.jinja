@@ -213,7 +213,7 @@ resources:
           
           ansible-playbook -i ../inventory/hosts -u apigee edge-dashboard-playbook.yaml
           ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
-          #ansible-playbook -i ../inventory/hosts -u apigee dp-playbook.yaml
+          ansible-playbook -i ../inventory/hosts -u apigee dp-playbook.yaml
 
     disks:
     - deviceName: boot
