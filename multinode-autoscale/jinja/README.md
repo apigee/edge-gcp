@@ -12,8 +12,8 @@ Please go through http://docs.apigee.com/private-cloud/content/version-41705 to 
 
 ## Apigee Deployment on GCP
 
- - At this point of time supported topologies are 2,5 , 7 and 9 . Additionally for 5,7,9 topologies you can setup auto scaling. When set of auto scaling, Routers and MP's are configured in seperate nodes.
- - Additionally it also creates 1 node Developer portal for each supported toplogy. So for example if you choose to deploy 5 node topology, a 6th node will spin up with developer portal.
+ - At this point of time, supported topologies are 2,5,7 and 9. For 5,7,9 node topologies, you can setup auto scaling. When set to auto scaling, Routers and MP's are configured in seperate nodes.
+ - Additionally it also create Developer portal in a separate node for all supported toplogies. So for example if you choose to deploy 5 node topology, it will deploy developer portal on 6th node.
  
  - Supported Deployment Topologies
 
