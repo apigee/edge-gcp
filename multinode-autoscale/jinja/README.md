@@ -95,7 +95,7 @@ GCP Resource Deployment Model for 7 node
          zone: us-central1-b
          nodes: 5
          cidr: 10.10.7.0/24
-         version: '4.17.01'
+         version: '4.17.05'
          repo:
            host: software.apigee.com
            protocol: https
@@ -119,8 +119,8 @@ GCP Resource Deployment Model for 7 node
             enabled: true
             size: 2
             maxSize: 5
-         SCRIPT_BASEPATH: "https://raw.githubusercontent.com/rajeshm7910/apigee-gcp/master/autoscale/jinja"
-         license: "This is license text here"
+         SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"
+         license: "Paste license text here"
          public-key: "apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
          private-key: "-----BEGIN RSA PRIVATE KEY-----
          MIIJKQIBAAKCAgEAudAtZkWpC/1iYPI5tpKQp2YMHfOezaqdYFw890lnvYwdntbs
@@ -134,7 +134,7 @@ GCP Resource Deployment Model for 7 node
     ```
     ./deploy.sh "RESOURCE_NAME"
     ```
-    RESOURCE_NAME is any freetext name you give to your deployments. All the GCP resources are tagged under that RESOURCE. All the GCP resources are created with name  having prefix of "RESOURCE_NAME".
+    RESOURCE_NAME is the name you give to your deployments. All the GCP resources will be tagged under that RESOURCE. All the GCP resources are created with name  having prefix of "RESOURCE_NAME".
     e.g :
 ```sh
  ./deploy.sh edgescale
