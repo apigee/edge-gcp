@@ -17,7 +17,7 @@ devIP="${devIP%"${devIP##*[![:space:]]}"}"
 
 admin_email=$(echo $(cat apigee-edge.yaml | grep ADMIN_EMAIL) | cut -d':' -f2 | sed -e 's/^[ \t]*//' | cut -d' ' -f1 )
 admin_password=$(echo $(cat apigee-edge.yaml | grep APIGEE_ADMINPW) | cut -d':' -f2 | sed -e 's/^[ \t]*//' | cut -d' ' -f1 )
-echo "${red}Please allow 15 minutes for edge to be installed";
+echo "${red}Please allow upto 15 minutes for edge to be installed";
 echo "${blue}Please access the Edge UI at ${green}http://$IP:9000";
 echo "${blue}Management Server is at ${green}http://$IP:8080";
 echo "${blue}Please access the Devportal  at ${green}http://$devIP:8079";

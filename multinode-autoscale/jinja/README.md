@@ -166,7 +166,7 @@ edgescale-network                         compute.v1.network               COMPL
 edgescale-network-firewall                compute.v1.firewall              COMPLETED  []
 edgescale-network-firewall-internal       compute.v1.firewall              COMPLETED  []
 edgescale-network-subnet                  compute.v1.subnetwork            COMPLETED  []
-Please allow 15 minutes for edge to be installed
+Please allow upto 15 minutes for edge to be installed
 Please access the Edge UI at http://35.184.252.116:9000
 Management Server is at http://35.184.252.116:8080
 Please access the Devportal  at http://104.198.251.5:8079
@@ -187,7 +187,7 @@ e.g :
 
 ## Troubleshootig
 
-It uses ansible based scripts for multi node installation and there can be cases where the instances doesnt get up after 15 - 30 minutes. It may require additional diaganosis on what may have gone wrong in installation.
+It uses ansible based scripts for multi node installation and there can be cases where the edge doesnt get installed even after 15 - 30 minutes. It may require additional diaganosis on what may have gone wrong in installation.
 
 - Check if apigee-edge.yaml properties are correct. Check if private key, public key, repo user, repo password and  license files are set correctly.
 - ssh to management server box which will be typically the vm with name "RESOUCE-NAME"-apigee-mgmt
