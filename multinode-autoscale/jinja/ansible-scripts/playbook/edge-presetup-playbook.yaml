@@ -15,5 +15,10 @@
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
     sudo: yes
   - name: Change Default Port timeout to higher value
-    command: "echo 'PORT_TIMEOUT=300' >> /opt/apigee/customer/default.sh"
+    lineinfile:
+      path: /opt/apigee/customer/defaults.sh
+      line: PORT_TIMEOUT=300
+      owner: apigee
+      group: apigee
+      create: yes
     sudo: yes
