@@ -42,27 +42,6 @@
     command: "setenforce 0"
     ignore_errors: true
     sudo: yes
-  - name: install rng tools
-    command: "yum install rng-tools -y"
-    ignore_errors: true
-    sudo: yes
-  - name: install rng tools
-    command: "yum install rng-tools -y"
-    ignore_errors: true
-    sudo: yes
-  - name: replace the rng service default value
-    replace:
-      dest: /usr/lib/systemd/system/rngd.service
-      regexp: 'ExecStart=\/sbin\/rngd -f'
-      replace: 'ExecStart=\/sbin\/rngd -f -r \/dev\/urandom'
-  - name: Start rng deamon
-    command: "{{ item }}"
-    with_items:
-    - "systemctl daemon-reload"
-    - "systemctl start rngd"
-    - "systemctl status rngd"
-    ignore_errors: true
-    sudo: yes
   - name: Create dest folder
     command: "mkdir -p {{ apigee_dest_path }}"
     sudo: yes
