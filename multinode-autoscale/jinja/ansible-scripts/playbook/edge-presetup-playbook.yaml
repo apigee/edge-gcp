@@ -14,3 +14,6 @@
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
     sudo: yes
+ - name: Change Default Port timeout to higher value
+    command: "echo 'PORT_TIMEOUT=300' >> /opt/apigee/customer/default.sh"
+    sudo: yes
