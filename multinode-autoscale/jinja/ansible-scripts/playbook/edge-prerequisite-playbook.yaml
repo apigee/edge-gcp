@@ -13,8 +13,8 @@
   - name: yum clean all
     command: "yum clean all"
     sudo: yes
-  - name: yum makecache
-    command: "yum makecache"
+  - name: yum repolist
+    command: "yum repolist"
     sudo: yes
   - name: yum install libselinux-python
     command: "yum install libselinux-python -y"
