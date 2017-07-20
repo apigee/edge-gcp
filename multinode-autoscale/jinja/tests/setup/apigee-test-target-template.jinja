@@ -130,6 +130,3 @@ resources:
     IPAddress: $(ref.{{ BASE_NAME }}-address.address)
     portRange: {{ LB_PORT }}
     target: $(ref.{{ BASE_NAME }}-targetproxy.selfLink)
-outputs:
-- name: target
-  value: $(ref.{{ BASE_NAME }}-address.addresses)

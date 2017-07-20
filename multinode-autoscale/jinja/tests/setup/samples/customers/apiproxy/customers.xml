@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="customers">
+    <Basepaths>/customers</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1500584547460</CreatedAt>
+    <CreatedBy>rajeshmishra@apigee.com</CreatedBy>
+    <Description></Description>
+    <DisplayName>customers</DisplayName>
+    <LastModifiedAt>1500584547460</LastModifiedAt>
+    <LastModifiedBy>rajeshmishra@apigee.com</LastModifiedBy>
+    <Policies/>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources/>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>
