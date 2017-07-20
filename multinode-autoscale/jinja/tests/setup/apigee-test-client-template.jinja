@@ -17,9 +17,11 @@ resources:
     machineType: zones/{{ zone }}/machineTypes/n1-standard-1
     metadata:
       items:
-      - key: startup-scripts
+      - key: startup-script
         value: |
+          yum repolist
           yum install -y git
+          cd /root
           git clone https://github.com/apigee/apib.git
           sudo yum install -y apr-devel apr-util-devel openssl-devel gcc
           cd apib

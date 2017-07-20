@@ -32,7 +32,6 @@ resources:
         org: imedusa
         enviornment: test
         user: rajeshmishra@apigee.com
-        password: 
     benchmark:
         name: apib
         duration: 120
