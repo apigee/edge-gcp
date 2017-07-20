@@ -12,7 +12,7 @@ Install gcloud sdk from https://cloud.google.com/sdk/downloads
 Initialize your account
 
 ## Getting Started
-- Please paste the generated key pair file apigee.key and apigee.key.pub in this tests folder.
+- Please copy the generated key pair file apigee.key and apigee.key.pub in this tests folder.
 - For reslience testing please run following command 
 ```sh
 ./resilience_testing.sh "RESOURCE_NAME"

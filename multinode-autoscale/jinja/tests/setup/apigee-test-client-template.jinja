@@ -1,0 +1,41 @@
+{% set LB_NAME = env['deployment'] + '-lb' %}
+{% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
+{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set NGINX_PORT = 80 %}
+{% set HEALTH_CHECK_PORT = 80 %}
+{% set LB_PORT = 80 %}
+{% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
+
+resources:
+{% for region in properties['regions'] %}
+{% for zone in region.zones  %}
+
+- name: {{ env['deployment'] }}-service-{{ region.name }}-{{ zone }}
+  type: compute.v1.instance 
+  properties:
+    zone: {{ zone }}
+    machineType: zones/{{ zone }}/machineTypes/n1-standard-1
+    metadata:
+      items:
+      - key: startup-scripts
+        value: |
+          yum install -y git
+          git clone https://github.com/apigee/apib.git
+          sudo yum install -y apr-devel apr-util-devel openssl-devel gcc
+          cd apib
+          ./configure
+          make
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7
+    networkInterfaces:
+    - accessConfigs:
+      - name: external-nat
+        type: ONE_TO_ONE_NAT
+      network: global/networks/default
+{% endfor %}
+{% endfor %}

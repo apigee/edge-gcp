@@ -1,0 +1,135 @@
+{% set LB_NAME = env['deployment'] + '-lb' %}
+{% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
+{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set NGINX_PORT = 80 %}
+{% set HEALTH_CHECK_PORT = 80 %}
+{% set LB_PORT = 80 %}
+{% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
+
+resources:
+- name: {{ BASE_NAME }}-it
+  type: compute.v1.instanceTemplate
+  properties:
+      properties:
+         machineType: n1-standard-2
+         tags:
+          items:
+          - http-server
+         metadata:
+           items:
+           - key: startup-script
+             value: |
+               #! /bin/bash
+               yum makecache
+               yum install nginx -y
+               systemctl start nginx
+               cat <<EOF > /usr/share/nginx/html/customers.json
+               [{
+                  "first_name": "James",
+                  "last_name": "Butterburg",
+                  "address": {
+                    "street": "6649 N Blue Gum St",
+                    "city": "New Orleans",
+                    "state": "LA",
+                     "zip": "70116"
+                 }
+                }, {
+                  "first_name": "Josephine",
+                  "last_name": "Darakjy",
+                  "address": {
+                    "street": "4 B Blue Ridge Blvd",
+                    "city": "Brighton",
+                    "state": "MI",
+                    "zip": "48116"
+                  }
+                }, {
+                   "first_name": "Art",
+                   "last_name": "Chemel",
+                   "address": {
+                      "street": "8 W Cerritos Ave #54",
+                      "city": "Bridgeport",
+                      "state": "NJ",
+                      "zip": "08014"
+                    }
+                }]
+               EOF
+         disks:
+         - deviceName: boot
+           boot: true
+           autoDelete: true
+           mode: READ_WRITE
+           type: PERSISTENT
+           initializeParams:
+             diskType: pd-ssd
+             diskSizeGb: 20
+             sourceImage: https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7
+         networkInterfaces:
+         - accessConfigs:
+           - name: external-nat
+             type: ONE_TO_ONE_NAT
+           network: global/networks/default
+
+- name: {{ BASE_NAME }}-hc
+  type: compute.v1.httpHealthCheck
+  properties:
+    port: {{ NGINX_PORT }}
+    requestPath: /
+- name: {{ BASE_NAME }}-address
+  type: compute.v1.globalAddress
+{% for region in properties['regions'] %}
+- name: {{ BASE_NAME }}-{{ region.name }}-igm
+  type: compute.v1.instanceGroupManager
+  properties:
+    zone: {{ region.zone }}
+    targetSize: {{ region.autoscale.size }}
+    baseInstanceName: {{ BASE_NAME }}-{{ region.name }}-instance
+    instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
+    namedPorts:
+    - name: {{ BASE_NAME }}-nginx
+      port: {{ NGINX_PORT }}
+- name: {{ BASE_NAME }}-{{region.name}}-as
+  type: compute.v1.autoscaler
+  properties:
+    zone: {{ region.zone }}
+    target: $(ref.{{ BASE_NAME }}-{{region.name}}-igm.selfLink)
+    autoscalingPolicy:
+      maxNumReplicas: {{ region.autoscale.max }}
+      coolDownPeriodSec: 600
+{% endfor %}
+- name: {{ BASE_NAME }}-bes
+  type: compute.v1.backendService
+  properties:
+    portName: {{ BASE_NAME }}-nginx
+    backends:
+    {% for region in properties['regions'] %}
+      - name: {{ BASE_NAME }}--{{ region.name}}-bak
+        group: $(ref.{{ BASE_NAME }}-{{ region.name}}-igm.instanceGroup)
+    {% endfor %}
+    healthChecks: [ $(ref.{{ BASE_NAME }}-hc.selfLink) ]
+- name: {{ BASE_NAME }}-urlmap
+  type: compute.v1.urlMap
+  properties:
+    defaultService: $(ref.{{ BASE_NAME }}-bes.selfLink)
+    hostRules:
+      - hosts: ["*"]
+        pathMatcher: pathmap
+    pathMatchers:
+      - name: pathmap
+        defaultService: $(ref.{{ BASE_NAME }}-bes.selfLink)
+        pathRules:
+          - paths: ["/static", "/static/*"]
+            service: $(ref.{{ BASE_NAME }}-bes.selfLink) 
+- name: {{ BASE_NAME }}-targetproxy
+  type: compute.v1.targetHttpProxy
+  properties:
+    urlMap: $(ref.{{ BASE_NAME }}-urlmap.selfLink)
+- name: {{ BASE_NAME }}-l7lb
+  type: compute.v1.globalForwardingRule
+  properties:
+    IPProtocol: TCP
+    IPAddress: $(ref.{{ BASE_NAME }}-address.address)
+    portRange: {{ LB_PORT }}
+    target: $(ref.{{ BASE_NAME }}-targetproxy.selfLink)
+outputs:
+- name: target
+  value: $(ref.{{ BASE_NAME }}-address.addresses)
