@@ -10,18 +10,20 @@ resources:
 {% for region in properties['regions'] %}
 {% for zone in region.zones  %}
 
-- name: {{ env['deployment'] }}-service-{{ region.name }}-{{ zone }}
+- name: {{ env['deployment'] }}-client-{{region.name}}-{{ zone }}
   type: compute.v1.instance 
   properties:
     zone: {{ zone }}
     machineType: zones/{{ zone }}/machineTypes/n1-standard-1
     metadata:
       items:
+      - key: ssh-keys
+        value: {{ properties['public-key'] }}
       - key: startup-script
         value: |
           yum repolist
           yum install -y git
-          cd /root
+          cd /home/apigee
           git clone https://github.com/apigee/apib.git
           sudo yum install -y apr-devel apr-util-devel openssl-devel gcc
           cd apib

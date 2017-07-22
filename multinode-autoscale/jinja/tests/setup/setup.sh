@@ -23,6 +23,9 @@ enviornment=$(echo $enviornment | cut -d':' -f2 | sed -e 's/^[\t]*//')
 user=$(cat apigee-test.yaml | grep user)
 user=$(echo $user | cut -d':' -f2 | sed -e 's/^[ \t]*//')
 
+api=$(cat apigee-test.yaml | grep api)
+api=$(echo $api | cut -d':' -f2 | sed -e 's/^[ \t]*//')
+
 apigeetool deployproxy  -L $mgmt -o $org -e $enviornment -n customers -u $user -d samples/customers
 echo 's/<URL>http:\/\/'$address'\/customers.json<\/URL>/<URL><\/URL>/g'
 sed -i.bak $(echo 's/<URL>http:\/\/'$address'\/customers.json<\/URL>/<URL><\/URL>/g') samples/customers/apiproxy/targets/default.xml
