@@ -26,16 +26,16 @@ then
 		qpidIP="${qpidIP%"${qpidIP##*[![:space:]]}"}"
 		echo "$qpidIP"
 
-		ssh -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-qpid-server stop"
-		ssh -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-qpidd stop"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-qpid-server stop"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-qpidd stop"
 
 		for ((n=0;n<10;n++))
 		do
 			echo "${blue}calling api, Status code : ${green}$(eval  'curl -s -o /dev/null -I -w "%{http_code}" $LBIP/customers')" 
 		done
 		echo ${reset}
-		ssh -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-qpidd start"
-		ssh -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-qpid-server start"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-qpidd start"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$qpidIP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-qpid-server start"
 
 fi
 
@@ -53,14 +53,14 @@ then
 		mp1IP="${mp1IP%"${mp1IP##*[![:space:]]}"}"
 		echo "$mp1IP"
 
-		ssh -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-message-processor stop"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-message-processor stop"
 
 		for ((n=0;n<10;n++))
 		do
 			echo "${blue}calling api, Status code : ${green}$(eval  'curl -s -o /dev/null -I -w "%{http_code}" $LBIP/customers')" 
 		done
 		echo ${reset}
-		ssh -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-message-processor start"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-message-processor start"
 
 fi
 
@@ -79,13 +79,13 @@ then
 		mp1IP="${mp1IP%"${mp1IP##*[![:space:]]}"}"
 		echo "$mp1IP"
 
-		ssh -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-router stop"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-router stop"
 
 		for ((n=0;n<10;n++))
 		do
 			echo "${blue}calling api, Status code : ${green}$(eval  'curl -s -o /dev/null -I -w "%{http_code}" $LBIP/customers')" 
 		done
 		echo ${reset}
-		ssh -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-router start"
+		ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$mp1IP sudo " /opt/apigee/apigee-service/bin/apigee-service edge-router start"
 
 fi

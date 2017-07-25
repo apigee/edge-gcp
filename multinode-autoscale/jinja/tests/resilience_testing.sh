@@ -45,13 +45,13 @@ then
 
 
 	echo ${reset}
-	ssh -i apigee.key apigee@$cassIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-cassandra stop"
+	ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$cassIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-cassandra stop"
 	for ((n=0;n<5;n++))
 	do
 		echo "${blue}calling api, Status code : ${green}$(eval  'curl -s -o /dev/null -I -w "%{http_code}" $LBIP/customers')" 
 	done
 	echo ${reset}
-	ssh -i apigee.key apigee@$cassIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-cassandra start"
+	ssh -o StrictHostKeyChecking=no -i apigee.key apigee@$cassIP sudo " /opt/apigee/apigee-service/bin/apigee-service apigee-cassandra start"
     
  fi
 
