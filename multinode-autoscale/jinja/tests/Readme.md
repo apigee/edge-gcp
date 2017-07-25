@@ -14,7 +14,7 @@ Initialize your account
 ## Getting Started
 - Please copy the generated key pair file apigee.key and apigee.key.pub in this directory.
 
-- Setup the test client and test target server. 
+- Setup  test client and test target server. 
 Edit setup/apigee-test.yaml with the required entries. In this case you can setup test targets with as many regions. There will be a GLB that will load balance
 between all test targets.
 In the public-key properties, paste the public key generated earlier.
@@ -89,6 +89,12 @@ Password: *********
 s/<URL>http:\/\/35.186.239.160\/customers.json<\/URL>/<URL><\/URL>/g
 
 ```
+-- This process created 2 target servers on us-east1 and us-west1 region respectively and added a GLB to load balance them. The two target servers 
+runs nginx and there is a sample api (customers.json) hosted on them. 
+
+-- It also creates two test clients on us-east1 and us-west1 region and installs apib on /home/apigee/apib directory. You can run load testing 
+from these nodes.
+
 
 - For reslience testing please run following command 
 ```sh
