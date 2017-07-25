@@ -53,12 +53,42 @@ resources:
         org: ASG
         enviornment: prod
         user: opdk@apigee.com
-
 ```
 Then you can run the setup as shown below
 ./setup/setup.sh <<TEST_RESOURCE_NAME>>
 for ex:
+```sh
 ./setup/setup.sh edgescale-test
+The fingerprint of the deployment is tuI64RooS6Bww5yLgEtTKg==
+Waiting for create [operation-1500688097248-554de2cf48301-66a536c1-bf679b2b]...done.
+Create operation operation-1500688097248-554de2cf48301-66a536c1-bf679b2b completed successfully.
+NAME                                               TYPE                             STATE      ERRORS  INTENT
+edgescale-test-apigee-test-target-setup-address       compute.v1.globalAddress         COMPLETED  []
+edgescale-test-apigee-test-target-setup-bes           compute.v1.backendService        COMPLETED  []
+edgescale-test-apigee-test-target-setup-hc            compute.v1.httpHealthCheck       COMPLETED  []
+edgescale-test-apigee-test-target-setup-it            compute.v1.instanceTemplate      COMPLETED  []
+edgescale-test-apigee-test-target-setup-l7lb          compute.v1.globalForwardingRule  COMPLETED  []
+edgescale-test-apigee-test-target-setup-targetproxy   compute.v1.targetHttpProxy       COMPLETED  []
+edgescale-test-apigee-test-target-setup-urlmap        compute.v1.urlMap                COMPLETED  []
+edgescale-test-apigee-test-target-setup-us-east1-as   compute.v1.autoscaler            COMPLETED  []
+edgescale-test-apigee-test-target-setup-us-east1-igm  compute.v1.instanceGroupManager  COMPLETED  []
+edgescale-test-apigee-test-target-setup-us-west1-as   compute.v1.autoscaler            COMPLETED  []
+edgescale-test-apigee-test-target-setup-us-west1-igm  compute.v1.instanceGroupManager  COMPLETED  []
+edgescale-test-client-us-east1-us-east1-b             compute.v1.instance              COMPLETED  []
+edgescale-test-client-us-west1-us-west1-b             compute.v1.instance              COMPLETED  []
+The target url to test:  http://35.186.239.160/customers.json
+Deploying Pass through API Proxy with target Url
+s/<URL><\/URL>/<URL>http:\/\/35.186.239.160\/customers.json<\/URL>/g
+http://104.198.61.121:8080
+Password: *********
+"customers" Revision 1
+  deployed
+  environment = prod
+  base path = /
+  URI = http://35.186.244.153:9001/customers
+s/<URL>http:\/\/35.186.239.160\/customers.json<\/URL>/<URL><\/URL>/g
+
+```
 
 - For reslience testing please run following command 
 ```sh
