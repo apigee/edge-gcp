@@ -14,7 +14,10 @@ mgmt=$(cat apigee-test.yaml | grep mgmt)
 
 mgmtHost=$(echo $mgmt | cut -d':' -f3 | sed -e 's/^[\t]*//')
 mgmtProto=$(echo $mgmt | cut -d':' -f2 | sed -e 's/^[\t]*//')
-mgmt=$mgmtProto:$mgmtHost
+mgmtPort=$(echo $mgmt | cut -d':' -f4 | sed -e 's/^[\t]*//')
+
+mgmt=$mgmtProto:$mgmtHost:$mgmtPort
+echo $mgmt
 enviornment=$(cat apigee-test.yaml | grep enviornment)
 
 enviornment=$(echo $enviornment | cut -d':' -f2 | sed -e 's/^[\t]*//')
@@ -23,8 +26,6 @@ enviornment=$(echo $enviornment | cut -d':' -f2 | sed -e 's/^[\t]*//')
 user=$(cat apigee-test.yaml | grep user)
 user=$(echo $user | cut -d':' -f2 | sed -e 's/^[ \t]*//')
 
-api=$(cat apigee-test.yaml | grep api)
-api=$(echo $api | cut -d':' -f2 | sed -e 's/^[ \t]*//')
 
 apigeetool deployproxy  -L $mgmt -o $org -e $enviornment -n customers -u $user -d samples/customers
 echo 's/<URL>http:\/\/'$address'\/customers.json<\/URL>/<URL><\/URL>/g'

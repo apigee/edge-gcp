@@ -9,12 +9,12 @@ resources:
     - name: us-east1
       zone: us-east1-b
       autoscale:
-        size: 2
+        size: 1
         max: 5
     - name: us-west1
       zone: us-west1-b
       autoscale:
-       size: 2
+       size: 1
        max: 5
 - name: apigee-test-client-setup
   type: apigee-test-client-template.jinja
@@ -28,7 +28,7 @@ resources:
       - us-west1-b
     public-key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC50C1mRakL/WJg8jm2kpCnZgwd857Nqp1gXDz3SWe9jB2e1uwQJ5ZJCK5ESydRur8ne8mkWfbUgOAVAE6J864qiJ4HC1Xp3SM4qhDpyqienZYBYVSayLf+/N96UInF0XZgG5J3W99unHOoeBKEIjZ9caMn5pkvCn00KyHLXZrVL5TVx3lzlf/9tl7QvxDaL5L8zMPKPQcL/3YjdYElvWIlmSg6bs0rWVD0rCE8McKGGILV8CtjwpYxgrHnrqItmyv6AIRkRbZaLaFKWRS5aaPNiNMgj6c6VcxO8JMc9mHPobBd9gjqr+rL3Z/Ptzi3w0cmivaNjIglZcGIa7JXKhCNXqUc/PeByVqI8HcQcwuZsD5z89xWcsC5tMIAuBsTtzUQN1fUrqKafKyud2Pf3hIRjYtjE3HIQgfIecJbe1nn+cn8j/V1T5sl93oeWGuV58G8L/q3v+X0NMDXa78o1A532Bb5hxtebLpZ2C7Xzduies28CQcnjGc7TCGssHiR/A4mIihpsmomElJ/Iee9g/YleBSzwu9iIlxSSw5W5rD9Arzqoz693+WBA0PibXTMVXEkFZ0SI8T+/7uNvHJqReKvm0VDN8wtlsOer9Tu/wToHwxaRqlaN5xYrHOvV9xNZXZfzfsTMSdCSJFb+E+Uzd5+u0AiCmFFDrbz6iBkGgS4Zw== apigee"
     edge:
-        mgmt: https://api.enterprise.apigee.com
-        org: imedusa
-        enviornment: test
-        user: rajeshmishra@apigee.com
+        mgmt: http://104.198.61.121:8080
+        org: ASG
+        enviornment: prod
+        user: opdk@apigee.com
