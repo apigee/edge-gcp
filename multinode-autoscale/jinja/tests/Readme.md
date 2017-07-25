@@ -1,4 +1,4 @@
-# edge-gcp
+# edge-gcp-test
 This section provides the test cases to test resilience, HA and Scalibility.
 
 ## Support
