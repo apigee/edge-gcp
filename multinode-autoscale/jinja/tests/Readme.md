@@ -94,7 +94,7 @@ This creates 2 target servers(Based on Autoscale size) on us-east1 and us-west1 
 
 It also creates two test clients on us-east1 and us-west1 region and installs apib(API benchmark tool) on /home/apigee/apib directory. You can run load testing from these nodes.
 
-It also installs a customer proxy with base path of /customers with the target just created on the edge server provided in the yaml file.
+It also installs a customer proxy on the edge server provided in the yaml file with base path of /customers and the target(GLB address) created.
 
 
 - For reslience testing please run following command 
