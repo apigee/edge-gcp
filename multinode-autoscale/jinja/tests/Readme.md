@@ -101,6 +101,7 @@ It also installs a customer proxy on the edge server provided in the yaml file w
 ```sh
 ./resilience_testing.sh "RESOURCE_NAME"
 ```
+In this case, RESOURCE_NAME is the resource name used to spin edge setup and not the test setup. The assumption is that you have used this GCP project to create edge setup.
 e.g :
 ```sh
 ./resilience_testing.sh edgescale
@@ -109,6 +110,7 @@ e.g :
 ```sh
 ./ha.sh "RESOURCE_NAME"
 ```
+In this case, RESOURCE_NAME is the resource name used to spin edge setup and not the test setup.The assumption is that you have used this GCP project to create edge setup.
 e.g :
 ```sh
 ./ha.sh edgescale
