@@ -90,11 +90,11 @@ s/<URL>http:\/\/35.186.239.160\/customers.json<\/URL>/<URL><\/URL>/g
 
 ```
 
-- This creates 2 target servers(Based on Autoscale size) on us-east1 and us-west1 region respectively and adds a GLB to load balance them. The two target servers 
+This creates 2 target servers(Based on Autoscale size) on us-east1 and us-west1 region respectively and adds a GLB to load balance them. The two target servers 
 runs nginx and hosts customers.json. 
 
-- It also creates two test clients on us-east1 and us-west1 region and installs apib(API benchmark tool) on /home/apigee/apib directory. You can run load testing 
-from these nodes.
+It also creates two test clients on us-east1 and us-west1 region and installs apib(API benchmark tool) on /home/apigee/apib directory. You can run load testing from these nodes.
+It also installs a customer proxy with base path of /customers with the target just created on the edge server provided in the yaml file.
 
 
 - For reslience testing please run following command 
@@ -123,6 +123,10 @@ e.g :
 ./auto_scaling_testing.sh edgescale-test 100 600 http://35.186.244.153
 ```
 
+- Clean
+ ```sh
+ ./setup/clean.sh <<TEST_RESOURCE_NAME>>
+ ```
 
 
 ## License
