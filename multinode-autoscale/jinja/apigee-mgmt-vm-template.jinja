@@ -213,6 +213,13 @@ resources:
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
           sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
           
+
+          ##Openldap 2.4.44 issues. Needs to be downgraded
+
+          sudo yum downgrade openldap-2.4.40 -y
+          sudo yum install openldap-servers-2.4.40 -y
+          sudo yum install openldap-clients-2.4.40 -y
+
           #Lets Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
           ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
