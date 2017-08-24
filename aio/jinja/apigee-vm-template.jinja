@@ -168,13 +168,13 @@ resources:
           sed -i s/SCRIPT_BASE.*//g /tmp/monitoring-config.txt
 
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb install
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb setup -f /tmp/monitoring-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-influxdb restart
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana install
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana setup -f /tmp/monitoring-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-grafana restart
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf install
-          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf setup -f /tmp/monitoringconfig
+          sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf setup -f /tmp/monitoring-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-telegraf restart
           sudo /opt/apigee/apigee-service/bin/apigee-all restart
 
