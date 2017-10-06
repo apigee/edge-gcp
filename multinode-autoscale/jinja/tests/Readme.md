@@ -1,5 +1,22 @@
 # edge-gcp-test
 This section provides the test cases to test resilience, HA and Scalibility.
+Non Function testing - Often times we are challenged to showcase our non functional capability. We are challenged to demonstrate apigee's resilience to failures, HA or auto scaling like in the case of starbucks. Often times we showcase our architecture and custom demo to build such use cases. I've tried to create a repeatable demo that can help us demonstrate some of the non functional capability with our private cloud. Here is the project - https://github.com/apigee/edge-gcp/tree/master/multinode-autoscale/jinja/tests .
+
+What does this do: 
+
+1. Create test target machine in multiple regions by configurations. Installs a nginx server with a sample customers.json.
+2. Creates a GLB to load balance them.
+3. Creates test clients machines in multiple region and installs apib.
+4. Installs a sample customer proxy to the edge server you want to test. The edge details are passed by configurations
+
+HA Testing 
+Kills bunch of servers and test api traffic
+Reslience Testing
+Kills Nodes like cassandra and test api traffic
+Scaling Test
+Puts system under tremedous load and check the scaling behavior.
+
+The setup can be brought up or down in minutes once the use case is done thus reduces ownership costs.
 
 ## Support
 This is an open-source project of the Apigee Corporation. It is not covered by Apigee support contracts. However, we will support you as best we can. For help, please open an issue in this GitHub project. You are also always welcome to submit a pull request.

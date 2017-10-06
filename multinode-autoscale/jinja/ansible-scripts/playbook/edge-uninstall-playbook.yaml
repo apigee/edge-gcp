@@ -6,26 +6,28 @@
     ignore_errors: True
   - name: Clean Yum
     command: "yum clean all"
-  - name: celan components
+  - name: Remove all components
     command: "{{ item }}"
     with_items:
-    - "sudo yum remove apigee-cassandra -y"
-    - "sudo yum remove apigee-zookeeper -y"
-    - "sudo yum remove apigee-openldap -y"
-    - "sudo yum remove edge-management-server -y"
-    - "sudo yum remove edge-ui -y"
-    - "sudo yum remove edge-router -y"
-    - "sudo yum remove edge-message-processor -y"
-    - "sudo yum remove apigee-postgresql -y"
-    - "sudo yum remove edge-postgres-server -y"
-    - "sudo yum remove apigee-qpidd -y"
-    - "sudo yum remove edge-qpid-server -y"
-    - "sudo yum remove apigee-adminapi -y"
-    - "sudo yum remove apigee-attribution -y"
-    - "sudo yum remove apigee-setup -y"
-    - "sudo yum remove apigee-lib -y"
-    - "sudo yum remove apigee-service -y"
-    - "sudo yum remove apigee-repo -y"
+    - "sudo yum autoremove apigee-cassandra -y"
+    - "sudo yum autoremove apigee-zookeeper -y"
+    - "sudo yum autoremove apigee-openldap -y"
+    - "sudo yum autoremove edge-management-server -y"
+    - "sudo yum autoremove edge-ui -y"
+    - "sudo yum autoremove edge-router -y"
+    - "sudo yum autoremove edge-message-processor -y"
+    - "sudo yum autoremove apigee-postgresql -y"
+    - "sudo yum autoremove edge-postgres-server -y"
+    - "sudo yum autoremove apigee-qpidd -y"
+    - "sudo yum autoremove edge-qpid-server -y"
+    - "sudo yum autoremove apigee-adminapi -y"
+    - "sudo yum autoremove apigee-attribution -y"
+    - "sudo yum autoremove apigee-setup -y"
+    - "sudo yum autoremove apigee-lib -y"
+    - "sudo yum autoremove apigee-service -y"
+    - "sudo yum autoremove apigee-repo -y"
     ignore_errors: True
   - name: Delete Apigee
     command: "rm -rf /opt/apigee"
+  - name: Delete Nginx
+    command: "rm -rf /opt/nginx"
