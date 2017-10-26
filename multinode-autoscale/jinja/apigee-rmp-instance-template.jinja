@@ -78,7 +78,10 @@ resources:
                  yum install nc.x86_64 -y
                fi
 
-               yum install ansible -y
+               #yum install ansible -y
+               cd /tmp
+               curl -O https://storage.googleapis.com/apigee/ansible-2.3.0.0-3.el7.noarch.rpm
+               yum install ansible-2.3.0.0-3.el7.noarch.rpm -y
                #Disable epel
                #sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
 
