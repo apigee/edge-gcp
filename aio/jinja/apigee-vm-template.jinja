@@ -108,9 +108,11 @@ resources:
           sudo /tmp/bootstrap_${VERSION}.sh apigeeuser=$REPO_USER  apigeepassword=$REPO_PASSWORD apigeereleasever=${VERSION} JAVA_FIX=I apigeerepohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL apigeestage=$REPO_STAGE
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-setup install
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision install
-          sudo yum downgrade openldap-2.4.40 -y
-          sudo yum install openldap-servers-2.4.40
-          sudo yum install openldap-clients-2.4.40
+
+          #Redhat 7.4 related changes
+          yum install yum-utils -y
+          yum install yum-plugin-priorities -y
+
           sudo /opt/apigee/apigee-setup/bin/setup.sh -p aio -f /tmp/aio-config.txt
           sudo /opt/apigee/apigee-service/bin/apigee-service apigee-provision setup-org -f /tmp/aio-config.txt
 

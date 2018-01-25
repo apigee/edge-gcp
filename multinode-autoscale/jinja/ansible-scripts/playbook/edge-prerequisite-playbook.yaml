@@ -19,6 +19,12 @@
   - name: yum install libselinux-python
     command: "yum install libselinux-python -y"
     sudo: yes
+  - name: yum install yum-utils
+    command: "yum install yum-utils -y"
+    sudo: yes
+  - name: yum install yum-plugin-priorities
+    command: "yum install yum-plugin-priorities -y"
+    sudo: yes
   - name: Limits change
     become_method: sudo
     lineinfile:
