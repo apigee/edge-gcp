@@ -11,29 +11,65 @@ limitations under the License.
 #}
 
 {% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
+{% set zone = properties['infra'].datacenters.primary.zone %}
+{% set machineType = properties['infra'].rmp.machineType %}
+{% set diskSizeGb = properties['infra'].ms.diskSizeGb %}
+
 
 resources:
   - name: {{ env["name"] }}
     type: compute.v1.instanceTemplate
     properties:
        properties:
-         machineType: {{ properties['machineType'] }}
-         repo: {{ properties['repo'] }}
-         version: {{ properties['version'] }}
-         HOST_NAMES: {{ properties['HOST_NAMES'] }}
-         APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-         APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-         ORG_NAME: {{ properties['ORG_NAME'] }}
-         LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
-         SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
-         nodes: {{ properties['nodes'] }}
+         machineType: {{ machineType }}
          metadata:
             items:
             - key: ssh-keys
-              value: {{ properties['public-key'] }}
+              value: {{ properties['public_key'] }}
             - key: startup-script
               value: |
                
+               export VERSION="{{ properties['repo'].apigee.version }}"
+               export REPO_HOST="{{ properties['repo'].apigee.host }}"
+               export REPO_PROTOCOL="{{ properties['repo'].apigee.protocol }}"
+               export REPO_USER="{{ properties['repo'].apigee.user }}"
+               export REPO_PASSWORD="{{ properties['repo'].apigee.password }}"
+               export REPO_STAGE={{ properties["repo"].apigee.stage }}
+               export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
+               export MSIP="{{ properties['msip'] }}"
+               export HOST_NAMES=$MSIP:$HOST_NAMES
+               export APIGEE_ADMIN_EMAIL="{{ properties['setup'].apigee_admin_email }}"
+               export APIGEE_ADMINPW="{{ properties['setup'].apigee_admin_password }}"
+               export APIGEE_LDAPPW="{{ properties['setup'].apigee_ldappw }}"
+               export ORG_NAME="{{ properties['setup'].org_name }}"
+               export SKIP_SMTP="{{ properties['setup'].skip_smtp }}"
+               export SMTPHOST="{{ properties['setup'].smtp_host }}"
+               export SMTPUSER="{{ properties['setup'].smtp_user }}"
+               export SMTPPASSWORD="{{ properties['setup'].smtp_password }}"
+               export SMTPSSL="{{ properties['setup'].smtp_ssl }}"
+               export SMTPPORT="{{ properties['setup'].smtp_port }}"
+               export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
+               export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
+               export topology="{{ properties['infra'].topology }}"
+               export GIT_CLONE_PATH="{{ properties['setup'].git_clone_path }}"
+               export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
+
+               mkdir -p ~/.ssh
+               touch ~/.ssh/id_rsa
+               echo "{{ properties['private_key'] }}" >> ~/.ssh/id_rsa
+               sed -i s/-----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----[[:space:]]//g ~/.ssh/id_rsa
+               sed -i s/[[:space:]]-----END[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----//g ~/.ssh/id_rsa
+               tr  ' ' '\n' < ~/.ssh/id_rsa  > ~/.ssh/test_rsa
+               mv -f ~/.ssh/test_rsa ~/.ssh/id_rsa
+               sed -i '1s/^/-----BEGIN RSA PRIVATE KEY-----\n/' ~/.ssh/id_rsa
+               echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
+               chmod 400 ~/.ssh/id_rsa
+
+               redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
+
+               rpm -ivh {{ properties["repo"].thirdparty.epel }}
+               yum install {{ properties['repo'].thirdparty.ansible }} -y
+               yum install  {{ properties['repo'].thirdparty.jq }} -y
                yum install rng-tools -y
                sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
                systemctl daemon-reload
@@ -42,163 +78,32 @@ resources:
                export TERM=xterm-256color
                mkdir -p /tmp/apigee
                mkdir -p /tmp/apigee/log
-               export VERSION="{{ properties['version'] }}"
-               export REPO_HOST="{{ properties['repo'].host }}"
-               export REPO_PROTOCOL="{{ properties['repo'].protocol }}"
-               export REPO_USER=$(echo "{{ properties["repo"].user }}")
-               export REPO_PASSWORD=$(echo "{{ properties["repo"].password }}")
-               export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
-               export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
-               export MSIP="{{ properties['msip'] }}"
-               export HOST_NAMES=$MSIP:$HOST_NAMES
-               export APIGEE_ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
-               export APIGEE_ADMINPW="{{ properties['APIGEE_ADMINPW'] }}"
-               export ORG_NAME="{{ properties['ORG_NAME'] }}"
-               export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
-               SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
-               mkdir -p ~/.ssh
-               touch ~/.ssh/id_rsa
-               echo "{{ properties['private-key'] }}" >> ~/.ssh/id_rsa
-               sed -i s/-----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----[[:space:]]//g ~/.ssh/id_rsa
-               sed -i s/[[:space:]]-----END[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----//g ~/.ssh/id_rsa
-               tr  ' ' '\n' < ~/.ssh/id_rsa  > ~/.ssh/test_rsa
-               mv -f ~/.ssh/test_rsa ~/.ssh/id_rsa
-               sed -i '1s/^/-----BEGIN RSA PRIVATE KEY-----\n/' ~/.ssh/id_rsa
-               echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
-               chmod 400 ~/.ssh/id_rsa
+
+
+               cd /tmp/apigee
+               #Lets get ansible scripts from git 
+               yum install git -y
+               git clone $GIT_CLONE_PATH
+               mv $SCRIPT_BASEPATH .
+  
           
-               redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
-               echo $redhat_release
-               if [ "$redhat_release" = "7" ]; then
-                  curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-                  rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
-               else
-                 curl -o /tmp/apigee/epel-release-latest-6.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-                 rpm -ivh /tmp/apigee/epel-release-latest-6.noarch.rpm
-                 yum install nc.x86_64 -y
-               fi
-
-               #yum install ansible -y
-               cd /tmp
-               curl -O https://storage.googleapis.com/apigee/ansible-2.3.0.0-3.el7.noarch.rpm
-               yum install ansible-2.3.0.0-3.el7.noarch.rpm -y
-               #Disable epel
-               #sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
-
-               #Get ansible scripts in /tmp/apigee/ansible directory
-               mkdir /tmp/apigee/ansible-scripts
-               mkdir /tmp/apigee/ansible-scripts/inventory
-               mkdir /tmp/apigee/ansible-scripts/playbook
-               mkdir /tmp/apigee/ansible-scripts/config
-
-               echo {{ properties["license"] }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
-
-               curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_5node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_5node
-               curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_7node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_7node
-               curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_9node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_9node
-               curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_rmp  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_rmp
-
-               curl -o /tmp/apigee/ansible-scripts/config/config5.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config5.txt
-               curl -o /tmp/apigee/ansible-scripts/config/config7.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config7.txt
-               curl -o /tmp/apigee/ansible-scripts/config/config9.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config9.txt
-               curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
-               curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
-               curl -o /tmp/apigee/ansible-scripts/config/grafana.txt  $SCRIPT_BASEPATH/ansible-scripts/config/grafana.txt
-
-               curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
-               curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/rmp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/rmp-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/ps-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ps-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/qs-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/qs-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/ms-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ms-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/r-playbook.yaml   $SCRIPT_BASEPATH/ansible-scripts/playbook/r-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/mp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/mp-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/orgsetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/orgsetup-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-prerequisite-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-prerequisite-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-components-setup-playbook.yaml    $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-components-setup-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-dashboard-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-dashboard-playbook.yaml
-               curl -o /tmp/apigee/ansible-scripts/playbook/edge-telegraf-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-telegraf-playbook.yaml
-
-          
-               #Copy the right file based on node number
-               cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
+               #Copy the right config file based on topology
+               cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['infra'].topology }}.txt /tmp/apigee/ansible-scripts/config/config.txt
                cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_rmp /tmp/apigee/ansible-scripts/inventory/hosts
 
-               IFS=':'
-               hosts_ary=($HOST_NAMES)
-               c=1
-               for i in "${hosts_ary[@]}"
-               do
-                if [[ ${i} != 'empty' ]]; then
-                  key='HOST'$c'_INTERNALIP'
-                  export ${key}=${i}
-                  sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/config.txt
-                  sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/grafana.txt
-                  sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-prod.txt
-                  sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-test.txt
-                  ((c++))
-                fi
-               done              
-               MYHOST=$(hostname -i)
-               cd /tmp/apigee/ansible-scripts/inventory
-               sed -i.bak s/HOST_RMP/${MYHOST}/g hosts
+               bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
 
-               cd /tmp/apigee/ansible-scripts/config
-               sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g config.txt
-               sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g setup-org-prod.txt
-               sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g setup-org-test.txt
+               #Performance Related configurations
+               bash /tmp/apigee/ansible-scripts/startup-scripts/router_mp_cwc.sh
 
-               sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g config.txt
-               sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g setup-org-prod.txt
-               sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g setup-org-test.txt
-
-               sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-prod.txt
-               sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-test.txt
-
-               sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
-               sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
-               sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
-               
 
                cd /tmp/apigee/ansible-scripts/playbook
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-prerequisite-playbook.yaml
 
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-presetup-playbook.yaml
 
-               #Change run user to root
-               #echo "RUN_USER=root" >> /opt/apigee/etc/defaults.sh
                
-               #Performance Related configurations
-
-               mkdir -p /opt/apigee/customer
-               mkdir -p /opt/apigee/customer/application
-               echo "conf_load_balancing_load.balancing.driver.nginx.limit_conn=25000" >> /opt/apigee/customer/application/router.properties
-
-               echo "conf_http_HTTPTransport.max.client.count=20000" >> /opt/apigee/customer/application/message-processor.properties
-               echo "conf_threadpool_maximum.pool.size=150" >> /opt/apigee/customer/application/message-processor.properties
-               
-               echo "bin_setenv_min_mem=1024m" >> /opt/apigee/customer/application/message-processor.properties
-               echo "bin_setenv_max_mem=3072m" >> /opt/apigee/customer/application/message-processor.properties
-               echo "bin_setenv_max_permsize=256m" >> /opt/apigee/customer/application/message-processor.properties
-
-               echo "bin_setenv_min_mem=1024m" >> /opt/apigee/customer/application/router.properties
-               echo "bin_setenv_max_mem=3072m" >> /opt/apigee/customer/application/router.properties
-               echo "bin_setenv_max_permsize=256m" >> /opt/apigee/customer/application/router.properties
-
-               chown apigee:apigee /opt/apigee/customer/application/message-processor.properties
-               chown apigee:apigee /opt/apigee/customer/application/router.properties
-
-
-               echo "* hard nofile 94000" >> /etc/security/limits.conf
-               echo "* soft nofile 94000" >> /etc/security/limits.conf
-               echo "* hard noproc 64000" >> /etc/security/limits.conf
-               echo "* soft noproc 64000"  >> /etc/security/limits.conf
-
-
-               #Wait for the MS Server to be up
+               #Wait for the Management Server to be up
 
                if [ "$redhat_release" = "7" ]; then
                   while ! echo -n > /dev/tcp/$MSIP/8080 ; do
@@ -216,38 +121,16 @@ resources:
                #wait for final 10 secs for MS to complete the registeration
                sleep 5
 
-               echo "Installing RMP First time only"
 
+               echo "Installing Router First time only"
+               cd /tmp/apigee/ansible-scripts/playbook
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee r-playbook.yaml
 
                ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
 
-               #install jq to parse json
+               
                cd /tmp/apigee
-               wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
-               cp -fr jq-linux64 /usr/bin/jq
-               chmod 777 /usr/bin/jq
-
-               IFS=','
-               export MSIP="{{ properties['msip'] }}"
-               export ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
-               export ADMIN_PWD="{{ properties['APIGEE_ADMINPW'] }}"
-               export ORG_NAME="{{ properties['ORG_NAME'] }}"
-                
-               export routeruuid=$(curl -s http://localhost:8081/v1/servers/self | /usr/bin/jq --raw-output '.uUID')
-               echo "uuid" >> /tmp/apigee/uuid.txt
-               echo $routeruuid >> /tmp/apigee/uuid.txt
-
-                
-               curl4=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X POST http://$MSIP:8080/v1/servers -d \"type=router\&region=dc-1\&pod=gateway\&uuid=$routeruuid\&action=remove\"'))
-
-               curl6=$(echo $(eval echo 'curl -v -u $ADMIN_EMAIL:$ADMIN_PWD -X DELETE \"http://$MSIP:8080/v1/servers/$routeruuid\"'))
-
-                
-               echo $curl4 >> /tmp/apigee/shutdown.sh
-               echo "sleep 5"  >> /tmp/apigee/shutdown.sh
-               echo $curl6 >> /tmp/apigee/shutdown.sh
-               chmod +x /tmp/apigee/shutdown.sh
+               bash /tmp/apigee/ansible-scripts/startup-scripts/create_r_startup_shutodown.sh $MSIP $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW
 
             - key: shutdown-script
               value: |
@@ -267,7 +150,7 @@ resources:
              type: PERSISTENT
              initializeParams:
                diskType: pd-ssd
-               diskSizeGb: 20
+               diskSizeGb: {{diskSizeGb}}
                sourceImage: {{ properties["sourceImage"] }}
          networkInterfaces:
            - accessConfigs:

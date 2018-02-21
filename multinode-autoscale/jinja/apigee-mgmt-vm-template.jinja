@@ -2,9 +2,7 @@
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,78 +11,56 @@ limitations under the License.
 #}
 
 {% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
-{% set BASE_NAME = env['deployment'] + '-' + env['name'] %}
+{% set BASE_NAME = env['deployment'] + '-' + properties["infra"].datacenters.primary.name + '-' + env['name'] %}
+{% set zone = properties['infra'].datacenters.primary.zone %}
+{% set machineType = properties['infra'].ms.machineType %}
+{% set diskSizeGb = properties['infra'].ms.diskSizeGb %}
 
 
 resources:
 - name: {{ BASE_NAME }}
   type: compute.v1.instance
   properties:
-    zone: {{ properties['zone'] }}
-    machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
-    sizeGb: 10
-    repo: {{ properties['repo'] }}
-    version: {{ properties['version'] }}
-    HOST_NAMES: {{ properties['HOST_NAMES'] }}
-    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-    APIGEE_LDAPPW: {{ properties['APIGEE_LDAPPW'] }}
-    ORG_NAME: {{ properties['ORG_NAME'] }}
-    SKIP_SMTP: {{ properties['SKIP_SMTP'] }}
-    SMTPHOST: {{ properties['SMTPHOST'] }}
-    SMTPUSER: {{ properties['SMTPUSER'] }}
-    SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
-    SMTPSSL: {{ properties['SMTPSSL'] }}
-    SMTPPORT: {{ properties['SMTPPORT'] }}
-    SMTPMAILFROM: {{ properties['SMTPMAILFROM'] }}
-    LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
-    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
-    nodes: {{ properties['nodes'] }}
+    zone: {{ zone }}
+    machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ zone }}/machineTypes/{{ machineType }}
+
     metadata:
       items:
       - key: ssh-keys
-        value: {{ properties['public-key'] }}
+        value: {{ properties['public_key'] }}
       - key: startup-script
         value: |
           if [ -d "/opt/apigee" ]; then
             exit 1
           fi
-          
-          yum install rng-tools -y
-          sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
-          systemctl daemon-reload
-          systemctl start rngd
 
-          export TERM=xterm-256color
-          mkdir -p /tmp/apigee
-          mkdir -p /tmp/apigee/log
-          export VERSION="{{ properties['version'] }}"
-          export REPO_HOST="{{ properties['repo'].host }}"
-          export REPO_PROTOCOL="{{ properties['repo'].protocol }}"
-          export REPO_USER=$(echo "{{ properties["repo"].user }}")
-          export REPO_PASSWORD=$(echo "{{ properties["repo"].password }}")
-          export REPO_STAGE=$(echo "{{ properties["repo"].stage }}")
+          export VERSION="{{ properties['repo'].apigee.version }}"
+          export REPO_HOST="{{ properties['repo'].apigee.host }}"
+          export REPO_PROTOCOL="{{ properties['repo'].apigee.protocol }}"
+          export REPO_USER="{{ properties['repo'].apigee.user }}"
+          export REPO_PASSWORD="{{ properties['repo'].apigee.password }}"
+          export REPO_STAGE={{ properties["repo"].apigee.stage }}
           export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
           export HOST_NAMES=$(hostname -i):$HOST_NAMES
-          export APIGEE_ADMIN_EMAIL="{{ properties['APIGEE_ADMIN_EMAIL'] }}"
-          export APIGEE_ADMINPW="{{ properties['APIGEE_ADMINPW'] }}"
-          export APIGEE_LDAPPW="{{ properties['APIGEE_LDAPPW'] }}"
-          export ORG_NAME="{{ properties['ORG_NAME'] }}"
-          export SKIP_SMTP="{{ properties['SKIP_SMTP'] }}"
-          export SMTPHOST="{{ properties['SMTPHOST'] }}"
-          export SMTPUSER="{{ properties['SMTPUSER'] }}"
-          export SMTPPASSWORD="{{ properties['SMTPPASSWORD'] }}"
-          export SMTPSSL="{{ properties['SMTPSSL'] }}"
-          export SMTPPORT="{{ properties['SMTPPORT'] }}"
-          export SMTPMAILFROM="{{ properties['SMTPMAILFROM'] }}"
+          export APIGEE_ADMIN_EMAIL="{{ properties['setup'].apigee_admin_email }}"
+          export APIGEE_ADMINPW="{{ properties['setup'].apigee_admin_password }}"
+          export APIGEE_LDAPPW="{{ properties['setup'].apigee_ldappw }}"
+          export ORG_NAME="{{ properties['setup'].org_name }}"
+          export SKIP_SMTP="{{ properties['setup'].skip_smtp }}"
+          export SMTPHOST="{{ properties['setup'].smtp_host }}"
+          export SMTPUSER="{{ properties['setup'].smtp_user }}"
+          export SMTPPASSWORD="{{ properties['setup'].smtp_password }}"
+          export SMTPSSL="{{ properties['setup'].smtp_ssl }}"
+          export SMTPPORT="{{ properties['setup'].smtp_port }}"
+          export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
           export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
-          export nodes="{{ properties['nodes'] }}"
-
-          SCRIPT_BASEPATH="{{ properties['SCRIPT_BASEPATH'] }}"
+          export topology="{{ properties['infra'].topology }}"
+          export GIT_CLONE_PATH="{{ properties['setup'].git_clone_path }}"
+          export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
 
           mkdir -p ~/.ssh
           touch ~/.ssh/id_rsa
-          echo "{{ properties['private-key'] }}" >> ~/.ssh/id_rsa
+          echo "{{ properties['private_key'] }}" >> ~/.ssh/id_rsa
           sed -i s/-----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----[[:space:]]//g ~/.ssh/id_rsa
           sed -i s/[[:space:]]-----END[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----//g ~/.ssh/id_rsa
           tr  ' ' '\n' < ~/.ssh/id_rsa  > ~/.ssh/test_rsa
@@ -93,138 +69,39 @@ resources:
           echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
 
-          redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
-          echo $redhat_release
-
-          if [ "$redhat_release" = "7" ]; then
-            curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
-          else
-            curl -o /tmp/apigee/epel-release-latest-6.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-latest-6.noarch.rpm
-          fi
-
-          #yum install ansible -y
-          cd /tmp
-
-          curl -O https://storage.googleapis.com/apigee/ansible-2.3.0.0-3.el7.noarch.rpm
-          yum install ansible-2.3.0.0-3.el7.noarch.rpm -y
-          #Disable epel
-          #sed -i 's^enabled=1^enabled=0^g' /etc/yum.repos.d/epel.repo || true
-
-          #Get ansible scripts in /tmp/apigee/ansible directory
-          mkdir /tmp/apigee/ansible-scripts
-          mkdir /tmp/apigee/ansible-scripts/inventory
-          mkdir /tmp/apigee/ansible-scripts/playbook
-          mkdir /tmp/apigee/ansible-scripts/config
-
-          echo {{ properties["license"] }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
-
-          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_2node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_2node
-          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_5node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_5node
-          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_7node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_7node
-          curl -o /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_9node  $SCRIPT_BASEPATH/ansible-scripts/inventory/hosts_EDGE_9node
-
-          curl -o /tmp/apigee/ansible-scripts/config/config2.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config2.txt
-          curl -o /tmp/apigee/ansible-scripts/config/config5.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config5.txt
-          curl -o /tmp/apigee/ansible-scripts/config/config7.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config7.txt
-          curl -o /tmp/apigee/ansible-scripts/config/config9.txt  $SCRIPT_BASEPATH/ansible-scripts/config/config9.txt
-          curl -o /tmp/apigee/ansible-scripts/config/setup-org-prod.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-prod.txt
-          curl -o /tmp/apigee/ansible-scripts/config/setup-org-test.txt  $SCRIPT_BASEPATH/ansible-scripts/config/setup-org-test.txt
-          curl -o /tmp/apigee/ansible-scripts/config/grafana.txt  $SCRIPT_BASEPATH/ansible-scripts/config/grafana.txt
-          curl -o /tmp/apigee/ansible-scripts/config/dp-config.txt  $SCRIPT_BASEPATH/ansible-scripts/config/dp-config.txt
-
-          curl -o /tmp/apigee/ansible-scripts/playbook/ansible.cfg  $SCRIPT_BASEPATH/ansible-scripts/playbook/ansible.cfg
-          curl -o /tmp/apigee/ansible-scripts/playbook/ds-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ds-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/rmp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/rmp-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/ps-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ps-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/qs-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/qs-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/dp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/dp-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/ms-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/ms-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/r-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/r-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/mp-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/mp-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/orgsetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/orgsetup-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-prerequisite-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-prerequisite-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-components-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-components-setup-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-setup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-setup-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-presetup-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-presetup-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-uninstall-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-uninstall-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-dashboard-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-dashboard-playbook.yaml
-          curl -o /tmp/apigee/ansible-scripts/playbook/edge-telegraf-playbook.yaml  $SCRIPT_BASEPATH/ansible-scripts/playbook/edge-telegraf-playbook.yaml
-          
-          #Copy the right file based on node number
-          cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['nodes'] }}.txt /tmp/apigee/ansible-scripts/config/config.txt
-          cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_{{ properties['nodes'] }}node /tmp/apigee/ansible-scripts/inventory/hosts
-
-          IFS=:
-          hosts_ary=($HOST_NAMES)
-          c=1
-          for i in "${hosts_ary[@]}"
+          for number in {1..3}
           do
-          if [[ ${i} != 'empty' ]]; then
-                key='HOST'$c'_INTERNALIP'
-                export ${key}=${i}
-                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/inventory/hosts
-                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/config.txt
-                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/grafana.txt
-                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-prod.txt
-                sed -i.bak s/${key}/${i}/g /tmp/apigee/ansible-scripts/config/setup-org-test.txt
-                ((c++))
-          fi
+          rpm -ivh {{ properties["repo"].thirdparty.epel }}
+          yum install {{ properties["repo"].thirdparty.ansible }} -y
+          yum install rng-tools -y
           done
 
-          cd /tmp/apigee/ansible-scripts/config
-          sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g config.txt
-          sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g setup-org-prod.txt
-          sed -i.bak s/ADMIN_EMAIL=/ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g setup-org-test.txt
+          sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
+          systemctl daemon-reload
+          systemctl start rngd
 
-          sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g config.txt
-          sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g setup-org-prod.txt
-          sed -i.bak s/APIGEE_ADMINPW=/APIGEE_ADMINPW="${APIGEE_ADMINPW}"/g setup-org-test.txt
+          export TERM=xterm-256color
+          mkdir -p /tmp/apigee
+          mkdir -p /tmp/apigee/log
 
-          sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-prod.txt
-          sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-test.txt
-
-          sed -i.bak s/APIGEE_LDAPPW=/APIGEE_LDAPPW="${APIGEE_LDAPPW}"/g config.txt
-
-          sed -i.bak s/SKIP_SMTP=.*/SKIP_SMTP=${SKIP_SMTP}/g config.txt
-          sed -i.bak s/SMTPHOST=.*/SMTPHOST=${SMTPHOST}/g config.txt
-          sed -i.bak s/SMTPMAILFROM=.*/SMTPMAILFROM=${SMTPMAILFROM}/g config.txt
-          sed -i.bak s/SMTPUSER=.*/SMTPUSER=${SMTPUSER}/g config.txt
-          sed -i.bak s/SMTPPASSWORD=.*/SMTPPASSWORD=${SMTPPASSWORD}/g config.txt
-          sed -i.bak s/SMTPSSL=.*/SMTPSSL=${SMTPSSL}/g config.txt
-          sed -i.bak s/SMTPPORT=.*/SMTPPORT="${SMTPPORT}"/g config.txt
-
-          sed -i.bak s/MGMTIP/$(hostname -i)/g dp-config.txt
-          sed -i.bak s/DEVADMIN_USER=/DEVADMIN_USER="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
-          sed -i.bak s/DEVADMIN_PWD=/DEVADMIN_PWD="${APIGEE_ADMINPW}"/g dp-config.txt
-          sed -i.bak s/EDGE_ORG=/EDGE_ORG="${ORG_NAME}"/g dp-config.txt
-          sed -i.bak s/DEVPORTAL_ADMIN_USERNAME=/DEVPORTAL_ADMIN_USERNAME="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
-          sed -i.bak s/DEVPORTAL_ADMIN_PWD=/DEVPORTAL_ADMIN_PWD="${APIGEE_ADMINPW}"/g dp-config.txt
-          sed -i.bak s/DEVPORTAL_ADMIN_EMAIL=/DEVPORTAL_ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}"/g dp-config.txt
-
-          echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
-          if [[ -z ${LB_IP_ALIAS} ]]; then
-              LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
-          fi
-          if [[ $nodes == '2' ]]; then
-             LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
-             sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
-             sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
-          fi
-  
-          sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
-          sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
-          sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
+          #Get ansible scripts in /tmp/apigee/ansible directory
           
+          cd /tmp/apigee
+          #Lets get ansible scripts from git 
+          yum install git -y
+          git clone $GIT_CLONE_PATH
+          mv $SCRIPT_BASEPATH .
 
-          ##Openldap 2.4.44 issues. Needs to be downgraded
+          echo {{ properties["setup"].license }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
 
-          sudo yum downgrade openldap-2.4.40 -y
-          sudo yum install openldap-servers-2.4.40 -y
-          sudo yum install openldap-clients-2.4.40 -y
+          #Copy the right file based on topology
+          cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['infra'].topology }}.txt /tmp/apigee/ansible-scripts/config/config.txt
+          cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_{{ properties['infra'].topology }}node /tmp/apigee/ansible-scripts/inventory/hosts
 
-          #Lets Run ansible and complete the setup
+          bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
+
+  
+          #Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
           ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
           
@@ -239,8 +116,8 @@ resources:
       autoDelete: true
       initializeParams:
         diskName: {{ BASE_NAME }}-disk
-        diskSizeGb: 40
-        diskType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/diskTypes/pd-ssd
+        diskSizeGb: {{ diskSizeGb }}
+        diskType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ zone }}/diskTypes/pd-ssd
         sourceImage: {{ properties["sourceImage"] }}
     networkInterfaces:
     - network: $(ref.{{ properties["network"] }}.selfLink)

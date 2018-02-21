@@ -12,7 +12,7 @@ limitations under the License.
 
 
 {% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
-{% set MASTER = env["deployment"]  + '-' + env["name"]  %}
+{% set MASTER = env["deployment"]  + '-' + properties["name"] + '-' + env["name"]  %}
 
 
 resources:
@@ -21,11 +21,10 @@ resources:
   properties:
     zone: {{ properties['zone'] }}
     machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/machineTypes/{{ properties["machineType"] }}
-    sizeGb: 40
     metadata:
       items:
       - key: ssh-keys
-        value: {{ properties['public-key'] }}
+        value: {{ properties['public_key'] }}
       - key: startup-script
         value: |
           if [ -d "/opt/apigee" ]; then
@@ -39,16 +38,8 @@ resources:
 
           mkdir -p /tmp/apigee
           mkdir -p /tmp/apigee/log
-          redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
-          echo $redhat_release
-
-          if [ "$redhat_release" = "7" ]; then
-            curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
-          else
-            curl -o /tmp/apigee/epel-release-latest-6.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-            rpm -ivh /tmp/apigee/epel-release-latest-6.noarch.rpm
-          fi
+          curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+          rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
           cd /etc
           sed -i s/::1/#::1/g hosts
     disks:
@@ -58,7 +49,7 @@ resources:
       autoDelete: true
       initializeParams:
         diskName: {{ MASTER }}-disk
-        diskSizeGb: 100
+        diskSizeGb: {{ properties["diskSizeGb"] }}
         diskType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ properties['zone'] }}/diskTypes/pd-ssd
         sourceImage: {{ properties["sourceImage"] }}
     networkInterfaces:

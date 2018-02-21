@@ -31,36 +31,62 @@ resources:
 - name: apigee-edge-setup
   type: apigee-edge-template.jinja
   properties:
-     nodes: 5
-     machineType: n1-standard-2
-     region: us-central1
-     zone: us-central1-b
-     cidr: 10.10.7.0/24
-     version: '4.18.01'
-     repo:
-       host: software.apigee.com
-       protocol: https
-       user: 
-       password: 
-       stage: release
-     APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
-     APIGEE_ADMINPW: 'Secret123'
-     APIGEE_LDAPPW: 'Secret123'
-     ORG_NAME: ASG
-     SKIP_SMTP: 'y'
-     SMTPHOST: test.smtp.com
-     SMTPMAILFROM: apiadmin@apigee.com
-     SMTPUSER: test@example.com
-     # 0 for no username
-     SMTPPASSWORD: testpassword
-     # 0 for no password
-     SMTPSSL: 'y'
-     SMTPPORT: 465
-     autoscale:
-        enabled: true
-        size: 2
-        maxSize: 5
-     SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"
-     license: ""
-     public-key: ""
-     private-key: ""
+    repo:
+      apigee:
+        host: software.apigee.com
+        protocol: https
+        user: 
+        password: 
+        stage: release
+        version: 4.18.01
+      thirdparty:
+        epel: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        jq: http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/j/jq-1.5-1.el7.x86_64.rpm
+        ansible: http://mirror.centos.org/centos/7/extras/x86_64/Packages/ansible-2.3.1.0-3.el7.noarch.rpm
+    infra:
+      topology: 5
+      datacenters:
+        primary:
+          name: dc-1
+          region: us-central1
+          zone: us-central1-b
+          vpc:
+           create: true
+           cidr: 10.10.2.0/24
+      ms:
+        machineType: n1-standard-2
+        diskSizeGb: 20
+      ds:
+        machineType: n1-standard-2
+        diskSizeGb: 20
+      rmp:
+        machineType: n1-standard-2
+        diskSizeGb: 20
+        autoscale:
+          enabled: true
+          size: 2
+          maxSize: 5
+      ax:
+        machineType: n1-standard-2
+        diskSizeGb: 20
+      portal:
+        install: true
+        machineType: n1-standard-2
+        diskSizeGb: 20
+    setup:
+      apigee_admin_email: "opdk@apigee.com"
+      apigee_admin_password: 'Secret123'
+      apigee_ldappw: 'Secret123'
+      org_name: trial
+      skip_smtp: 'y'
+      smtp_host: test.smtp.com
+      smtp_mail_from: apiadmin@apigee.com
+      smtp_user: test@example.com
+      smtp_password: testpassword
+      smtp_ssl: 'y'
+      smtp_port: 465
+      git_clone_path: 'https://github.com/apigee/edge-gcp'
+      script_base_path: './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'
+      license: ""
+      public_key: ""
+      private_key: ""

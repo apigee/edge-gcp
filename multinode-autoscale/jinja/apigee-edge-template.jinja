@@ -11,30 +11,32 @@ limitations under the License.
 #}
 
 {% set  BASE_NAME =   env['deployment'] + '-' + env['name'] %}
-{% set  NETWORK_NAME = env['deployment'] + '-' + 'network' %}
-{% set  SUBNET_NAME =  env['deployment'] + '-' + 'network-subnet' %}
-{% set  FIREWALL_NAME = env['deployment'] + '-' + 'network-firewall' %}
-{% set  TEMPLATE_NAME = 'apigee-edge-' + properties['nodes']|string + 'node-template.jinja' %}
-{% set  RMP_TEMPLATE_NAME = 'apigee-lb-autoscale-' + (properties['autoscale'].enabled|string).lower() + '-template.jinja' %}
+
+{% set  TEMPLATE_NAME = 'apigee-edge-' + properties['infra'].topology|string + 'node-template.jinja' %}
+{% set  RMP_TEMPLATE_NAME = 'apigee-lb-autoscale-' + (properties['infra'].rmp.autoscale.enabled|string).lower() + '-template.jinja' %}
 
 {% set  sourceImage= 'https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7' %}
 
-{% if (properties['nodes'] == 2) %}
+{% if (properties['infra'].topology == 2) %}
 {% set  RMP_TEMPLATE_NAME='apigee-lb-template.jinja' %}
 {% endif %}
+
+{% set  NETWORK_NAME = env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + 'network' %}
+{% set  SUBNET_NAME =  env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + 'network-subnet' %}
+{% set  FIREWALL_NAME = env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + 'network-firewall' %}
 
 resources:
 - name: {{ NETWORK_NAME }}
   type: apigee-network-template.jinja
   properties:
-    cidr: {{ properties["cidr"] }}
+    cidr: {{ properties['infra'].datacenters.primary.vpc.cidr }}
     subnet: {{ SUBNET_NAME }}
-    region: {{ properties['region'] }}
+    region: {{ properties['infra'].datacenters.primary.region }}
 - name: {{ FIREWALL_NAME }}
   type: apigee-firewall-template.jinja
   properties:
     network: {{ NETWORK_NAME }}
-    cidr: {{ properties["cidr"] }}
+    cidr: {{ properties['infra'].datacenters.primary.vpc.cidr }}
 - name: {{ BASE_NAME }}-address
   type: compute.v1.globalAddress
 - name: apigee-edge
@@ -42,16 +44,9 @@ resources:
   properties:
     network: {{ NETWORK_NAME }}
     subnet: {{ SUBNET_NAME }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
+    infra: {{ properties["infra"] }}
     repo: {{ properties["repo"] }}
-    license: {{ properties["license"] }}
-    region: {{ properties["region"] }}
-    public-key: {{ properties["public-key"] }}
-    private-key: {{ properties["private-key"] }}
-    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-    ORG_NAME: {{ properties['ORG_NAME'] }}
+    setup: {{ properties["setup"] }}
     sourceImage: {{ sourceImage }}
 - name: apigee-mgmt
   type: apigee-mgmt-vm-template.jinja
@@ -59,26 +54,11 @@ resources:
     network: {{ NETWORK_NAME }}
     subnet: {{ SUBNET_NAME }}
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    repo : {{ properties["repo"] }}
-    version: {{ properties['version']}}
-    license: {{ properties["license"] }}
-    public-key: {{ properties["public-key"] }}
-    private-key: {{ properties["private-key"] }}
-    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-    APIGEE_LDAPPW: {{ properties['APIGEE_LDAPPW'] }}
-    ORG_NAME: {{ properties['ORG_NAME'] }}
-    SKIP_SMTP: {{ properties['SKIP_SMTP'] }}
-    SMTPHOST: {{ properties['SMTPHOST'] }}
-    SMTPUSER: {{ properties['SMTPUSER'] }}
-    SMTPPASSWORD: {{ properties['SMTPPASSWORD'] }}
-    SMTPSSL: {{ properties['SMTPSSL'] }}
-    SMTPPORT: {{ properties['SMTPPORT'] }}
-    SMTPMAILFROM: {{ properties['SMTPMAILFROM'] }}
-    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
-    nodes: {{ properties['nodes'] }}
+    public_key: {{ properties["setup"].public_key }}
+    private_key: {{ properties["setup"].private_key }}
+    infra: {{ properties["infra"] }}
+    repo: {{ properties["repo"] }}
+    setup: {{ properties["setup"] }}
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
     sourceImage: {{ sourceImage }}
 - name: apigee-rmp-as
@@ -86,22 +66,12 @@ resources:
   properties:
     network: {{ NETWORK_NAME }}
     subnet: {{ SUBNET_NAME }}
-    machineType: {{ properties["machineType"] }}
-    region: {{ properties['region']}}
-    zone: {{ properties["zone"] }}
-    repo : {{ properties["repo"] }}
-    version: {{ properties['version']}}
-    license: {{ properties["license"] }}
-    public-key: {{ properties["public-key"] }}
-    private-key: {{ properties["private-key"] }}
     HOST_NAMES: $(ref.apigee-edge.HOST_NAMES)
-    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-    ORG_NAME: {{ properties['ORG_NAME'] }}
-    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
-    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
-    nodes: {{ properties['nodes'] }}
+    public_key: {{ properties["setup"].public_key }}
+    private_key: {{ properties["setup"].private_key }}
+    infra: {{ properties["infra"] }}
+    repo: {{ properties["repo"] }}
+    setup: {{ properties["setup"] }}
     msip: $(ref.apigee-mgmt.myIp)
-    size: {{ properties["autoscale"].size }}
-    maxSize: {{ properties["autoscale"].maxSize }}
+    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
     sourceImage: {{ sourceImage }}

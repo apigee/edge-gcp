@@ -53,81 +53,117 @@ GCP Resource Deployment Model for 7 node
             apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
           ```
 
-- Add missing fields repo->user, repo->password, public-key, private-key and license in apigee-edge.yaml. Change other entries as desired.
+- Add missing fields repo->apigee->user, repo->apigee->password, repo->setup->public_key, repo->setup->private_key and license in apigee-edge.yaml. Change other entries as desired.
 
-    | properties        | Description                                    |
-    | ----------------- |:-----------------------------------------------| 
-    | machineType       | The machine types. Refer https://cloud.google.com/compute/docs/machine-types for list of all machine types               |
-    | region            | gcloud region . asia-east1,europe-west1,us-central1,us-east1,us-west1  | 
-    | zone              | The availability zone in region               |
-    | nodes             | This repesents the deployment topologies. Presently it comes with bundled template of 2,5,7,9 nodes. You can specify any of these values                                    |
-    | cidr              | The subnet address.                            |
-    | version           | The apigee private cloud release version       |
-    | repo : host       | The software repo of apigee binaries           |
-    | repo : protocol   | The software repo protocol  (http or https)    | 
-    | repo : user       | The  user details to access Apigee software    |
-    | repo : stage      | The repo stage (release, e2e)                     |
-    | repo : password   | The  password to access the software           |
-    | APIGEE_ADMIN_EMAIL| Edge system admin user                         |
-    | APIGEE_ADMINPW    | Edge System admin Password                     |
-    | APIGEE_LDAPPW     | Edge LDAP password                             |
-    | ORG_NAME          | Edge Org name                                  |
-    | SKIP_SMTP         | If you want to skip Smtp it is y               |
-    | SMTPHOST          | SMTP Host                                      |
-    | SMTPMAILFROM      | SMTP MAIL FROM                                 |
-    | SMTPUSER          | SMTP user. 0 if no user                        |
-    | SMTPPASSWORD      | SMTP Password. 0 if no password                |
-    | SMTPSSL           | Is SMTP on SSL                                 |
-    | SMTPPORT          | SMTP port (25)                                 |
-    | autoscale : enabled| The value can be true or false                |
-    | autoscale : size  | The minimum number of rmp instances. Even if autoscale is false, you need to provide the number of rmp nodes           |
-    | autoscale : maxSize| The maximum number of autoscaled instances    |
-    | SCRIPT_BASEPATH   | The raw  path where script is located          |
-    | license           | Paste the license  text here                   |
-    | public-key        | Paste the contents of apigee.key.pub  you created earlier|
-    | private-key       | Paste the contents of apigee.key you created earlier|
+    | properties                             | Description                                    |
+    | -------------------------------------- |:-----------------------------------------------| 
+    | repo:apigee:host                       | The software repo of apigee binaries           |
+    | repo:apigee:protocol                   | The software repo protocol  (http or https)    | 
+    | repo:apigee:user                       | The  user id to access Apigee software         |
+    | repo:apigee:password                   | The  user password to access Apigee software   |
+    | repo:apigee:stage                      | The repo stage (release, e2e)                  |
+    | repo:apigee:version                    | The apigee private cloud release version       |
+    | infra: topology                        | This repesents the deployment topologies. Presently it comes with bundled template of 2,5,7,9 nodes. You can specify any of these values               |
+    | infra:datacenters:primary:name          | Name of primary datacenter name.              |
+    | infra:datacenters:primary:region.       | Datacenter region                             |
+    | infra:datacenters:primary:zone          | The primary zone of datacenter                |
+    | infra:datacenters:primary:vpc:cidr      | The subnet cidr                               |
+    | infra:datacenters:ms:machineType.       | The machine type for management server.       |
+    | infra:datacenters:ms:diskSizeGb         | The disk size associated with management server    |
+    | infra:datacenters:ds:machineType.       | The machine type for datastore(Cassandra/Zookeeper) server.                                                                                        |
+    | infra:datacenters:ds:diskSizeGb         | The disk size associated with for datastore(Cassandra/Zookeeper) server                                                                                |
+    | infra:datacenters:rmp:machineType.      | The machine type for router/MP server.               |
+    | infra:datacenters:rmp:diskSizeGb        | The disk size associated with router/MP server       |
+    | infra:datacenters:rmp:autoscale.enabled | The value can be true or false                       |
+    | infra:datacenters:rmp:autoscale.size    | The minimum number of mp instances. This is mandatory|
+    | infra:datacenters:rmp:autoscale.maxSize | he maximum number of autoscaled instances            |
+    | infra:datacenters:ax:machineType.       | The machine type for Analytics(PG & QPID) server.    |
+    | infra:datacenters:ax:diskSizeGb         | The disk size associated with Analytics(PG & QPID)   |
+    | infra:datacenters:portal:machineType.   | The machine type for Portal server.                  |
+    | infra:datacenters:portal:diskSizeGb     | The disk size associated with portal server          |
+    | setup:apigee_admin_email                | Edge system admin user                               |
+    | setup:apigee_admin_password             | Edge System admin Password                           |
+    | setup:apigee_ldappw                     | Edge LDAP password                                   |
+    | setup:org_name                          | Org Name                                             |
+    | setup:skip_smtp                         | 'y' or 'n'                                           |
+    | setup:smtp_host                         | smtp Host                                            |
+    | setup:smtp_mail_from                    | smtp Mail From                                       |
+    | setup:smtp_user                         | smtp user. 0 for no user                             |
+    | setup:smtp_password                     | smtp password. 0 fro no password                     |
+    | setup:smtp_ssl.                         | 'y' or 'n'                                           |
+    | setup:smtp_port| 465                    | smtp port. default 25. For ssl its 465               |
+    | setup:git_clone_path                    | 'https://github.com/apigee/edge-gcp'                 |
+    | setup:script_base_path.                 | './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'|
+    | setup:license                           | Paste the license  text here                             |
+    | setup:public_key                        | Paste the contents of apigee.key.pub  you created earlier|
+    | setup:private_key                       | Paste the contents of apigee.key you created earlier.    |
  
     
 - An example of apigee-edge.yaml would look like this. 
     ```sh
-         machineType: n1-standard-2
-         region: us-central1
-         zone: us-central1-b
-         nodes: 5
-         cidr: 10.10.7.0/24
-         version: '4.17.05'
          repo:
-           host: software.apigee.com
-           protocol: https
-           user: apigee
-           password: mypasswordToAccessRepo
-           stage: release
-         APIGEE_ADMIN_EMAIL: "opdk@apigee.com"
-         APIGEE_ADMINPW: 'Secret123'
-         APIGEE_LDAPPW: 'Secret123'
-         ORG_NAME: ASG
-         SKIP_SMTP: 'y'
-         SMTPHOST: test.smtp.com
-         SMTPMAILFROM: apiadmin@apigee.com
-         SMTPUSER: test@example.com
-         # 0 for no username
-         SMTPPASSWORD: testpassword
-         # 0 for no password
-         SMTPSSL: 'y'
-         SMTPPORT: 465
-         autoscale:
-            enabled: true
-            size: 2
-            maxSize: 5
-         SCRIPT_BASEPATH: "https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja"
-         license: "Paste license text here"
-         public-key: "apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOxjW0NaKon2OA0jecyM5Iw6bE4MW3AgYuXG7I+glrrfltiK/5JUx+3+Okp2dzhw== apigee"
-         private-key: "-----BEGIN RSA PRIVATE KEY-----
-         MIIJKQIBAAKCAgEAudAtZkWpC/1iYPI5tpKQp2YMHfOezaqdYFw890lnvYwdntbs
-         ECeWSQiuREsnUbq/J3vJpFn21IDgFQBOifOuKoieBwtV6d0jOKoQ6cqonp2WAWFU
-         msi3/vzfelCJxdF2YBuSd1vfbpxzqHgShCI2fXGjJ+aZLwp9NCshy12a1S+U1cd5
-         c5X//bZe0L8Q2i+S/MzDyj0HC/92I3WBJb1iJZkoOm7NK1lQ9KwhPDHChhiC1fAr
-         -----END RSA PRIVATE KEY-----"
+          apigee:
+            host: software.apigee.com
+            protocol: https
+            user: apigeesoftwareuser
+            password: x2334t23455
+            stage: release
+            version: 4.18.01
+          thirdparty:
+            epel: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            jq: http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/j/jq-1.5-1.el7.x86_64.rpm
+            ansible: http://mirror.centos.org/centos/7/extras/x86_64/Packages/ansible-2.3.1.0-3.el7.noarch.rpm
+        infra:
+          topology: 5
+          datacenters:
+            primary:
+              name: dc-1
+              region: us-central1
+              zone: us-central1-b
+              vpc:
+               create: true
+               cidr: 10.10.2.0/24
+          ms:
+            machineType: n1-standard-2
+            diskSizeGb: 20
+          ds:
+            machineType: n1-standard-2
+            diskSizeGb: 20
+          rmp:
+            machineType: n1-standard-2
+            diskSizeGb: 20
+            autoscale:
+              enabled: false
+              size: 2
+              maxSize: 5
+          ax:
+            machineType: n1-standard-2
+            diskSizeGb: 20
+          portal:
+            install: true
+            machineType: n1-standard-2
+            diskSizeGb: 20
+        setup:
+          apigee_admin_email: "opdk@apigee.com"
+          apigee_admin_password: 'Secret123'
+          apigee_ldappw: 'Secret123'
+          org_name: trial
+          skip_smtp: 'y'
+          smtp_host: test.smtp.com
+          smtp_mail_from: apiadmin@apigee.com
+          smtp_user: test@example.com
+          smtp_password: testpassword
+          smtp_ssl: 'y'
+          smtp_port: 465
+          git_clone_path: 'https://github.com/apigee/edge-gcp'
+          script_base_path: './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'
+          license: "JakHrOe9fuHhHyuJYF8NtiKkIvW01Oa6PZcuaWZql8U
+    V6KicnWnZJZzdLhTZskwz+DqcwNf0R1+UaFaPg=="
+          public_key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpI7cH+5dBvsiNrVOwd6kvZ2r7aXAHofCpZzVpm8w== apigee"
+          private_key: "-----BEGIN RSA PRIVATE KEY-----
+    MIIJKAIBAAKCAgEAqSPpE8rZAnDpJaAfVjZ+MsWJThQJgi3dL4DlLnURt7ErWeKo
+    VsMR3pz/wbIX7fAMr+eMGtmm1gMna5gzMaZy9nON/hE/vJ89J7KsfaEIA8c=
+    -----END RSA PRIVATE KEY-----"
     ```
 - Deploy to GCP
 

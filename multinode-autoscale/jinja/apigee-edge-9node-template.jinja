@@ -16,63 +16,77 @@ resources:
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ds.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ds2
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ds.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-qs0
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ax.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-qs1
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ax.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ps0
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ax.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-ps1
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].ax.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: apigee-dp
   type: apigee-shared-vm-template.jinja
   properties:
     network: {{ properties["network"] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
-    zone: {{ properties["zone"] }}
-    public-key: {{ properties["public-key"] }}
+    name: {{ properties["infra"].datacenters.primary.name }}
+    machineType: {{ properties["infra"].portal.machineType }}
+    zone: {{ properties["infra"].datacenters.primary.zone }}
+    diskSizeGb: {{ properties["infra"].portal.diskSizeGb }}
+    public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
 outputs:
 - name: HOST_NAMES

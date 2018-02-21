@@ -10,7 +10,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 #}
 
-{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set BASE_NAME =   env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + env['name'] %}
 {% set LB_PORT = 80 %}
 {% set LB_PORT_TEST = 8080 %}
 {% set PROD_VH_PORT = 9001 %}
@@ -22,31 +22,22 @@ resources:
 - name: {{ BASE_NAME }}-it
   type: apigee-rmp-instance-template.jinja
   properties:
-    region: {{ properties['region']}}
-    zone: {{ properties["zone"] }}
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
     network: {{ properties['network'] }}
     subnet: {{ properties["subnet"] }}
-    machineType: {{ properties["machineType"] }}
     msip: {{ properties["msip"] }}
     HOST_NAMES: {{ properties["HOST_NAMES"] }}
-    repo : {{ properties["repo"] }}
-    version: {{ properties['version']}}
-    ftp: {{ properties["ftp"] }}
-    license: {{ properties["license"] }}
-    public-key: {{ properties["public-key"] }}
-    private-key: {{ properties["private-key"] }}
-    APIGEE_ADMIN_EMAIL: {{ properties['APIGEE_ADMIN_EMAIL'] }}
-    APIGEE_ADMINPW: {{ properties['APIGEE_ADMINPW'] }}
-    ORG_NAME: {{ properties['ORG_NAME'] }}
-    SCRIPT_BASEPATH: {{ properties['SCRIPT_BASEPATH'] }}
-    nodes: {{ properties['nodes'] }}
-    LB_IP_ALIAS: {{ properties['LB_IP_ALIAS'] }}
+    public_key: {{ properties["public_key"] }}
+    private_key: {{ properties["private_key"] }}
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: {{ BASE_NAME }}-igm
   type: compute.v1.instanceGroupManager
   properties:
-    zone: {{ properties['zone'] }}
-    targetSize: {{ properties['size'] }}
+    zone: {{ properties['infra'].datacenters.primary.zone }}
+    targetSize: {{ properties['infra'].rmp.autoscale.size }}
     baseInstanceName: {{ BASE_NAME }}-instance
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
     namedPorts:
