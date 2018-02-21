@@ -67,6 +67,20 @@
     until: task_result.rc == 0
     retries: 3
     delay: 1
+  - name: yum install yum-utils
+    command: "yum install yum-utils -y"
+    sudo: yes
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
+  - name: yum install yum-plugin-priorities
+    command: "yum install yum-plugin-priorities -y"
+    sudo: yes
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
+    delay: 1
   - name: Limits change
     become_method: sudo
     lineinfile:
