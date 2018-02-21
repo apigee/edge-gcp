@@ -73,6 +73,7 @@ echo "topology ${topology}"
 
 if [[ $topology = '2' ]]; then
  LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
+ echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
  sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
  sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
 fi
