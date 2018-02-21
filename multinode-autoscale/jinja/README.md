@@ -8,7 +8,7 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 - Initialize your account
 
 ## Apigee Private Cloud
-Please go through http://docs.apigee.com/private-cloud/content/version-41705 to know more about Apigee Edge Private Cloud.
+Please go through https://docs.apigee.com/private-cloud/latest/overview to know more about Apigee Edge Private Cloud.
 
 ## Apigee Deployment on GCP
 
