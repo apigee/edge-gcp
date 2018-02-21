@@ -53,7 +53,7 @@ GCP Resource Deployment Model for 7 node
             apigee:sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMQYOx.....2OA0jecyUx+3+Okp2dzhw== apigee
           ```
 
-- Add missing fields repo->apigee->user, repo->apigee->password, repo->setup->public_key, repo->setup->private_key and license in apigee-edge.yaml. Change other entries as desired.
+- Add missing fields repo->apigee->user, repo->apigee->password, setup->public_key, setup->private_key and setup->license in apigee-edge.yaml. Change other entries as desired.
 
     | properties                             | Description                                    |
     | -------------------------------------- |:-----------------------------------------------| 
