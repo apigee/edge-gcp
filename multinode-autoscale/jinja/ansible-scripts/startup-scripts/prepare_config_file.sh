@@ -45,10 +45,6 @@ sed -i.bak s/APIGEE_LDAPPW=/APIGEE_LDAPPW="${APIGEE_LDAPPW}"/g config.txt
 sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-prod.txt
 sed -i.bak s/ORG_NAME=/ORG_NAME="${ORG_NAME}"/g setup-org-test.txt
 
-sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
-sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
-sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
-
 sed -i.bak s/SKIP_SMTP=.*/SKIP_SMTP=${SKIP_SMTP}/g config.txt
 sed -i.bak s/SMTPHOST=.*/SMTPHOST=${SMTPHOST}/g config.txt
 sed -i.bak s/SMTPMAILFROM=.*/SMTPMAILFROM=${SMTPMAILFROM}/g config.txt
