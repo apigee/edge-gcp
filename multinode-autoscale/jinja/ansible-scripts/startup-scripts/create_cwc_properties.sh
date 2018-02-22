@@ -4,7 +4,7 @@ APP_CWC=$2
 IFS=','
 mkdir -p /opt/apigee/customer
 mkdir -p /opt/apigee/customer/application
-mkdir -p /opt/apigee/customer/application/${property_name}
+touch /opt/apigee/customer/application/${property_name}
 
 app_cwc_ary=($APP_CWC)
 for item in ${app_cwc_ary[*]}
