@@ -11,6 +11,10 @@
     retries: 3
     delay: 1
     sudo: yes
+  - name: copy all shared cwc
+    command: "cp {{apigee_dest_path}}/cwc/* /opt/apigee/customer/application/"
+    sudo: yes
+    ignore_errors: true
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
     sudo: yes
