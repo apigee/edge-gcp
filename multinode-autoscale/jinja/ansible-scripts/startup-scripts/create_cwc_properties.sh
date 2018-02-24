@@ -10,13 +10,12 @@ app_cwc_ary=($APP_CWC)
 for item in ${app_cwc_ary[*]}
 do
     cwc_item=$item
-    if [["$cwc_item" != "None" ]];then
-      cwc_item=${cwc_item/[/}
-      cwc_item=${cwc_item/]/}
-      cwc_item=${cwc_item/\'/}
-      cwc_item=${cwc_item/\'/}
-      cwc_item="$(echo -e "${cwc_item}" | tr -d '[:space:]')"
-      echo $cwc_item >> /opt/apigee/customer/application/${property_name}
-    fi
+    echo $cwc_item
+    cwc_item=${cwc_item/[/}
+    cwc_item=${cwc_item/]/}
+    cwc_item=${cwc_item/\'/}
+    cwc_item=${cwc_item/\'/}
+    cwc_item="$(echo -e "${cwc_item}" | tr -d '[:space:]')"
+    echo $cwc_item >> /opt/apigee/customer/application/${property_name}
 done
 chown apigee:apigee /opt/apigee/customer/application/${property_name}
