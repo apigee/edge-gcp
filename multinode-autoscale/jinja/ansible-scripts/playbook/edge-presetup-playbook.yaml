@@ -8,11 +8,16 @@
     sudo: yes
   - name: install apigee service
     command: "bash {{apigee_dest_path}}/bootstrap_{{ version }}.sh apigeeuser={{ apigee_user }} apigeepassword={{ apigee_password }} JAVA_FIX=I apigeestage={{repostage}} apigeerepohost={{repohost}}"
+    register: task_result
+    until: task_result.rc == 0
     retries: 3
     delay: 1
     sudo: yes
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
+    register: task_result
+    until: task_result.rc == 0
+    retries: 3
     sudo: yes
   - name: Change Default Port timeout to higher value
     lineinfile:
@@ -22,3 +27,7 @@
       group: apigee
       create: yes
     sudo: yes
+  - name: copy file as command
+    command: "cp /tmp/apigee/cwc/shared.properties /opt/apigee/customer/application/"
+    sudo: yes
+    ignore_errors: true
