@@ -27,7 +27,11 @@
       group: apigee
       create: yes
     sudo: yes
-  - name: copy file as command
+  - name: Copy shared properties
     command: "cp /tmp/apigee/cwc/shared.properties /opt/apigee/customer/application/"
+    sudo: yes
+    ignore_errors: true
+  - name: Change the ownership of shared properties
+    command: "chown apigee:apigee /opt/apigee/customer/application/shared.properties"
     sudo: yes
     ignore_errors: true
