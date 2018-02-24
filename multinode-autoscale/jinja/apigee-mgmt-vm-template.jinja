@@ -57,6 +57,12 @@ resources:
           export topology="{{ properties['infra'].topology }}"
           export GIT_CLONE_PATH="{{ properties['setup'].git_clone_path }}"
           export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
+          export DS_CWC="{{ properties['setup'].config.code_with_config.ds }}"
+          export MS_CWC="{{ properties['setup'].config.code_with_config.ms }}"
+          export ROUTER_CWC="{{ properties['setup'].config.code_with_config.router }}"
+          export MP_CWC="{{ properties['setup'].config.code_with_config.mp }}"
+          export AX_CWC="{{ properties['setup'].config.code_with_config.ax }}"
+          export thirdparty="{{ properties["repo"].thirdparty }}"
 
           mkdir -p ~/.ssh
           touch ~/.ssh/id_rsa
@@ -69,28 +75,41 @@ resources:
           echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
 
-          for number in {1..3}
-          do
-          rpm -ivh {{ properties["repo"].thirdparty.epel }}
-          yum install {{ properties["repo"].thirdparty.ansible }} -y
-          yum install rng-tools -y
-          done
-
-          sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
-          systemctl daemon-reload
-          systemctl start rngd
 
           export TERM=xterm-256color
           mkdir -p /tmp/apigee
           mkdir -p /tmp/apigee/log
 
+          echo $thirdparty
+          IFS=','
+          thirdparty_ary=($thirdparty)
+          for item in ${thirdparty_ary[*]}
+          do
+            thirdparty_item=$item
+            echo $thirdparty_item
+            thirdparty_item=${thirdparty_item/[/}
+            thirdparty_item=${thirdparty_item/]/}
+            thirdparty_item=${thirdparty_item/\'/}
+            thirdparty_item=${thirdparty_item/\'/}
+            thirdparty_item="$(echo -e "${thirdparty_item}" | tr -d '[:space:]')"
+            echo $thirdparty_item
+            #To ensure that it works atleast once every 3 times
+            for number in {1..3}
+            do
+              yum install -y $thirdparty_item
+            done
+          done
+
           #Get ansible scripts in /tmp/apigee/ansible directory
           
           cd /tmp/apigee
-          #Lets get ansible scripts from git 
-          yum install git -y
+
           git clone $GIT_CLONE_PATH
           mv $SCRIPT_BASEPATH .
+
+          sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
+          systemctl daemon-reload
+          systemctl start rngd
 
           echo {{ properties["setup"].license }} | tr " " "\n" >> /tmp/apigee/ansible-scripts/config/license.txt
 
@@ -100,10 +119,24 @@ resources:
 
           bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
 
-  
+
           #Run ansible and complete the setup
           cd /tmp/apigee/ansible-scripts/playbook
           ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-setup-playbook.yaml
+
+          #Code with Config settings
+          bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "management-server.properties" "$MS_CWC"
+          bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "shared.properties" "$DS_CWC"
+
+          if [[ $topology = '2' ]]; then
+            bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "router.properties" "$ROUTER_CWC"
+            bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "message-processor.properties" "$MP_CWC"
+            bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "shared.properties" "$AX_CWC"
+          fi
+
+          #Restart Apigee Service to make code with config available
+          /opt/apigee/apigee-service/bin/apigee-all restart
+
           
           ansible-playbook -i ../inventory/hosts -u apigee edge-dashboard-playbook.yaml
           ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml

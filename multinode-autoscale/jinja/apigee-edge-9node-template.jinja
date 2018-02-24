@@ -22,6 +22,8 @@ resources:
     diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ds }}
 - name: apigee-ds2
   type: apigee-shared-vm-template.jinja
   properties:
@@ -33,6 +35,8 @@ resources:
     diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ds }}
 - name: apigee-qs0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -41,9 +45,11 @@ resources:
     name: {{ properties["infra"].datacenters.primary.name }}
     machineType: {{ properties["infra"].ax.machineType }}
     zone: {{ properties["infra"].datacenters.primary.zone }}
-    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    diskSizeGb: {{ properties["infra"].ax.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ax }}
 - name: apigee-qs1
   type: apigee-shared-vm-template.jinja
   properties:
@@ -52,9 +58,11 @@ resources:
     name: {{ properties["infra"].datacenters.primary.name }}
     machineType: {{ properties["infra"].ax.machineType }}
     zone: {{ properties["infra"].datacenters.primary.zone }}
-    diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
+    diskSizeGb: {{ properties["infra"].ax.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ax }}
 - name: apigee-ps0
   type: apigee-shared-vm-template.jinja
   properties:
@@ -66,6 +74,8 @@ resources:
     diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ax }}
 - name: apigee-ps1
   type: apigee-shared-vm-template.jinja
   properties:
@@ -77,6 +87,8 @@ resources:
     diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ax }}
 - name: apigee-dp
   type: apigee-shared-vm-template.jinja
   properties:
@@ -88,6 +100,8 @@ resources:
     diskSizeGb: {{ properties["infra"].portal.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ms }}
 outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-ds1.myIp):$(ref.apigee-ds2.myIp):$(ref.apigee-qs0.myIp):$(ref.apigee-qs1.myIp):$(ref.apigee-ps0.myIp):$(ref.apigee-ps1.myIp):$(ref.apigee-dp.myIp)

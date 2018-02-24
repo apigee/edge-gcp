@@ -22,6 +22,8 @@ resources:
     diskSizeGb: {{ properties["infra"].ds.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.ds }}
 - name: apigee-dp
   type: apigee-shared-vm-template.jinja
   properties:
@@ -33,6 +35,8 @@ resources:
     diskSizeGb: {{ properties["infra"].portal.diskSizeGb }}
     public_key: {{ properties["setup"].public_key }}
     sourceImage: {{ properties["sourceImage"] }}
+    thirdparty: {{ properties["repo"].thirdparty }}
+    cwc: {{ properties["setup"].config.code_with_config.portal }}
 outputs:
 - name: HOST_NAMES
   value: $(ref.apigee-ax0.myIp):$(ref.apigee-dp.myIp)

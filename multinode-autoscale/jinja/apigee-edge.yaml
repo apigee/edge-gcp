@@ -40,9 +40,11 @@ resources:
         stage: release
         version: 4.18.01
       thirdparty:
-        epel: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        jq: http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/j/jq-1.5-1.el7.x86_64.rpm
-        ansible: http://mirror.centos.org/centos/7/extras/x86_64/Packages/ansible-2.3.1.0-3.el7.noarch.rpm
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      - http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/j/jq-1.5-1.el7.x86_64.rpm
+      - http://mirror.centos.org/centos/7/extras/x86_64/Packages/ansible-2.3.1.0-3.el7.noarch.rpm
+      - rng-tools
+      - git
     infra:
       topology: 5
       datacenters:
@@ -70,7 +72,6 @@ resources:
         machineType: n1-standard-2
         diskSizeGb: 20
       portal:
-        install: true
         machineType: n1-standard-2
         diskSizeGb: 20
     setup:
@@ -80,13 +81,31 @@ resources:
       org_name: trial
       skip_smtp: 'y'
       smtp_host: test.smtp.com
-      smtp_mail_from: apiadmin@apigee.com
-      smtp_user: test@example.com
-      smtp_password: testpassword
+      smtp_mail_from: "noreply@apigee.com"
+      smtp_user: test@gmail.com
+      smtp_password: testPassword
       smtp_ssl: 'y'
       smtp_port: 465
       git_clone_path: 'https://github.com/apigee/edge-gcp'
       script_base_path: './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'
+      config:
+        code_with_config:
+          ds:
+          ms:
+          router:
+          - conf_load_balancing_load.balancing.driver.nginx.limit_conn=25000
+          - bin_setenv_min_mem=1024m
+          - bin_setenv_max_mem=3072m
+          - bin_setenv_max_permsize=256m
+          mp:
+          - bin_setenv_min_mem=1024m
+          - bin_setenv_max_mem=3072m
+          - bin_setenv_max_permsize=256m
+          - conf_system_jsse.enableSNIExtension=true
+          - conf_threadpool_maximum.pool.size=150
+          - conf_http_HTTPTransport.max.client.count=20000
+          ax:
+          portal:
       license: ""
       public_key: ""
       private_key: ""
