@@ -22,10 +22,3 @@
       group: apigee
       create: yes
     sudo: yes
-  - name: copy all shared cwc
-    copy: src={{apigee_dest_path}}/cwc/shared.properties
-          dest=/opt/apigee/customer/application/shared.properties force=yes
-    owner: apigee
-    group: apigee
-    sudo: yes
-    ignore_errors: true
