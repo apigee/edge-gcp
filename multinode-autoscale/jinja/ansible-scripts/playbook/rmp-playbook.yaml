@@ -11,6 +11,3 @@
     retries: 3
     delay: 1
     sudo: yes
-  - name: Restart RMP
-    command: "/opt/apigee/apigee-service/bin/apigee-all restart"
-    sudo: yes
