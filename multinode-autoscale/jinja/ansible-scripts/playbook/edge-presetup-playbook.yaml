@@ -11,15 +11,6 @@
     retries: 3
     delay: 1
     sudo: yes
-  - name: copy all shared cwc
-    copy: src={{apigee_dest_path}}/cwc/shared.properties
-        dest=/opt/apigee/customer/application/shared.properties force=yes
-    sudo: yes
-    ignore_errors: true
-  - name: change the ownership
-    command: "chown apigee:apigee /opt/apigee/customer/application/shared.properties"
-    sudo: yes
-    ignore_errors: true
   - name: Install Apigee setup
     command: "/opt/apigee/apigee-service/bin/apigee-service apigee-setup install"
     sudo: yes
@@ -31,3 +22,10 @@
       group: apigee
       create: yes
     sudo: yes
+  - name: copy all shared cwc
+    copy: src={{apigee_dest_path}}/cwc/shared.properties
+          dest=/opt/apigee/customer/application/shared.properties force=yes
+    owner: apigee
+    group: apigee
+    sudo: yes
+    ignore_errors: true
