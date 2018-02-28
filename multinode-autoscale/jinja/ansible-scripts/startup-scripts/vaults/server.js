@@ -11,10 +11,10 @@ var port = process.env.PORT || 8672;        // set our port
 var router = express.Router();              // get an instance of the express Router
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 router.get('/', function(req, res) {
-    res.json({ "ftp_user_name": "ftp_name",
-               "ftp_password": "ftp_pass",
-               "apigee_admin_user": "apigee_user",
-               "apigee_admin_password": "apigee_password" });
+    res.json({ "ftp_user_name": "user_ftp",
+               "ftp_password": "pass_ftp",
+               "apigee_admin_user": "user_apigee",
+               "apigee_admin_password": "password_apigee" });
 });
 // more routes for our API will happen here
 // REGISTER OUR ROUTES -------------------------------
