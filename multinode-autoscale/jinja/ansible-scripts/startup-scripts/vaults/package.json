@@ -1,0 +1,16 @@
+{
+  "name": "vaults",
+  "description": "",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "body-parser": "*",
+    "express": "4.2.x"
+  },
+  "license": "Apache License, Version 2.0"
+}
