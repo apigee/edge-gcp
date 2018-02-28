@@ -29,24 +29,17 @@ resources:
               value: {{ properties['public_key'] }}
             - key: startup-script
               value: |
-
                export VERSION="{{ properties['repo'].apigee.version }}"
                export REPO_HOST="{{ properties['repo'].apigee.host }}"
                export REPO_PROTOCOL="{{ properties['repo'].apigee.protocol }}"
-               export REPO_USER="{{ properties['repo'].apigee.user }}"
-               export REPO_PASSWORD="{{ properties['repo'].apigee.password }}"
                export REPO_STAGE={{ properties["repo"].apigee.stage }}
                export HOST_NAMES="{{ properties['HOST_NAMES'] }}"
                export MSIP="{{ properties['msip'] }}"
                export HOST_NAMES=$MSIP:$HOST_NAMES
-               export APIGEE_ADMIN_EMAIL="{{ properties['setup'].apigee_admin_email }}"
-               export APIGEE_ADMINPW="{{ properties['setup'].apigee_admin_password }}"
-               export APIGEE_LDAPPW="{{ properties['setup'].apigee_ldappw }}"
                export ORG_NAME="{{ properties['setup'].org_name }}"
                export SKIP_SMTP="{{ properties['setup'].skip_smtp }}"
                export SMTPHOST="{{ properties['setup'].smtp_host }}"
                export SMTPUSER="{{ properties['setup'].smtp_user }}"
-               export SMTPPASSWORD="{{ properties['setup'].smtp_password }}"
                export SMTPSSL="{{ properties['setup'].smtp_ssl }}"
                export SMTPPORT="{{ properties['setup'].smtp_port }}"
                export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
@@ -58,16 +51,6 @@ resources:
                export MP_CWC="{{ properties['setup'].config.code_with_config.mp }}"
                export thirdparty="{{ properties["repo"].thirdparty }}"
 
-               mkdir -p ~/.ssh
-               touch ~/.ssh/id_rsa
-               echo "{{ properties['private_key'] }}" >> ~/.ssh/id_rsa
-               sed -i s/-----BEGIN[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----[[:space:]]//g ~/.ssh/id_rsa
-               sed -i s/[[:space:]]-----END[[:space:]]RSA[[:space:]]PRIVATE[[:space:]]KEY-----//g ~/.ssh/id_rsa
-               tr  ' ' '\n' < ~/.ssh/id_rsa  > ~/.ssh/test_rsa
-               mv -f ~/.ssh/test_rsa ~/.ssh/id_rsa
-               sed -i '1s/^/-----BEGIN RSA PRIVATE KEY-----\n/' ~/.ssh/id_rsa
-               echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
-               chmod 400 ~/.ssh/id_rsa
 
                redhat_release=$(cat /etc/os-release|grep VERSION_ID|cut -d'=' -f2|sed 's/\"//g'|sed 's/\..*//g')
 
@@ -94,6 +77,21 @@ resources:
                    yum install -y $thirdparty_item
                  done
                done
+
+               while ! echo -n > /dev/tcp/$MSIP/8672 ; do
+                 echo "."
+                 sleep 10
+               done
+               sleep 5
+
+               #Get valuts information
+               export REPO_USER=$(curl -s $MSIP:8672/creds | jq .ftp_user_name)
+               export REPO_PASSWORD=$(curl -s $MSIP:8672/creds | jq .ftp_password)
+               export APIGEE_ADMIN_EMAIL=$(curl -s $MSIP:8672/creds | jq .apigee_admin_user)
+               export APIGEE_ADMINPW=$(curl -s $MSIP:8672/creds | jq .apigee_admin_password)
+               export APIGEE_LDAPPW=$(curl -s $MSIP:8672/creds | jq .pwd_ldap)
+               export SMTPPASSWORD=$(curl -s $MSIP:8672/creds | jq .password_smtp)
+
                
                cd /tmp/apigee
                #Lets get ansible scripts from git 
@@ -113,9 +111,9 @@ resources:
                bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
 
                cd /tmp/apigee/ansible-scripts/playbook
-               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-prerequisite-playbook.yaml
+               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-prerequisite-playbook.yaml --connection=local
 
-               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-presetup-playbook.yaml
+               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee edge-presetup-playbook.yaml --connection=local
 
                #Performance Related optimization
                bash /tmp/apigee/ansible-scripts/startup-scripts/create_cwc_properties.sh "router.properties" "$ROUTER_CWC"
@@ -142,9 +140,9 @@ resources:
 
                echo "Installing RMP First time only"
 
-               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml
+               ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee rmp-playbook.yaml --connection=local
 
-               ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml
+               ansible-playbook -i ../inventory/hosts -u apigee edge-telegraf-playbook.yaml --connection=local
 
                cd /tmp/apigee
                bash /tmp/apigee/ansible-scripts/startup-scripts/create_rpm_startup_shutodown.sh $MSIP $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW
@@ -157,7 +155,7 @@ resources:
                 /opt/apigee/apigee-service/bin/apigee-all stop
                 /tmp/apigee/shutdown.sh
                 cd /tmp/apigee/ansible-scripts/playbook
-                ansible-playbook -i ../inventory/hosts -u apigee edge-uninstall-playbook.yaml
+                ansible-playbook -i ../inventory/hosts -u apigee edge-uninstall-playbook.yaml --connection=local
                 rm -fr /tmp/apigee
                 rm -fr ~/.ssh/id_rsa
 
