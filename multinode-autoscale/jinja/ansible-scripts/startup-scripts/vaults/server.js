@@ -16,7 +16,7 @@ router.get('/', function(req, res) {
                "apigee_admin_user": "user_apigee",
                "apigee_admin_password": "password_apigee",
                "apigee_ldap_pwd": "pwd_ldap",
-               "smtp_password","password_smtp" });
+               "smtp_password":"password_smtp" });
 });
 // more routes for our API will happen here
 // REGISTER OUR ROUTES -------------------------------
