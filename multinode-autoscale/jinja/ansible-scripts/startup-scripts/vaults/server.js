@@ -14,7 +14,9 @@ router.get('/', function(req, res) {
     res.json({ "ftp_user_name": "user_ftp",
                "ftp_password": "pass_ftp",
                "apigee_admin_user": "user_apigee",
-               "apigee_admin_password": "password_apigee" });
+               "apigee_admin_password": "password_apigee",
+               "apigee_ldap_pwd": "pwd_ldap",
+               "smtp_password","password_smtp" });
 });
 // more routes for our API will happen here
 // REGISTER OUR ROUTES -------------------------------
