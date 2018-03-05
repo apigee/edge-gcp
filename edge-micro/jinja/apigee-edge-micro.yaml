@@ -9,7 +9,7 @@ resources:
     sourceImage: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/family/centos-7
     region: us-east1
     zone: us-east1-b
-    install_mg_script: https://storage.googleapis.com/microgateway/install_mg7.sh?ignoreCache=1
+    install_mg_script: https://raw.githubusercontent.com/apigee/edge-gcp/master/edge-micro/jinja/install_mg.sh
     edge:
         org: gaccelerate5
         env: test
