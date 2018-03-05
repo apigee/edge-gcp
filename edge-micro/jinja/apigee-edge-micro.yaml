@@ -42,6 +42,8 @@ resources:
             allow: 10
             timeUnit: minute
         sequence:
+        - oauth
+        - spikearrest
     test_setup:
       microservice:
         git_base_path: https://github.com/rajeshm7910/samples
