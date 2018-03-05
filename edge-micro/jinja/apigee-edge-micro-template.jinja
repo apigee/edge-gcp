@@ -1,0 +1,257 @@
+{% set COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/' %}
+{% set BASE_NAME =   env['deployment'] + '-' + env['name'] %}
+{% set MASTER = env["deployment"]  %}
+{% set region = properties['region'] %}
+{% set zone = properties['zone'] %}
+
+resources:
+- name: {{ env['deployment'] }}-{{region}}-{{ zone }}
+  type: compute.v1.instance 
+  properties:
+    zone: {{ zone }}
+    machineType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ zone }}/machineTypes/{{ properties["machineType"] }}
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          curl -o /tmp/install_mg.sh {{ properties["install_mg_script"] }} 
+          chmod +x /tmp/install_mg.sh
+
+          export private_mgmt_api="{{properties['edge'].private.mgmt_url}}"
+          export api_endpoint="{{properties['edge'].private.api_endpoint}}"
+
+          if [[ "$private_mgmt_api" = "None" ]]; then
+             echo "private mgmt api is null"
+             mgmt_api="https://api.enterprise.apigee.com"
+          else
+             mgmt_api=$private_mgmt_api
+          fi
+          if [[ "$api_endpoint" = "None" ]]; then
+             echo "api_endpoint is null"
+          fi
+
+          echo 'mgmt '$mgmt_api
+          echo 'api '$api_endpoint
+          echo 'private '$private_mgmt_api
+          
+          export org="{{properties['edge'].org}}"
+          export env_name="{{properties['edge'].env}}"
+          export APIGEE_ADMIN_EMAIL="{{properties['edge'].admin_email}}"
+          export APIGEE_ADMINPW="{{properties['edge'].admin_password}}"
+          export PORT={{properties['test_setup'].microservice.port}}
+          export edgemicro_port="{{properties['edge_micro_custom'].port}}"
+          export policies="{{ properties['edge_micro_custom'] }}"
+
+          if [[ "$private_mgmt_api" = "None" ]]; then
+             ./tmp/install_mg.sh -o ${org} -e ${env_name} -v {{ properties['edge'].vhost}} -u $APIGEE_ADMIN_EMAIL -p $APIGEE_ADMINPW -P $edgemicro_port}} 
+
+          else
+             ./tmp/install_mg.sh -o ${org} -e ${env_name} -v {{ properties['edge'].vhost}} -u $APIGEE_ADMIN_EMAIL -p $APIGEE_ADMINPW -P $edgemicro_port}} -m ${private_mgmt_api} -r ${api_endpoint}
+          fi
+
+          export proxy_name="edgemicro_{{ MASTER }}"
+          export base_path="{{ MASTER }}"
+          source /tmp/key.properties
+          echo key1:$key
+          echo secret1:$secret
+
+          mkdir -p /tmp/config
+          echo $policies >> /tmp/config/policies.json
+          cd /tmp/config
+          cp ~/.edgemicro/${org}-${env_name}-config.yaml .
+          yum install jq -y
+          npm install -g yamljs
+          yaml2json ${org}-${env_name}-config.yaml > ${org}-${env_name}-config.json
+          policies_file=policies.json
+          config_file=${org}-${env_name}-config.json
+          sed -i.bak s/True/true/g $policies_file
+          sed -i.bak s/False/false/g $policies_file
+          sed -i.bak s/\'/\"/g $policies_file
+          sed -i.bak s/None/[]/g $policies_file
+
+          length=$(cat $policies_file | jq '.policies | length')
+          COUNTER=0
+          while [  $COUNTER -lt $length ]; do
+             data=$(cat $policies_file | jq -c .policies[$COUNTER])
+             cat $config_file | jq '. |= . + '$data  > temp.json
+             mv temp.json $config_file
+            let COUNTER=COUNTER+1
+          done
+          #Modify sequence now
+          data=$(cat $policies_file | jq -c .sequence)
+          cat $config_file | jq '.edgemicro.plugins.sequence |= . - ["oauth"]' | jq '.edgemicro.plugins.sequence |= . + '$data > temp.json
+          mv temp.json $config_file
+          cat $config_file | jq .
+          json2yaml $org-${env_name}-config.json > $org-${env_name}-config.yaml
+
+
+          curl -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/apis  -d "{\"name\" : \"$proxy_name\"}" 
+
+          curl -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/apis/$proxy_name/revisions/1/targets -d \
+          "{
+            \"connection\": {
+            \"connectionType\": \"httpConnection\",
+            \"uRL\": \"http:\/\/localhost:$PORT\"
+          },
+          \"connectionType\": \"httpConnection\",
+          \"description\": \"\",
+          \"faultRules\": [],
+          \"flows\": [],
+          \"name\": \"default\",
+          \"postFlow\": {
+             \"name\": \"PostFlow\",
+            \"request\": {
+              \"children\": []
+          },
+          \"response\": {
+            \"children\": []
+          }
+          },
+          \"preFlow\": {
+            \"name\": \"PreFlow\",
+            \"request\": {
+              \"children\": []
+          },
+          \"response\": {
+            \"children\": []
+          }
+          },
+           \"type\": \"Target\"
+          }"
+
+          curl -v -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/apis/$proxy_name/revisions/1/proxies -d \
+          "{
+             \"connection\": {
+               \"basePath\": \"\/$base_path\",
+               \"connectionType\": \"httpConnection\",
+                  \"virtualHost\": [
+                      \"default\",
+                      \"secure\"
+                  ]
+             },
+             \"connectionType\": \"httpConnection\",
+             \"description\": \"\",
+             \"faultRules\": [],
+             \"flows\": [],
+             \"name\": \"default\",
+             \"postFlow\": {
+                \"name\": \"PostFlow\",
+                \"request\": {
+                   \"children\": []
+                },
+                \"response\": {
+                   \"children\": []
+                }
+              },
+              \"preFlow\": {
+                  \"name\": \"PreFlow\",
+                  \"request\": {
+                     \"children\": []
+                  },
+                  \"response\": {
+                     \"children\": []
+                  }
+              },
+              \"routeRule\": [
+              {
+                 \"empty\": false,
+                 \"name\": \"default\",
+                 \"targetEndpoint\": \"default\"
+              }
+              ],
+              \"routeRuleNames\": [
+                 \"default\"
+              ],
+              \"type\": \"Proxy\"
+          }"
+
+          curl -v -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/x-www-form-urlencoded" ${mgmt_api}/v1/organizations/${org}/environments/${env_name}/apis/${proxy_name}/revisions/1/deployments
+ 
+      
+          #create product
+          curl -v -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/apiproducts -d \
+            "{
+                \"name\" : \"${proxy_name}-product\",
+                \"displayName\": \"${proxy_name}-product\",
+                \"approvalType\": \"auto\",
+                \"attributes\": [
+                {
+                  \"name\": \"access\",
+                  \"value\": \"public\"
+                }
+                ],
+                \"description\": \"Edgemicro proxy\",
+                \"environments\": [ \"${env_name}\"],
+                \"proxies\": [\"edgemicro-auth\", \"$proxy_name\"],
+                \"quota\": \"\",
+                \"quotaInterval\": \"\",
+                \"quotaTimeUnit\": \"\",
+                \"scopes\": []
+          }"
+
+          #create developer
+          curl -v -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/developers -d \
+          "{
+            \"email\" : \"${proxy_name}-developer@test.com\",
+            \"firstName\" : \"${proxy_name}\",
+            \"lastName\" : \"${proxy_name}\",
+            \"userName\" : \"${proxy_name}-developer\",
+            \"attributes\" : []
+          }"
+
+          #create developer apps
+          curl -v -X POST -u $APIGEE_ADMIN_EMAIL:$APIGEE_ADMINPW -H "Content-Type:application/json" ${mgmt_api}/v1/organizations/${org}/developers/${proxy_name}-developer@test.com/apps -d \
+          "{
+             \"name\" : \"${proxy_name}-app\",
+             \"apiProducts\": [ \"${proxy_name}-product\"],
+             \"keyExpiresIn\" : 2592000000,
+             \"attributes\" : [ 
+              {
+                \"name\" : \"DisplayName\",
+                \"value\" : \"${proxy_name}-app\"
+              }, 
+              {
+                \"name\" : \"Notes\",
+                \"value\" : \"\"
+              }
+              ],
+              \"scopes\" : [],
+              \"callbackUrl\" : \"\"
+          }"
+
+          yum install git -y
+          cd /tmp
+          git clone {{properties['test_setup'].microservice.git_base_path}}
+          cd {{properties['test_setup'].microservice.app_base_path}}
+          
+          npm install
+          nohup npm start &
+
+          #restart edgemicro
+          export PORT=${edgemicro_port}
+          edgemicro stop
+          nohup edgemicro start -o ${org} -e ${env_name}  -k $key -s $secret -r ${edgemicro_port}  -c /tmp/config &
+
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        diskName: {{ MASTER }}-disk
+        diskSizeGb: {{ properties["diskSizeGb"] }}
+        diskType: {{ COMPUTE_URL_BASE }}projects/{{ env['project'] }}/zones/{{ zone }}/diskTypes/pd-ssd
+        sourceImage: {{ properties["sourceImage"] }}
+    networkInterfaces:
+    - accessConfigs:
+      - name: external-nat
+        type: ONE_TO_ONE_NAT
+      network: global/networks/default
+- name: {{ MASTER }}-network-firewall
+  type: compute.v1.firewall
+  properties:
+    network: global/networks/default
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [{{properties["port"]}}]

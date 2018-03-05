@@ -1,0 +1,37 @@
+imports:
+- path: apigee-edge-micro-template.jinja
+resources:
+- name: apigee-edge-micro-setup
+  type: apigee-edge-micro-template.jinja
+  properties:
+    machineType: n1-standard-2
+    diskSizeGb: 20
+    sourceImage: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/family/centos-7
+    region: us-east1
+    zone: us-east1-b
+    install_mg_script: https://storage.googleapis.com/microgateway/install_mg7.sh?ignoreCache=1
+    edge:
+        org: gaccelerate5
+        env: test
+        admin_email: 
+        admin_password: 
+        vhost: "default"
+        private:
+          mgmt_url:
+          api_endpoint:
+    edge_micro_custom:
+        port: 8000
+        policies:
+        - oauth:
+            allowNoAuthorization: false
+            allowInvalidAuthorization: false
+            verify_api_key_url: https://gaccelerate5-test.apigee.net/edgemicro-auth/verifyApiKey
+        - spikearrest:
+            allow: 10
+            timeUnit: minute
+        sequence:
+    test_setup:
+      microservice:
+        git_base_path: https://github.com/rajeshm7910/samples
+        app_base_path: ./samples/hello_app
+        port: 8081

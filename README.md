@@ -17,9 +17,14 @@ This profile helps to create a AIO profile in Google cloud platform. The details
 [here](../../tree/master/aio/jinja)
 
 ### multinode (Multinode edge deployment)
-This profile helps to create a 5,7,9 node cluster deployment in Google cloud platform. 
+This profile helps to create a 2,5,7,9 node cluster deployment in Google cloud platform. 
 
 The details are present [here](../../tree/master/multinode-autoscale/jinja)
+
+### edge-micro (Edge Micro  deployment)
+This profile creates Edge Micro deployment
+
+The details are present [here](../../tree/master/edge-micro/jinja)
 
 ## License
 
