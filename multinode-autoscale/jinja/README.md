@@ -10,36 +10,6 @@ This project allows you to install edge in Google Cloud Platform using GCP's dep
 ## Apigee Private Cloud
 Please go through https://docs.apigee.com/private-cloud/latest/overview to know more about Apigee Edge Private Cloud.
 
-## Apigee Deployment on GCP
-
- - At this point of time, supported topologies are 2,5,7 and 9. For 5,7,9 node topologies, you can setup auto scaling. When set to auto scaling, Routers and MP's are configured in seperate nodes.
- - Additionally it also create Developer portal in a separate node for all supported toplogies. So for example if you choose to deploy 5 node topology, it will deploy developer portal on 6th node.
- 
- - Supported Deployment Topologies
-
-Edge Topology- 2 node
-![Edge Topology- 2 node](/images/2node.png)
-
-Edge Topology- 5 node
-![Edge Topology- 5 node](/images/5node.png)
-
-Edge Topology- 5 node with auto scaling
-![Edge Topology- 5 node with auto scaling](/images/5node-auto-scaling.png)
-
-Edge Topology- 7 node
-![Edge Topology- 7 node](/images/7node.png)
-
-Edge Topology- 7 node with auto scaling
-![Edge Topology- 7 node with auto scaling](/images/7node-auto-scaling.png)
-
-Edge Topology- 9 node
-![Edge Topology- 9 node](/images/9node.png)
-
-Edge Topology- 9 node with auto scaling
-![Edge Topology- 9 node with auto scaling](/images/9node-auto-scaling.png)
-
-GCP Resource Deployment Model for 7 node
-![GCP Resource Deployment Model for 7 node](/images/resourceDeployment.png)
 
 ## Getting Started
 - Create a ssh key pair 
@@ -255,6 +225,37 @@ It uses ansible based scripts for multi node installation and there can be cases
 - Check if apigee-edge.yaml properties are correct. Check if private key, public key, repo user, repo password and  license files are set correctly.
 - ssh to management server box which will be typically the vm with name "RESOUCE-NAME"-apigee-mgmt
 - Go to /tmp/apigee/log directory and you can find two log files - ansible.log and setup-root.log. Looking into those files can provide clue to what may have gone wrong.
+
+## Apigee Deployment Topologies on GCP
+
+ - At this point of time, supported topologies are 2,5,7 and 9. For 5,7,9 node topologies, you can setup auto scaling. When set to auto scaling, Routers and MP's are configured in seperate nodes.
+ - Additionally it also create Developer portal in a separate node for all supported toplogies. So for example if you choose to deploy 5 node topology, it will deploy developer portal on 6th node.
+ 
+ - Supported Deployment Topologies
+
+Edge Topology- 2 node
+![Edge Topology- 2 node](/images/2node.png)
+
+Edge Topology- 5 node
+![Edge Topology- 5 node](/images/5node.png)
+
+Edge Topology- 5 node with auto scaling
+![Edge Topology- 5 node with auto scaling](/images/5node-auto-scaling.png)
+
+Edge Topology- 7 node
+![Edge Topology- 7 node](/images/7node.png)
+
+Edge Topology- 7 node with auto scaling
+![Edge Topology- 7 node with auto scaling](/images/7node-auto-scaling.png)
+
+Edge Topology- 9 node
+![Edge Topology- 9 node](/images/9node.png)
+
+Edge Topology- 9 node with auto scaling
+![Edge Topology- 9 node with auto scaling](/images/9node-auto-scaling.png)
+
+GCP Resource Deployment Model for 7 node
+![GCP Resource Deployment Model for 7 node](/images/resourceDeployment.png)
 
 
 ## License
