@@ -1,3 +1,4 @@
+#!/bin/bash
 for number in {1..3}
 do
   yum install nodejs -y
@@ -12,5 +13,4 @@ sed -i.bak s/password_apigee/"${APIGEE_ADMINPW}"/g server.js
 sed -i.bak s/pwd_ldap/"${APIGEE_LDAPPW}"/g server.js
 sed -i.bak s/password_smtp/"${SMTPPASSWORD}"/g server.js
 rm -fr server.js.bak
-
-nohup node server.js &
+node server.js

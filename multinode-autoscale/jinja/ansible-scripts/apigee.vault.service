@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 ExecStart=/tmp/apigee/ansible-scripts/startup-scripts/setup_vault.sh
-TimeoutStartSec=0
 
 [Install]
 WantedBy=default.target
+Alias=dbus-apigee.vault.service
