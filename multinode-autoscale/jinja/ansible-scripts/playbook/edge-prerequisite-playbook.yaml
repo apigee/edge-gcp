@@ -109,3 +109,15 @@
     command: "setenforce 0"
     ignore_errors: true
     sudo: yes
+  - name: install rng tools
+    command: "yum install rng-tools -y"
+    sudo: yes
+    ignore_errors: true
+  - name: configure rng tools
+    command: "sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service"
+    sudo: yes
+    ignore_errors: true
+  - name: ExecStart rng tools
+    command: "systemctl daemon-reload && systemctl start rngd"
+    sudo: yes
+    ignore_errors: true
