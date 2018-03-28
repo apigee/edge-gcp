@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/tmp/apigee/ansible-scripts/startup-scripts/vaults/setup_vault.sh
+ExecStart=/tmp/apigee/ansible-scripts/startup-scripts/setup_vault.sh
 TimeoutStartSec=0
 
 [Install]
