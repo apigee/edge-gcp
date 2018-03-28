@@ -1,0 +1,11 @@
+[Unit]
+Description=Apigee Vault Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/tmp/apigee/ansible-scripts/startup-scripts/vaults/setup_vault.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=default.target
