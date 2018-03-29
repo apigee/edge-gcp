@@ -66,8 +66,7 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
     | setup:smtp_password                     | smtp password. 0 fro no password                     |
     | setup:smtp_ssl.                         | 'y' or 'n'                                           |
     | setup:smtp_port| 465                    | smtp port. default 25. For ssl its 465               |
-    | setup:git_clone_path                    | 'https://github.com/apigee/edge-gcp'                 |
-    | setup:script_base_path                  | './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'. Please don't change this unless required                                                         |
+    | setup:script_base_path                  | 'https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja/ansible-scripts'. Please don't change this unless required                                                         |
     | setup:config:code_with_config           | This section deals with all code with config settings. |
     | setup:config:code_with_config.ds        | Cassandra and Zookeeper related code with config.      |
     | setup:config:code_with_config.ms        | Management server code with config.                    |
@@ -94,8 +93,6 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
           - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
           - http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/j/jq-1.5-1.el7.x86_64.rpm
           - http://mirror.centos.org/centos/7/extras/x86_64/Packages/ansible-2.3.1.0-3.el7.noarch.rpm
-          - rng-tools
-          - git
         infra:
           topology: 5
           datacenters:
@@ -137,8 +134,7 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
           smtp_password: testpassword
           smtp_ssl: 'y'
           smtp_port: 465
-          git_clone_path: 'https://github.com/apigee/edge-gcp'
-          script_base_path: './edge-gcp/multinode-autoscale/jinja/ansible-scripts/'
+          script_base_path: 'https://raw.githubusercontent.com/apigee/edge-gcp/master/multinode-autoscale/jinja/ansible-scripts'
           config:
             code_with_config:
               ds:

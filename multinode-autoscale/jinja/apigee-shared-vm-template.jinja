@@ -60,8 +60,6 @@ resources:
               done
           fi
 
-          #curl -o /tmp/apigee/epel-release-latest-7.noarch.rpm  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-          #rpm -ivh /tmp/apigee/epel-release-latest-7.noarch.rpm
 
           echo $thirdparty
           IFS=','
@@ -84,12 +82,6 @@ resources:
             done
           done
 
-          #yum install rng-tools -y
-          sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
-          systemctl daemon-reload
-          systemctl start rngd
-
-          
           cd /etc
           sed -i s/::1/#::1/g hosts
     disks:

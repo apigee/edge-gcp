@@ -45,7 +45,6 @@ resources:
                export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
                export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
                export topology="{{ properties['infra'].topology }}"
-               export GIT_CLONE_PATH="{{ properties['setup'].git_clone_path }}"
                export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
                export ROUTER_CWC="{{ properties['setup'].config.code_with_config.router }}"
                export thirdparty="{{ properties["repo"].thirdparty }}"
@@ -92,16 +91,12 @@ resources:
                export SMTPPASSWORD=$(curl -s $MSIP:8672/creds | jq .password_smtp)
 
                cd /tmp/apigee
-               #Lets get ansible scripts from git
+               #Get ansible scripts in /tmp/apigee/ansible-scripts directory
+          
+               mkdir -p /tmp/apigee/ansible-scripts
+               cd /tmp/apigee/ansible-scripts
+               curl -L $SCRIPT_BASEPATH/download_files.sh | sh -
 
-               git clone $GIT_CLONE_PATH
-               mv $SCRIPT_BASEPATH .
-
-               sed -i 's#ExecStart=/sbin/rngd -f#ExecStart=/sbin/rngd -f -r /dev/urandom#g' /usr/lib/systemd/system/rngd.service
-               systemctl daemon-reload
-               systemctl start rngd
-
-               
           
                #Copy the right config file based on topology
                cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['infra'].topology }}.txt /tmp/apigee/ansible-scripts/config/config.txt
@@ -138,7 +133,7 @@ resources:
                sleep 5
 
 
-               echo "Installing Router First time only"
+               echo "Installing Router during setup"
                cd /tmp/apigee/ansible-scripts/playbook
                ansible-playbook --extra-vars "apigee_user=$REPO_USER apigee_password=$REPO_PASSWORD repohost=$REPO_HOST repoprotocol=$REPO_PROTOCOL repostage=$REPO_STAGE version=$VERSION" -i ../inventory/hosts -u apigee r-playbook.yaml --connection=local
 
