@@ -63,7 +63,7 @@ resources:
         machineType: n1-standard-2
         diskSizeGb: 20
         autoscale:
-          enabled: true
+          enabled: false
           size: 2
           maxSize: 5
       ax:
