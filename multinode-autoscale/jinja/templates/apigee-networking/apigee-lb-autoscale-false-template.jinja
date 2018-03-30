@@ -12,7 +12,7 @@ limitations under the License.
 
 {% set BASE_NAME =   env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + env['name'] %}
 {% set LB_PORT = 80 %}
-{% set LB_PORT_TEST = 8080 %}
+{% set LB_PORT_TEST = 80 %}
 {% set PROD_VH_PORT = 9001 %}
 {% set TEST_VH_PORT = 9002 %}
 {% set HEALTH_CHECK_PORT = "15999" %}
@@ -32,6 +32,7 @@ resources:
     public_key: {{ properties["public_key"] }}
     private_key: {{ properties["private_key"] }}
     LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
     sourceImage: {{ properties["sourceImage"] }}
 - name: {{ BASE_NAME }}-igm
   type: compute.v1.instanceGroupManager
@@ -111,7 +112,7 @@ resources:
   type: compute.v1.globalForwardingRule
   properties:
     IPProtocol: TCP
-    IPAddress: {{ properties['LB_IP_ALIAS'] }}
+    IPAddress: {{ properties['LB_IP_ALIAS_TEST'] }}
     portRange: {{ LB_PORT_TEST }}
     target: $(ref.{{ BASE_NAME }}-targetproxy-test.selfLink)
 - name: {{ BASE_NAME }}-lb

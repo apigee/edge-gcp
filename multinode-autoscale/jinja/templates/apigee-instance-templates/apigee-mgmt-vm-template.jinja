@@ -54,6 +54,7 @@ resources:
           export SMTPPORT="{{ properties['setup'].smtp_port }}"
           export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
           export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
+          export LB_IP_ALIAS_TEST="{{ properties['LB_IP_ALIAS_TEST'] }}"
           export topology="{{ properties['infra'].topology }}"
           export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
           export DS_CWC="{{ properties['setup'].config.code_with_config.ds }}"
@@ -132,7 +133,8 @@ resources:
           cp -fr  /tmp/apigee/ansible-scripts/config/config{{ properties['infra'].topology }}.txt /tmp/apigee/ansible-scripts/config/config.txt
           cp -fr  /tmp/apigee/ansible-scripts/inventory/hosts_EDGE_{{ properties['infra'].topology }}node /tmp/apigee/ansible-scripts/inventory/hosts
 
-          bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
+          bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh
+          #bash /tmp/apigee/ansible-scripts/startup-scripts/prepare_config_file.sh $topology $HOST_NAMES $APIGEE_ADMIN_EMAIL $APIGEE_ADMINPW $ORG_NAME $LB_IP_ALIAS $LB_IP_ALIAS_TEST $SKIP_SMTP $SMTPHOST $SMTPMAILFROM $SMTPSSL $SMTPUSER $SMTPPASSWORD
 
 
           #Run ansible and complete the setup

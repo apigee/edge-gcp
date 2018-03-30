@@ -47,7 +47,7 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
     | infra:datacenters:ds:diskSizeGb         | The disk size associated with for datastore(Cassandra/Zookeeper) server                                                                                |
     | infra:datacenters:rmp:machineType       | The machine type for router/MP server.               |
     | infra:datacenters:rmp:diskSizeGb        | The disk size associated with router/MP server       |
-    | infra:datacenters:rmp:autoscale.enabled | The value can be true or false                       |
+    | infra:datacenters:rmp:autoscale.enable  | The value can be true or false                       |
     | infra:datacenters:rmp:autoscale.size    | The minimum number of mp instances. This is mandatory|
     | infra:datacenters:rmp:autoscale.maxSize | he maximum number of autoscaled instances            |
     | infra:datacenters:ax:machineType        | The machine type for Analytics(PG & QPID) server.    |
