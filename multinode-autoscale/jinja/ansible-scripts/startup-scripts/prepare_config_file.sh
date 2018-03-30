@@ -1,15 +1,16 @@
-topology=$1
-HOST_NAMES=$2
-APIGEE_ADMIN_EMAIL=$3
-APIGEE_ADMINPW=$4
-ORG_NAME=$5
-LB_IP_ALIAS=$6
-SKIP_SMTP=$7
-SMTPHOST=$8
-SMTPMAILFROM=$9
-SMTPSSL=${10}
-SMTPUSER=${11}
-SMTPPASSWORD=${12}
+#topology=$1
+#HOST_NAMES=$2
+#APIGEE_ADMIN_EMAIL=$3
+#APIGEE_ADMINPW=$4
+#ORG_NAME=$5
+#LB_IP_ALIAS=$6
+#LB_IP_ALIAS_TEST=$7
+#SKIP_SMTP=$8
+#SMTPHOST=$9
+#SMTPMAILFROM=${10}
+#SMTPSSL=${11}
+#SMTPUSER=${12}
+#SMTPPASSWORD=${13}
 
 IFS=':'
 hosts_ary=($HOST_NAMES)
@@ -70,12 +71,18 @@ echo "topology ${topology}"
 if [[ $topology = '2' ]]; then
  LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
  echo "LB_SINGLE_ALIAS ${LB_SINGLE_ALIAS}"
+ LB_IP_ALIAS_TEST=$LB_IP_ALIAS
  sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
  sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
 fi 
  
 echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
+if [[ ! -n "$LB_IP_ALIAS_TEST"  ]]; then
+	LB_IP_ALIAS_TEST=$LB_IP_ALIAS
+fi
+echo "LB_IP_ALIAS ${LB_IP_ALIAS_TEST}"
+
 sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
 sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
-sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-test.txt
+sed -i.bak s/LBDNS/"${LB_IP_ALIAS_TEST}"/g setup-org-test.txt
 
