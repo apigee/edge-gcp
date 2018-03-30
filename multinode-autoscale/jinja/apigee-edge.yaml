@@ -11,21 +11,36 @@
 # limitations under the License.
 
 imports:
-- path: apigee-shared-vm-template.jinja
-- path: apigee-rmp-instance-template.jinja
-- path: apigee-r-instance-template.jinja
-- path: apigee-mp-instance-template.jinja
-- path: apigee-mgmt-vm-template.jinja
-- path: apigee-network-template.jinja
-- path: apigee-firewall-template.jinja
-- path: apigee-lb-template.jinja
-- path: apigee-lb-autoscale-true-template.jinja
-- path: apigee-lb-autoscale-false-template.jinja
-- path: apigee-edge-2node-template.jinja
-- path: apigee-edge-5node-template.jinja
-- path: apigee-edge-7node-template.jinja
-- path: apigee-edge-9node-template.jinja
-- path: apigee-edge-template.jinja
+- path: templates/apigee-instance-templates/apigee-shared-vm-template.jinja
+  name: apigee-shared-vm-template.jinja
+- path: templates/apigee-instance-templates/apigee-rmp-instance-template.jinja
+  name: apigee-rmp-instance-template.jinja
+- path: templates/apigee-instance-templates/apigee-r-instance-template.jinja
+  name: apigee-r-instance-template.jinja
+- path: templates/apigee-instance-templates/apigee-mp-instance-template.jinja
+  name: apigee-mp-instance-template.jinja
+- path: templates/apigee-instance-templates/apigee-mgmt-vm-template.jinja
+  name: apigee-mgmt-vm-template.jinja
+- path: templates/apigee-networking/apigee-network-template.jinja
+  name: apigee-network-template.jinja
+- path: templates/apigee-networking/apigee-firewall-template.jinja
+  name: apigee-firewall-template.jinja
+- path: templates/apigee-networking/apigee-lb-template.jinja
+  name: apigee-lb-template.jinja
+- path: templates/apigee-networking/apigee-lb-autoscale-true-template.jinja
+  name: apigee-lb-autoscale-true-template.jinja
+- path: templates/apigee-networking/apigee-lb-autoscale-false-template.jinja
+  name: apigee-lb-autoscale-false-template.jinja
+- path: templates/apigee-topologies/apigee-edge-2node-template.jinja
+  name: apigee-edge-2node-template.jinja
+- path: templates/apigee-topologies/apigee-edge-5node-template.jinja
+  name: apigee-edge-5node-template.jinja
+- path: templates/apigee-topologies/apigee-edge-7node-template.jinja
+  name: apigee-edge-7node-template.jinja
+- path: templates/apigee-topologies/apigee-edge-9node-template.jinja
+  name: apigee-edge-9node-template.jinja
+- path: templates/apigee-edge-template.jinja
+  name: apigee-edge-template.jinja
 
 resources:
 - name: apigee-edge-setup

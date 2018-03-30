@@ -5,8 +5,8 @@ blue=`tput setaf 4`
 reset=`tput sgr0`
 zone=$(cat apigee-edge.yaml | grep zone)
 zone=$(echo $zone | cut -d':' -f2 | sed -e 's/^[ \t]*//')
-datacenter=$(cat apigee-edge.yaml | grep name)
-datacenter=$(echo $datacenter | cut -d':' -f3 | sed -e 's/^[ \t]*//'| cut -d' ' -f1)
+datacenter=$(cat apigee-edge.yaml | grep -w name | cut -d ':' -f2 | tail -1 | sed -e 's/^[ \t]*//')
+#datacenter=$(echo $datacenter | cut -d':' -f3 | sed -e 's/^[ \t]*//'| cut -d' ' -f1)
 mgmt_instance=$1"-"$datacenter"-apigee-mgmt"
 
 natIP=$(gcloud compute instances describe $mgmt_instance --zone $zone --format yaml | grep natIP)
