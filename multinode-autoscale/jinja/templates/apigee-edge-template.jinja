@@ -13,13 +13,9 @@ limitations under the License.
 {% set  BASE_NAME =   env['deployment'] + '-' + env['name'] %}
 
 {% set  TEMPLATE_NAME = 'apigee-edge-' + properties['infra'].topology|string + 'node-template.jinja' %}
-{% set  RMP_TEMPLATE_NAME = 'apigee-lb-autoscale-' + (properties['infra'].rmp.autoscale.enabled|string).lower() + '-template.jinja' %}
+{% set  RMP_TEMPLATE_NAME = 'apigee-lb-autoscale-' + (properties['infra'].rmp.autoscale.enable|string).lower() + '-template.jinja' %}
 
 {% set  sourceImage= 'https://www.googleapis.com/compute/v1/projects/rhel-cloud/global/images/family/rhel-7' %}
-
-{% if (properties['infra'].topology == 2) %}
-{% set  RMP_TEMPLATE_NAME='apigee-lb-template.jinja' %}
-{% endif %}
 
 {% set  NETWORK_NAME = env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + 'network' %}
 {% set  SUBNET_NAME =  env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + 'network-subnet' %}
@@ -37,8 +33,10 @@ resources:
   properties:
     network: {{ NETWORK_NAME }}
     cidr: {{ properties['infra'].datacenters.primary.vpc.cidr }}
+{% if (properties['infra'].topology != 2) %}
 - name: {{ BASE_NAME }}-address
   type: compute.v1.globalAddress
+{% endif %}
 - name: apigee-edge
   type: {{ TEMPLATE_NAME }}
   properties:
@@ -59,8 +57,14 @@ resources:
     infra: {{ properties["infra"] }}
     repo: {{ properties["repo"] }}
     setup: {{ properties["setup"] }}
+    {% if (properties['infra'].topology != 2) %}
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
+    {% else %}
+    LB_IP_ALIAS: 0.0.0.0
+    {% endif %}
     sourceImage: {{ sourceImage }}
+
+{% if (properties['infra'].topology != 2) %}
 - name: apigee-rmp-as
   type: {{ RMP_TEMPLATE_NAME }}
   properties:
@@ -75,3 +79,5 @@ resources:
     msip: $(ref.apigee-mgmt.myIp)
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
     sourceImage: {{ sourceImage }}
+{% endif %}
+

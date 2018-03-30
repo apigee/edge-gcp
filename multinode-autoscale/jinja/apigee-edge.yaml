@@ -78,13 +78,14 @@ resources:
         machineType: n1-standard-2
         diskSizeGb: 20
         autoscale:
-          enabled: false
+          enable: false
           size: 2
           maxSize: 5
       ax:
         machineType: n1-standard-2
         diskSizeGb: 20
       portal:
+        enable: false
         machineType: n1-standard-2
         diskSizeGb: 20
     setup:

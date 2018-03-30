@@ -24,6 +24,8 @@ resources:
     sourceImage: {{ properties["sourceImage"] }}
     thirdparty: {{ properties["repo"].thirdparty }}
     cwc: {{ properties["setup"].config.code_with_config.ds }}
+
+{% if (properties['infra'].portal.enable != false) %}
 - name: apigee-dp
   type: apigee-shared-vm-template.jinja
   properties:
@@ -37,6 +39,11 @@ resources:
     sourceImage: {{ properties["sourceImage"] }}
     thirdparty: {{ properties["repo"].thirdparty }}
     cwc: {{ properties["setup"].config.code_with_config.portal }}
+{% endif %}
 outputs:
 - name: HOST_NAMES
+  {% if (properties['infra'].portal.enable != false) %}
   value: $(ref.apigee-ax0.myIp):$(ref.apigee-dp.myIp)
+  {% else %}
+  value: $(ref.apigee-ax0.myIp)
+  {% endif %}

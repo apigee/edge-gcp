@@ -52,6 +52,7 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
     | infra:datacenters:rmp:autoscale.maxSize | he maximum number of autoscaled instances            |
     | infra:datacenters:ax:machineType        | The machine type for Analytics(PG & QPID) server.    |
     | infra:datacenters:ax:diskSizeGb         | The disk size associated with Analytics(PG & QPID)   |
+    | infra:datacenters:portal:enable         | true or false. If true, devportal will be installed.                  |
     | infra:datacenters:portal:machineType    | The machine type for Portal server.                  |
     | infra:datacenters:portal:diskSizeGb     | The disk size associated with portal server          |
     | setup:                                  | This section covers the setup related information.   |
@@ -113,13 +114,14 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
             machineType: n1-standard-2
             diskSizeGb: 20
             autoscale:
-              enabled: false
+              enable: false
               size: 2
               maxSize: 5
           ax:
             machineType: n1-standard-2
             diskSizeGb: 20
           portal:
+            enable: true
             machineType: n1-standard-2
             diskSizeGb: 20
         setup:
