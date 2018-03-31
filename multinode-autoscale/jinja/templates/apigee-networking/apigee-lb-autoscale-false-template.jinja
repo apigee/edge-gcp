@@ -46,80 +46,13 @@ resources:
       port: {{ PROD_VH_PORT }}
     - name: {{ BASE_NAME }}-test
       port: {{ TEST_VH_PORT }}
-- name: {{ BASE_NAME }}-hc
-  type: compute.v1.httpHealthCheck
+- name: {{ BASE_NAME }}
+  type: apigee-lb-template.jinja
   properties:
-    port: {{ HEALTH_CHECK_PORT }}
-    requestPath: /v1/servers/self/up
-- name: {{ BASE_NAME }}-bes-prod
-  type: compute.v1.backendService
-  properties:
-    portName: {{ BASE_NAME }}-prod
-    backends:
-      - name: {{ BASE_NAME }}-bak
-        group: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
-    healthChecks: [ $(ref.{{ BASE_NAME }}-hc.selfLink) ]
-- name: {{ BASE_NAME }}-bes-test
-  type: compute.v1.backendService
-  properties:
-    portName: {{ BASE_NAME }}-test
-    backends:
-      - name: {{ BASE_NAME }}-bak
-        group: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
-    healthChecks: [ $(ref.{{ BASE_NAME }}-hc.selfLink) ]
-- name: {{ BASE_NAME }}-urlmap-prod
-  type: compute.v1.urlMap
-  properties:
-    defaultService: $(ref.{{ BASE_NAME }}-bes-prod.selfLink)
-    hostRules:
-      - hosts: ["*"]
-        pathMatcher: pathmap
-    pathMatchers:
-      - name: pathmap
-        defaultService: $(ref.{{ BASE_NAME }}-bes-prod.selfLink)
-        pathRules:
-          - paths: ["/static", "/static/*"]
-            service: $(ref.{{ BASE_NAME }}-bes-prod.selfLink) 
-- name: {{ BASE_NAME }}-urlmap-test
-  type: compute.v1.urlMap
-  properties:
-    defaultService: $(ref.{{ BASE_NAME }}-bes-test.selfLink)
-    hostRules:
-      - hosts: ["*"]
-        pathMatcher: pathmap
-    pathMatchers:
-      - name: pathmap
-        defaultService: $(ref.{{ BASE_NAME }}-bes-test.selfLink)
-        pathRules:
-          - paths: ["/static", "/static/*"]
-            service: $(ref.{{ BASE_NAME }}-bes-test.selfLink)  
-- name: {{ BASE_NAME }}-targetproxy-prod
-  type: compute.v1.targetHttpProxy
-  properties:
-    urlMap: $(ref.{{ BASE_NAME }}-urlmap-prod.selfLink)
-- name: {{ BASE_NAME }}-targetproxy-test
-  type: compute.v1.targetHttpProxy
-  properties:
-    urlMap: $(ref.{{ BASE_NAME }}-urlmap-test.selfLink)
-- name: {{ BASE_NAME }}-l7lb-prod
-  type: compute.v1.globalForwardingRule
-  properties:
-    IPProtocol: TCP
-    IPAddress: {{ properties['LB_IP_ALIAS'] }}
-    portRange: {{ LB_PORT }}
-    target: $(ref.{{ BASE_NAME }}-targetproxy-prod.selfLink)
-- name: {{ BASE_NAME }}-l7lb-test
-  type: compute.v1.globalForwardingRule
-  properties:
-    IPProtocol: TCP
-    IPAddress: {{ properties['LB_IP_ALIAS_TEST'] }}
-    portRange: {{ LB_PORT_TEST }}
-    target: $(ref.{{ BASE_NAME }}-targetproxy-test.selfLink)
-- name: {{ BASE_NAME }}-lb
-  type: compute.v1.firewall
-  properties:
-    network: $(ref.{{ properties["network"] }}.selfLink)
-    sourceRanges: [ {{ GCLOUD_STATIC_IP }}]
-    allowed:
-    - IPProtocol: TCP
-      ports: [{{ HEALTH_CHECK_PORT }}]
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties['network'] }}
+    subnet: {{ properties["subnet"] }}
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
