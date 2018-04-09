@@ -82,6 +82,14 @@ if [[ ! -n "$LB_IP_ALIAS_TEST"  ]]; then
 fi
 echo "LB_IP_ALIAS ${LB_IP_ALIAS_TEST}"
 
+if [[ -n $DNS_PROD ]]; then
+  LB_IP_ALIAS=$DNS_PROD
+fi
+
+if [[ -n $DNS_PROD ]]; then
+  LB_IP_ALIAS_TEST=$DNS_TEST
+fi 
+
 sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g config.txt
 sed -i.bak s/LBDNS/"${LB_IP_ALIAS}"/g setup-org-prod.txt
 sed -i.bak s/LBDNS/"${LB_IP_ALIAS_TEST}"/g setup-org-test.txt

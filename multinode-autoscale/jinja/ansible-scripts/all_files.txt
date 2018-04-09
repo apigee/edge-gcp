@@ -36,6 +36,7 @@ inventory/hosts_EDGE_9node
 startup-scripts/prepare_config_file.sh
 startup-scripts/setup_vault.sh
 startup-scripts/create_mp_startup_shutdown.sh
+startup-scripts/create_ssl_vhosh.sh
 startup-scripts/create_rpm_startup_shutodown.sh
 startup-scripts/vaults/server.js
 startup-scripts/vaults/package.json
