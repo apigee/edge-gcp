@@ -4,13 +4,14 @@ admin_password=$APIGEE_ADMINPW
 org=$ORG_NAME
 mgmt_url=http://localhost:8080
 declare -a envs=("test" "prod")
-ssl_port=443
 temp_dir=/tmp/apigee
 echo ${temp_dir}
 ## now loop through the above array
 for env_name in "${envs[@]}"
 do
+   ssl_port=443
    echo "$env_name"
+   echo $topology
    eval echo \${KEY_$env_name} | base64 -di > ${temp_dir}/key_$env_name.pem 
    eval echo \${CRT_$env_name} | base64 -di > ${temp_dir}/crt_$env_name.pem 
    if [[ "$env_name" == "test" ]]; then
@@ -19,7 +20,7 @@ do
                 else
                         lb_ip_alias=$LB_IP_ALIAS_TEST
                 fi
-                if [[ $topology == '2' ]];then
+                if [[ "$topology" == "2" ]];then
                         ssl_port=9003
                 fi
    elif [[ "$env_name" == "prod" ]]; then
