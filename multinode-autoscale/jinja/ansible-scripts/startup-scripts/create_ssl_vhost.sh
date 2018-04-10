@@ -14,7 +14,7 @@ do
    eval echo \${KEY_$env_name} | base64 -di > ${temp_dir}/key_$env_name.pem 
    eval echo \${CRT_$env_name} | base64 -di > ${temp_dir}/crt_$env_name.pem 
    if [[ "$env_name" == "test" ]]; then
-                if [[ -n "$DNS_TEST" ]]; then
+                if [[ "$DNS_TEST" != "None" ]]; then
                         lb_ip_alias=$DNS_TEST
                 else
                         lb_ip_alias=$LB_IP_ALIAS_TEST
@@ -23,7 +23,7 @@ do
                         ssl_port=9003
                 fi
    elif [[ "$env_name" == "prod" ]]; then
-                if [[ -n "$DNS_PROD" ]]; then
+                if [[ "$DNS_PROD" != "None" ]]; then
                         lb_ip_alias=$DNS_PROD
                 else
                         lb_ip_alias=$LB_IP_ALIAS
