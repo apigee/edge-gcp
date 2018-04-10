@@ -82,11 +82,14 @@ if [[ ! -n "$LB_IP_ALIAS_TEST"  ]]; then
 fi
 echo "LB_IP_ALIAS ${LB_IP_ALIAS_TEST}"
 
-if [[ -n $DNS_PROD ]]; then
+echo "dns_prod:"$DNS_PROD
+echo "dns_test:"$DNS_TEST
+
+if [[ $DNS_PROD != "None" ]]; then
   LB_IP_ALIAS=$DNS_PROD
 fi
 
-if [[ -n $DNS_PROD ]]; then
+if [[ "$DNS_TEST" != "None" ]]; then
   LB_IP_ALIAS_TEST=$DNS_TEST
 fi 
 
