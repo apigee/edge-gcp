@@ -34,7 +34,7 @@ resources:
     network: {{ NETWORK_NAME }}
     cidr: {{ properties['infra'].datacenters.primary.vpc.cidr }}
 {% if (properties['infra'].topology != 2) %}
-- name: {{ BASE_NAME }}-address
+- name: {{ BASE_NAME }}-address-prod
   type: compute.v1.globalAddress
 - name: {{ BASE_NAME }}-address-test
   type: compute.v1.globalAddress
@@ -60,7 +60,7 @@ resources:
     repo: {{ properties["repo"] }}
     setup: {{ properties["setup"] }}
     {% if (properties['infra'].topology != 2) %}
-    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
+    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address-prod.address)
     LB_IP_ALIAS_TEST: $(ref.{{ BASE_NAME }}-address-test.address)
     {% else %}
     LB_IP_ALIAS: 0.0.0.0
@@ -80,8 +80,10 @@ resources:
     repo: {{ properties["repo"] }}
     setup: {{ properties["setup"] }}
     msip: $(ref.apigee-mgmt.myIp)
-    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address.address)
+    LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address-prod.address)
     LB_IP_ALIAS_TEST: $(ref.{{ BASE_NAME }}-address-test.address)
     sourceImage: {{ sourceImage }}
 {% endif %}
+
+
 

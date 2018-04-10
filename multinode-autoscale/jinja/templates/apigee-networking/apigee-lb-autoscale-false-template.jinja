@@ -11,6 +11,8 @@ limitations under the License.
 #}
 
 {% set BASE_NAME =   env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + env['name'] %}
+{% set BASE_NAME_LB =   env['deployment'] + '-' + env['name'] %}
+
 {% set LB_PORT = 80 %}
 {% set LB_PORT_TEST = 80 %}
 {% set PROD_VH_PORT = 9001 %}
@@ -42,11 +44,14 @@ resources:
     baseInstanceName: {{ BASE_NAME }}-instance
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
     namedPorts:
-    - name: {{ BASE_NAME }}-prod
+    - name: {{ BASE_NAME_LB }}-prod
       port: {{ PROD_VH_PORT }}
-    - name: {{ BASE_NAME }}-test
+    - name: {{ BASE_NAME_LB }}-test
       port: {{ TEST_VH_PORT }}
-- name: {{ BASE_NAME }}
+    - name: https
+      port: 443
+
+- name: {{ BASE_NAME_LB }}
   type: apigee-lb-template.jinja
   properties:
     repo: {{ properties['repo'] }}
@@ -54,5 +59,20 @@ resources:
     setup: {{ properties['setup'] }}
     network: {{ properties['network'] }}
     subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
     LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
     LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+
+{% if (properties['setup'].config.ingress.ssl != false) %}
+- name: {{ BASE_NAME_LB }}-ssl
+  type: apigee-lb-ssl-template.jinja
+  properties:
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties['network'] }}
+    subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.instanceGroup)
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+{% endif %}

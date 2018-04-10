@@ -27,10 +27,14 @@ imports:
   name: apigee-firewall-template.jinja
 - path: templates/apigee-networking/apigee-lb-template.jinja
   name: apigee-lb-template.jinja
+- path: templates/apigee-networking/apigee-lb-ssl-template.jinja
+  name: apigee-lb-ssl-template.jinja
 - path: templates/apigee-networking/apigee-lb-autoscale-true-template.jinja
   name: apigee-lb-autoscale-true-template.jinja
 - path: templates/apigee-networking/apigee-lb-autoscale-false-template.jinja
   name: apigee-lb-autoscale-false-template.jinja
+- path: templates/apigee-networking/apigee-edge-ssl-certificate.py
+  name: apigee-edge-ssl-certificate.py
 - path: templates/apigee-topologies/apigee-edge-2node-template.jinja
   name: apigee-edge-2node-template.jinja
 - path: templates/apigee-topologies/apigee-edge-5node-template.jinja
@@ -90,7 +94,7 @@ resources:
         diskSizeGb: 20
     setup:
       apigee_admin_email: "opdk@apigee.com"
-      apigee_admin_password: 'Secret123'
+      apigee_admin_password: "Secret123"
       apigee_ldappw: 'Secret123'
       org_name: trial
       skip_smtp: 'y'
@@ -112,6 +116,16 @@ resources:
           ax:
           portal:
           grafana:
+        ingress:
+          ssl: false
+          test:
+            host: 
+            key: ""
+            crt: ""
+          prod:
+            host: 
+            key: ""
+            crt: ""
       license: ""
       public_key: ""
       private_key: ""

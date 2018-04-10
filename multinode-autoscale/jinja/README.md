@@ -74,7 +74,14 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
     | setup:config:code_with_config.router    | Router related code with config. Please look at the example below of how you can set code with config                                                          |
     | setup:config:code_with_config.mp        | Message processor related code with config. Please look at the example below of how you can set code with config                                                   |
     | setup:config:code_with_config.ax        | Analytics(qpid/PG) related code with config.            |
-    | setup:config:code_with_config.portal    | Portal related code with config.                        |      
+    | setup:config:code_with_config.portal    | Portal related code with config.                       |      
+    | setup:ingress:ssl                       | true/false. |
+    | setup:ingress:test:host                 | Hostname of test environment |
+    | setup:ingress:test:key                  | base64 encoded private key. you can use cat key.pem -base64                                                                                         |
+    | setup:ingress:test:crt                  | base64 encoded of public certificate|
+    | setup:ingress:prod:host                 | Hostname of prod interface|
+    | setup:ingress:prod:key                  | base64 encoded private key. you can use cat key.pem -base64     for prod env                                                                      |
+    | setup:ingress:prod:crt                  | base64 encoded of public certificate for prod env|
     | setup:license                           | Paste the license  text here                             |
     | setup:public_key                        | Paste the contents of apigee.key.pub  you created earlier|
     | setup:private_key                       | Paste the contents of apigee.key you created earlier.    |
@@ -171,38 +178,37 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
     RESOURCE_NAME is the name you give to your deployments. All the GCP resources will be tagged under that RESOURCE. All the GCP resources are created with name  having prefix of "RESOURCE_NAME".
     e.g :
 ```sh
-  ./deploy.sh edgetest
-The fingerprint of the deployment is kY-5qna7-zBpeFh5-LxFEQ==
-Waiting for create [operation-1519496035049-565f93d681e28-0d7ff0e0-f76e967c]...done.
-Create operation operation-1519496035049-565f93d681e28-0d7ff0e0-f76e967c completed successfully.
-NAME                                          TYPE                             STATE      ERRORS  INTENT
-edgetest-apigee-edge-setup-address            compute.v1.globalAddress         COMPLETED  []
-edgetest-dc-1-apigee-ax0                      compute.v1.instance              COMPLETED  []
-edgetest-dc-1-apigee-ax1                      compute.v1.instance              COMPLETED  []
-edgetest-dc-1-apigee-dp                       compute.v1.instance              COMPLETED  []
-edgetest-dc-1-apigee-mgmt                     compute.v1.instance              COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-bes-prod          compute.v1.backendService        COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-bes-test          compute.v1.backendService        COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-hc                compute.v1.httpHealthCheck       COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-igm               compute.v1.instanceGroupManager  COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-it                compute.v1.instanceTemplate      COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-l7lb-prod         compute.v1.globalForwardingRule  COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-l7lb-test         compute.v1.globalForwardingRule  COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-lb                compute.v1.firewall              COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-targetproxy-prod  compute.v1.targetHttpProxy       COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-targetproxy-test  compute.v1.targetHttpProxy       COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-urlmap-prod       compute.v1.urlMap                COMPLETED  []
-edgetest-dc-1-apigee-rmp-as-urlmap-test       compute.v1.urlMap                COMPLETED  []
-edgetest-dc-1-network                         compute.v1.network               COMPLETED  []
-edgetest-dc-1-network-firewall                compute.v1.firewall              COMPLETED  []
-edgetest-dc-1-network-firewall-internal       compute.v1.firewall              COMPLETED  []
-edgetest-dc-1-network-subnet                  compute.v1.subnetwork            COMPLETED  []
+ ./deploy.sh edgetest
+The fingerprint of the deployment is KpHjLYQI1P3638T-REzsuA==
+Waiting for create [operation-1523393508131-56984b0e7c0b8-9bcb9cc9-8336820f]...done.
+Create operation operation-1523393508131-56984b0e7c0b8-9bcb9cc9-8336820f completed successfully.
+NAME                                     TYPE                             STATE      ERRORS  INTENT
+edgetest-apigee-edge-setup-address-prod  compute.v1.globalAddress         COMPLETED  []
+edgetest-apigee-edge-setup-address-test  compute.v1.globalAddress         COMPLETED  []
+edgetest-apigee-rmp-as-bes-prod          compute.v1.backendService        COMPLETED  []
+edgetest-apigee-rmp-as-bes-test          compute.v1.backendService        COMPLETED  []
+edgetest-apigee-rmp-as-hc                compute.v1.healthCheck           COMPLETED  []
+edgetest-apigee-rmp-as-l7lb-prod         compute.v1.globalForwardingRule  COMPLETED  []
+edgetest-apigee-rmp-as-l7lb-test         compute.v1.globalForwardingRule  COMPLETED  []
+edgetest-apigee-rmp-as-lb                compute.v1.firewall              COMPLETED  []
+edgetest-apigee-rmp-as-targetproxy-prod  compute.v1.targetHttpProxy       COMPLETED  []
+edgetest-apigee-rmp-as-targetproxy-test  compute.v1.targetHttpProxy       COMPLETED  []
+edgetest-apigee-rmp-as-urlmap-prod       compute.v1.urlMap                COMPLETED  []
+edgetest-apigee-rmp-as-urlmap-test       compute.v1.urlMap                COMPLETED  []
+edgetest-dc-1-apigee-ax0                 compute.v1.instance              COMPLETED  []
+edgetest-dc-1-apigee-ax1                 compute.v1.instance              COMPLETED  []
+edgetest-dc-1-apigee-mgmt                compute.v1.instance              COMPLETED  []
+edgetest-dc-1-apigee-rmp-as-igm          compute.v1.instanceGroupManager  COMPLETED  []
+edgetest-dc-1-apigee-rmp-as-it           compute.v1.instanceTemplate      COMPLETED  []
+edgetest-dc-1-network                    compute.v1.network               COMPLETED  []
+edgetest-dc-1-network-firewall           compute.v1.firewall              COMPLETED  []
+edgetest-dc-1-network-firewall-internal  compute.v1.firewall              COMPLETED  []
+edgetest-dc-1-network-subnet             compute.v1.subnetwork            COMPLETED  []
 Please allow upto 15 minutes for edge to be installed
-Please access the Edge UI at http://104.197.144.238:9000
-Management Server is at http://104.197.144.238:8080
-Please access the Devportal  at http://35.192.96.108:8079
-Cred to access EdgeUI/Managament Server/DevPortal is :"opdk@apigee.com"/'Secret123'
-Montitoring Dashboard http://104.197.144.238:3000
+Please access the Edge UI at http://104.197.157.233:9000
+Management Server is at http://104.197.157.233:8080
+Cred to access EdgeUI/Managament Server/DevPortal is :opdk@apigee.com/Secret123
+Montitoring Dashboard http://104.197.157.233:3000
 Creds for Monitoring Dashboard admin/admin
 ```
 

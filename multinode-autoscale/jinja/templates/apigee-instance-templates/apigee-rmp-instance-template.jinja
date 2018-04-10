@@ -45,6 +45,8 @@ resources:
                export SMTPMAILFROM="{{ properties['setup'].smtp_mail_from }}"
                export LB_IP_ALIAS="{{ properties['LB_IP_ALIAS'] }}"
                export LB_IP_ALIAS_TEST="{{ properties['LB_IP_ALIAS_TEST'] }}"
+               export DNS_PROD="{{ properties['setup'].config.ingress.prod.host }}"
+               export DNS_TEST="{{ properties['setup'].config.ingress.test.host }}"
                export topology="{{ properties['infra'].topology }}"
                export SCRIPT_BASEPATH="{{ properties['setup'].script_base_path }}"
                export ROUTER_CWC="{{ properties['setup'].config.code_with_config.router }}"

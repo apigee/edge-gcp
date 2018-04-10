@@ -1,21 +1,25 @@
-gcloud deployment-manager deployments create $1 --config apigee-edge.yaml
+#!/bin/bash         
+
 red=`tput setaf 1`
 green=`tput setaf 2`
 blue=`tput setaf 4`
 reset=`tput sgr0`
-zone=$(cat apigee-edge.yaml | grep zone)
-zone=$(echo $zone | cut -d':' -f2 | sed -e 's/^[ \t]*//')
-datacenter=$(cat apigee-edge.yaml | grep -w name | cut -d ':' -f2 | tail -1 | sed -e 's/^[ \t]*//')
-#datacenter=$(echo $datacenter | cut -d':' -f3 | sed -e 's/^[ \t]*//'| cut -d' ' -f1)
+
+gcloud deployment-manager deployments create $1 --config apigee-edge.yaml	
+
+zone=$(cat apigee-edge.yaml | grep zone | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g )
+datacenter=$(cat apigee-edge.yaml | grep -w name | cut -d ':' -f2 | tail -1 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
+
 mgmt_instance=$1"-"$datacenter"-apigee-mgmt"
 
 natIP=$(gcloud compute instances describe $mgmt_instance --zone $zone --format yaml | grep natIP)
 IP=$(echo $natIP | grep -oE "[^:]+$")
 IP="${IP#"${IP%%[![:space:]]*}"}"   # remove leading whitespace characters
 IP="${IP%"${IP##*[![:space:]]}"}"
+mgmt_url="http://"$IP":8080"
 
 
-dp_enable=$(cat apigee-edge.yaml | grep -w enable | cut -d ':' -f2 | tail -1 | sed -e 's/^[ \t]*//')
+dp_enable=$(cat apigee-edge.yaml | grep -w enable | cut -d ':' -f2 | tail -1 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
 
 if [[ $dp_enable != false ]]; then
 	devportal_instance=$1"-"$datacenter"-apigee-dp"
@@ -26,8 +30,12 @@ if [[ $dp_enable != false ]]; then
 	devIP="${devIP%"${devIP##*[![:space:]]}"}"
 fi
 
-admin_email=$(echo $(cat apigee-edge.yaml | grep apigee_admin_email) | cut -d':' -f2 | sed -e 's/^[ \t]*//' | cut -d' ' -f1 )
-admin_password=$(echo $(cat apigee-edge.yaml | grep apigee_admin_password) | cut -d':' -f2 | sed -e 's/^[ \t]*//' | cut -d' ' -f1 )
+admin_email=$(cat apigee-edge.yaml | grep apigee_admin_email | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g )
+admin_password=$(cat apigee-edge.yaml | grep apigee_admin_password | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
+org=$(cat apigee-edge.yaml | grep org_name | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
+ssl_enable=$(cat apigee-edge.yaml | grep ssl | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
+
+
 echo "${red}Please allow upto 15 minutes for edge to be installed";
 echo "${blue}Please access the Edge UI at ${green}http://$IP:9000";
 echo "${blue}Management Server is at ${green}http://$IP:8080";

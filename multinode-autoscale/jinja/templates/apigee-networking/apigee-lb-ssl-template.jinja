@@ -11,12 +11,9 @@ limitations under the License.
 #}
 
 {% set BASE_NAME =  env['name'] %}
-{% set LB_PORT = 80 %}
-{% set LB_PORT_TEST = 80 %}
-{% set PROD_VH_PORT = 9001 %}
-{% set TEST_VH_PORT = 9002 %}
+{% set LB_PORT = 443 %}
+{% set VH_PORT = 443 %}
 {% set HEALTH_CHECK_PORT = "15999" %}
-{% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
 
 resources:
 - name: {{ BASE_NAME }}-hc
@@ -25,10 +22,21 @@ resources:
     type: TCP
     tcpHealthCheck:
       port: {{ HEALTH_CHECK_PORT }}
+- name : {{ BASE_NAME }}-certificate-test
+  type: apigee-edge-ssl-certificate.py
+  properties:
+    crt: {{ properties['setup'].config.ingress.test.crt }}
+    key: {{ properties['setup'].config.ingress.test.key }}
+- name : {{ BASE_NAME }}-certificate-prod
+  type: apigee-edge-ssl-certificate.py
+  properties:
+    crt: {{ properties['setup'].config.ingress.prod.crt }}
+    key: {{ properties['setup'].config.ingress.prod.key }}
 - name: {{ BASE_NAME }}-bes-prod
   type: compute.v1.backendService
   properties:
-    portName: {{ BASE_NAME }}-prod
+    portName: https
+    protocol: HTTPS
     backends:
       - name: {{ BASE_NAME }}-backends
         group: {{ properties['igm'] }}
@@ -36,7 +44,8 @@ resources:
 - name: {{ BASE_NAME }}-bes-test
   type: compute.v1.backendService
   properties:
-    portName: {{ BASE_NAME }}-test
+    portName: https
+    protocol: HTTPS
     backends:
       - name: {{ BASE_NAME }}-backends
         group: {{ properties['igm'] }}
@@ -50,13 +59,15 @@ resources:
   properties:
     defaultService: $(ref.{{ BASE_NAME }}-bes-test.selfLink) 
 - name: {{ BASE_NAME }}-targetproxy-prod
-  type: compute.v1.targetHttpProxy
+  type: compute.v1.targetHttpsProxy
   properties:
     urlMap: $(ref.{{ BASE_NAME }}-urlmap-prod.selfLink)
+    sslCertificates: [ $(ref.{{ BASE_NAME }}-certificate-prod.selfLink) ]
 - name: {{ BASE_NAME }}-targetproxy-test
-  type: compute.v1.targetHttpProxy
+  type: compute.v1.targetHttpsProxy
   properties:
     urlMap: $(ref.{{ BASE_NAME }}-urlmap-test.selfLink)
+    sslCertificates: [ $(ref.{{ BASE_NAME }}-certificate-test.selfLink) ]
 - name: {{ BASE_NAME }}-l7lb-prod
   type: compute.v1.globalForwardingRule
   properties:
@@ -69,7 +80,7 @@ resources:
   properties:
     IPProtocol: TCP
     IPAddress: {{ properties['LB_IP_ALIAS_TEST'] }}
-    portRange: {{ LB_PORT_TEST }}
+    portRange: {{ LB_PORT }}
     target: $(ref.{{ BASE_NAME }}-targetproxy-test.selfLink)
 - name: {{ BASE_NAME }}-lb
   type: compute.v1.firewall
@@ -79,3 +90,4 @@ resources:
     allowed:
     - IPProtocol: TCP
       ports: [{{ HEALTH_CHECK_PORT }}]
+
