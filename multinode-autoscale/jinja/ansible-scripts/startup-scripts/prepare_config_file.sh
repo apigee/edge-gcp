@@ -64,17 +64,18 @@ sed -i.bak s/DEVPORTAL_ADMIN_EMAIL=/DEVPORTAL_ADMIN_EMAIL="${APIGEE_ADMIN_EMAIL}
 
 if [[ -z ${LB_IP_ALIAS} ]]; then
   LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
+  LB_IP_ALIAS_TEST=$LB_IP_ALIAS
 fi
 
 echo "topology ${topology}"
 
-if [[ $topology = '2' ]]; then
- LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
- echo "LB_SINGLE_ALIAS ${LB_SINGLE_ALIAS}"
- LB_IP_ALIAS_TEST=$LB_IP_ALIAS
- sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
- sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
-fi 
+#if [[ $topology = '2' ]]; then
+# LB_IP_ALIAS=$(curl -s "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip" -H "Metadata-Flavor: Google")
+# echo "LB_SINGLE_ALIAS ${LB_SINGLE_ALIAS}"
+# LB_IP_ALIAS_TEST=$LB_IP_ALIAS
+# sed -i.bak s/VHOST_BASEURL=.*//g setup-org-prod.txt
+# sed -i.bak s/VHOST_BASEURL=.*//g setup-org-test.txt
+#fi 
  
 echo "LB_IP_ALIAS ${LB_IP_ALIAS}"
 if [[ ! -n "$LB_IP_ALIAS_TEST"  ]]; then

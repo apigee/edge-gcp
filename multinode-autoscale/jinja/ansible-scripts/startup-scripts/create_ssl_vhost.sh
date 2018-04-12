@@ -20,9 +20,9 @@ do
                 else
                         lb_ip_alias=$LB_IP_ALIAS_TEST
                 fi
-                if [[ "$topology" == "2" ]];then
-                        ssl_port=9003
-                fi
+                #if [[ "$topology" == "2" ]];then
+                #        ssl_port=9003
+                #fi
    elif [[ "$env_name" == "prod" ]]; then
                 if [[ "$DNS_PROD" != "None" ]]; then
                         lb_ip_alias=$DNS_PROD
