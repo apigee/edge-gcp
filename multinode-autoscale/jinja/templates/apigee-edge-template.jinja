@@ -33,12 +33,10 @@ resources:
   properties:
     network: {{ NETWORK_NAME }}
     cidr: {{ properties['infra'].datacenters.primary.vpc.cidr }}
-{% if (properties['infra'].topology != 2) %}
 - name: {{ BASE_NAME }}-address-prod
   type: compute.v1.globalAddress
 - name: {{ BASE_NAME }}-address-test
   type: compute.v1.globalAddress
-{% endif %}
 - name: apigee-edge
   type: {{ TEMPLATE_NAME }}
   properties:
@@ -59,15 +57,10 @@ resources:
     infra: {{ properties["infra"] }}
     repo: {{ properties["repo"] }}
     setup: {{ properties["setup"] }}
-    {% if (properties['infra'].topology != 2) %}
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address-prod.address)
     LB_IP_ALIAS_TEST: $(ref.{{ BASE_NAME }}-address-test.address)
-    {% else %}
-    LB_IP_ALIAS: 0.0.0.0
-    {% endif %}
     sourceImage: {{ sourceImage }}
 
-{% if (properties['infra'].topology != 2) %}
 - name: apigee-rmp-as
   type: {{ RMP_TEMPLATE_NAME }}
   properties:
@@ -83,7 +76,3 @@ resources:
     LB_IP_ALIAS: $(ref.{{ BASE_NAME }}-address-prod.address)
     LB_IP_ALIAS_TEST: $(ref.{{ BASE_NAME }}-address-test.address)
     sourceImage: {{ sourceImage }}
-{% endif %}
-
-
-

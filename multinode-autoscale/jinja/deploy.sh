@@ -7,10 +7,17 @@ reset=`tput sgr0`
 
 gcloud deployment-manager deployments create $1 --config apigee-edge.yaml	
 
+
 zone=$(cat apigee-edge.yaml | grep zone | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g )
 datacenter=$(cat apigee-edge.yaml | grep -w name | cut -d ':' -f2 | tail -1 | tr -d ' ' | sed -e s/\'//g -e s/\"//g)
 
 mgmt_instance=$1"-"$datacenter"-apigee-mgmt"
+
+#Get toplogy and add instance if its 2
+topology=$(cat apigee-edge.yaml | grep topology | cut -d':' -f2 | tr -d ' ' | sed -e s/\'//g -e s/\"//g )
+if [[ $topology == 2 ]]; then
+	gcloud compute instance-groups unmanaged add-instances $1-dc-1-apigee-rmp-as-igm  --instances $mgmt_instance --zone $zone	
+fi
 
 natIP=$(gcloud compute instances describe $mgmt_instance --zone $zone --format yaml | grep natIP)
 IP=$(echo $natIP | grep -oE "[^:]+$")

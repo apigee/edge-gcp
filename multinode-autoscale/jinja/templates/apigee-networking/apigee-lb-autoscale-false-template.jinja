@@ -13,14 +13,16 @@ limitations under the License.
 {% set BASE_NAME =   env['deployment'] + '-' + properties['infra'].datacenters.primary.name + '-' + env['name'] %}
 {% set BASE_NAME_LB =   env['deployment'] + '-' + env['name'] %}
 
-{% set LB_PORT = 80 %}
-{% set LB_PORT_TEST = 80 %}
-{% set PROD_VH_PORT = 9001 %}
-{% set TEST_VH_PORT = 9002 %}
+{% set LB_PORT_DEFAULT = 80 %}
+{% set VH_DEFAULT_PORT = 80 %}
+{% set LB_PORT_SSL = 443 %}
+{% set VH_SSL_PORT = 443 %}
 {% set HEALTH_CHECK_PORT = "15999" %}
 {% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
 
 resources:
+
+{% if (properties['infra'].topology != 2) %}
 - name: {{ BASE_NAME }}-it
   type: apigee-rmp-instance-template.jinja
   properties:
@@ -44,12 +46,10 @@ resources:
     baseInstanceName: {{ BASE_NAME }}-instance
     instanceTemplate: $(ref.{{ BASE_NAME }}-it.selfLink)
     namedPorts:
-    - name: {{ BASE_NAME_LB }}-prod
-      port: {{ PROD_VH_PORT }}
-    - name: {{ BASE_NAME_LB }}-test
-      port: {{ TEST_VH_PORT }}
-    - name: https
-      port: 443
+    - name: {{ BASE_NAME_LB }}-default
+      port: {{ VH_DEFAULT_PORT }}
+    - name: {{ BASE_NAME_LB }}-ssl
+      port: {{ VH_SSL_PORT }}
 
 - name: {{ BASE_NAME_LB }}
   type: apigee-lb-template.jinja
@@ -76,3 +76,48 @@ resources:
     LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
     LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
 {% endif %}
+
+{% else %}
+
+- name: {{ BASE_NAME }}-igm
+  type: compute.v1.instanceGroup
+  properties:
+    network: $(ref.{{ properties["network"] }}.selfLink)
+    subnet: $(ref.{{ properties["subnet"] }}.selfLink)
+    region: {{ properties['infra'].datacenters.primary.region }}
+    zone: {{ properties['infra'].datacenters.primary.zone }}
+    namedPorts:
+    - name: {{ BASE_NAME_LB }}-default
+      port: {{ VH_DEFAULT_PORT }}
+    - name: {{ BASE_NAME_LB }}-ssl
+      port: {{ VH_SSL_PORT }}
+
+- name: {{ BASE_NAME_LB }}
+  type: apigee-lb-template.jinja
+  properties:
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.selfLink)
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+
+{% if (properties['setup'].config.ingress.ssl != false) %}
+- name: {{ BASE_NAME_LB }}-ssl
+  type: apigee-lb-ssl-template.jinja
+  properties:
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties['network'] }}
+    subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.selfLink)
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+{% endif %}
+
+{% endif %}
+
+
