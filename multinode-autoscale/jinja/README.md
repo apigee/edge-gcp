@@ -162,6 +162,16 @@ Please go through https://docs.apigee.com/private-cloud/latest/overview to know 
               - conf_http_HTTPTransport.max.client.count=20000
               ax:
               portal:
+            ingress:
+              ssl: false
+              test:
+                host: 
+                key: ""
+                crt: ""
+              prod:
+                host: 
+                key: ""
+                crt: ""
           license: "JakHrOe9fuHhHyuJYF8NtiKkIvW01Oa6PZcuaWZql8U
     V6KicnWnZJZzdLhTZskwz+DqcwNf0R1+UaFaPg=="
           public_key: "apigee:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpI7cH+5dBvsiNrVOwd6kvZ2r7aXAHofCpZzVpm8w== apigee"
@@ -238,28 +248,28 @@ It uses ansible based scripts for multi node installation and there can be cases
  - Supported Deployment Topologies
 
 Edge Topology- 2 node
-![Edge Topology- 2 node](/images/2node.png)
+![Edge Topology- 2 node](/docs/images/2node.png)
 
 Edge Topology- 5 node
-![Edge Topology- 5 node](/images/5node.png)
+![Edge Topology- 5 node](/docs/images/5node.png)
 
 Edge Topology- 5 node with auto scaling
-![Edge Topology- 5 node with auto scaling](/images/5node-auto-scaling.png)
+![Edge Topology- 5 node with auto scaling](/docs/images/5node-auto-scaling.png)
 
 Edge Topology- 7 node
-![Edge Topology- 7 node](/images/7node.png)
+![Edge Topology- 7 node](/docs/images/7node.png)
 
 Edge Topology- 7 node with auto scaling
-![Edge Topology- 7 node with auto scaling](/images/7node-auto-scaling.png)
+![Edge Topology- 7 node with auto scaling](/docs/images/7node-auto-scaling.png)
 
 Edge Topology- 9 node
-![Edge Topology- 9 node](/images/9node.png)
+![Edge Topology- 9 node](/docs/images/9node.png)
 
 Edge Topology- 9 node with auto scaling
-![Edge Topology- 9 node with auto scaling](/images/9node-auto-scaling.png)
+![Edge Topology- 9 node with auto scaling](/docs/images/9node-auto-scaling.png)
 
 GCP Resource Deployment Model for 7 node
-![GCP Resource Deployment Model for 7 node](/images/resourceDeployment.png)
+![GCP Resource Deployment Model for 7 node](/docs/images/resourceDeployment.png)
 
 
 ## License

@@ -21,6 +21,8 @@ limitations under the License.
 {% set GCLOUD_STATIC_IP = "130.211.0.0/16,35.191.0.0/16" %}
 
 resources:
+{% if (properties['infra'].topology != 2) %}
+
 - name: {{ BASE_NAME }}-it
   type: apigee-r-instance-template.jinja
   properties:
@@ -103,4 +105,49 @@ resources:
     LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
     LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
 {% endif %}
+
+{% else %}
+
+- name: {{ BASE_NAME }}-igm
+  type: compute.v1.instanceGroup
+  properties:
+    network: $(ref.{{ properties["network"] }}.selfLink)
+    subnet: $(ref.{{ properties["subnet"] }}.selfLink)
+    region: {{ properties['infra'].datacenters.primary.region }}
+    zone: {{ properties['infra'].datacenters.primary.zone }}
+    namedPorts:
+    - name: {{ BASE_NAME_LB }}-default
+      port: {{ VH_DEFAULT_PORT }}
+    - name: {{ BASE_NAME_LB }}-ssl
+      port: {{ VH_SSL_PORT }}
+
+- name: {{ BASE_NAME_LB }}
+  type: apigee-lb-template.jinja
+  properties:
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties["network"] }}
+    subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.selfLink)
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+
+{% if (properties['setup'].config.ingress.ssl != false) %}
+- name: {{ BASE_NAME_LB }}-ssl
+  type: apigee-lb-ssl-template.jinja
+  properties:
+    repo: {{ properties['repo'] }}
+    infra: {{ properties['infra'] }}
+    setup: {{ properties['setup'] }}
+    network: {{ properties['network'] }}
+    subnet: {{ properties["subnet"] }}
+    igm: $(ref.{{ BASE_NAME }}-igm.selfLink)
+    LB_IP_ALIAS: {{ properties["LB_IP_ALIAS"] }}
+    LB_IP_ALIAS_TEST: {{ properties["LB_IP_ALIAS_TEST"] }}
+{% endif %}
+
+{% endif %}
+
+
 
